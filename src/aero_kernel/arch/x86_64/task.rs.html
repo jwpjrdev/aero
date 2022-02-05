@@ -455,7 +455,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>::{<span class="ident">ExecArgs</span>, <span class="ident">RegistersFrame</span>, <span class="ident">SyscallFrame</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::vm::Vm</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils</span>::{<span class="ident">io</span>, <span class="ident">StackHelper</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::StackHelper</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::controlregs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::gdt::Ring</span>;
