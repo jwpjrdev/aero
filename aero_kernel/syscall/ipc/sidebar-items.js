@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["handle_recieve",""],["recv",""],["send",""]],"struct":[["Message",""],["MessageQueue",""]]});
