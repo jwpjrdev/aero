@@ -311,6 +311,8 @@
 <span id="306">306</span>
 <span id="307">307</span>
 <span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -375,19 +377,19 @@
 <span class="kw">use</span> <span class="ident">aero_syscall::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fs</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ipc</span>;
 <span class="kw">mod</span> <span class="ident">net</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">process</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">time</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ipc</span>;
 
 <span class="kw">use</span> <span class="ident">alloc::boxed::Box</span>;
 <span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">fs</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ipc</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">process</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">raw_cpuid::CpuId</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">time</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ipc</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::signals</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch</span>::{<span class="ident">gdt::GdtEntryType</span>, <span class="ident">interrupts</span>};
@@ -537,6 +539,8 @@
 
         <span class="ident">SYS_IPC_SEND</span> =&gt; <span class="ident">ipc::send</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_IPC_RECV</span> =&gt; <span class="ident">ipc::recv</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>),
+        <span class="ident">SYS_IPC_DISCOVER_ROOT</span> =&gt; <span class="ident">ipc::discover_root</span>(),
+        <span class="ident">SYS_IPC_BECOME_ROOT</span> =&gt; <span class="ident">ipc::become_root</span>(),
 
         <span class="kw">_</span> =&gt; {
             <span class="macro">log::error!</span>(<span class="string">&quot;invalid syscall: {:#x}&quot;</span>, <span class="ident">a</span>);
