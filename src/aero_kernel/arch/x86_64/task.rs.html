@@ -782,7 +782,7 @@
             }
         }
 
-        <span class="kw">let</span> <span class="ident">p2_header</span> <span class="op">=</span> <span class="ident">loaded_binary</span>.<span class="ident">header</span>.<span class="ident">pt2</span>;
+        <span class="kw">let</span> <span class="ident">p2_header</span> <span class="op">=</span> <span class="ident">loaded_binary</span>.<span class="ident">elf</span>.<span class="ident">header</span>.<span class="ident">pt2</span>;
 
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">hdr</span>: [(<span class="ident">AuxvType</span>, <span class="ident">usize</span>); <span class="number">4</span>] <span class="op">=</span> [
