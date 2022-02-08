@@ -879,6 +879,12 @@
 <span id="874">874</span>
 <span id="875">875</span>
 <span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
+<span id="879">879</span>
+<span id="880">880</span>
+<span id="881">881</span>
+<span id="882">882</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1099,6 +1105,7 @@
         <span class="ident">prelude::SYS_IPC_RECV</span> =&gt; <span class="string">&quot;ipc_recv&quot;</span>,
         <span class="ident">prelude::SYS_IPC_DISCOVER_ROOT</span> =&gt; <span class="string">&quot;ipc_discover_root&quot;</span>,
         <span class="ident">prelude::SYS_IPC_BECOME_ROOT</span> =&gt; <span class="string">&quot;ipc_become_root&quot;</span>,
+        <span class="ident">prelude::SYS_TELL</span> =&gt; <span class="string">&quot;tell&quot;</span>,
 
         <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;unknown syscall&quot;</span>),
     }
@@ -1636,6 +1643,11 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_seek</span>(<span class="ident">fd</span>: <span class="ident">usize</span>, <span class="ident">offset</span>: <span class="ident">usize</span>, <span class="ident">whence</span>: <span class="ident">SeekWhence</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall3</span>(<span class="ident">prelude::SYS_SEEK</span>, <span class="ident">fd</span>, <span class="ident">offset</span>, <span class="ident">whence</span> <span class="kw">as</span> <span class="ident">usize</span>);
+    <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sys_tell</span>(<span class="ident">fd</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">syscall1</span>(<span class="ident">prelude::SYS_TELL</span>, <span class="ident">fd</span>);
     <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
 }
 
