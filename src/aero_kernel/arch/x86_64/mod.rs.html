@@ -238,9 +238,6 @@
 <span id="233">233</span>
 <span id="234">234</span>
 <span id="235">235</span>
-<span id="236">236</span>
-<span id="237">237</span>
-<span id="238">238</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -427,14 +424,11 @@
     <span class="ident">interrupts::init</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded IDT&quot;</span>);
 
-    <span class="kw">let</span> <span class="ident">apic_type</span> <span class="op">=</span> <span class="ident">apic::init</span>();
-    <span class="macro">log::info!</span>(
-        <span class="string">&quot;Loaded local apic (x2apic={})&quot;</span>,
-        <span class="ident">apic_type</span>.<span class="ident">supports_x2_apic</span>()
-    );
+    <span class="ident">apic::init</span>();
+    <span class="macro">log::info!</span>(<span class="string">&quot;loaded APIC&quot;</span>);
 
     <span class="ident">acpi::init</span>(<span class="ident">rsdp_address</span>).<span class="ident">unwrap</span>();
-    <span class="macro">log::info!</span>(<span class="string">&quot;Loaded ACPI&quot;</span>);
+    <span class="macro">log::info!</span>(<span class="string">&quot;loaded ACPI&quot;</span>);
 
     <span class="ident">tls::init</span>(<span class="number">0</span>);
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded TLS&quot;</span>);
