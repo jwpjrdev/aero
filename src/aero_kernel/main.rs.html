@@ -322,9 +322,6 @@
     <span class="ident">drivers::mouse::init</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded PS/2 driver&quot;</span>);
 
-    <span class="ident">time::init</span>();
-    <span class="macro">log::info!</span>(<span class="string">&quot;loaded PIT&quot;</span>);
-
     <span class="ident">fs::init</span>().<span class="ident">unwrap</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded filesystem&quot;</span>);
 
@@ -343,6 +340,9 @@
     <span class="kw">unsafe</span> {
         <span class="ident">interrupts::enable_interrupts</span>();
     }
+
+    <span class="ident">time::init</span>();
+    <span class="macro">log::info!</span>(<span class="string">&quot;loaded timer&quot;</span>);
 
     <span class="comment">// Pre-scheduler init done. Now we are waiting for the main kernel</span>
     <span class="comment">// thread to be scheduled.</span>
@@ -410,5 +410,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (e789f3a3a 2022-02-11)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (1e12aef3f 2022-02-13)" ></div>
 </body></html>

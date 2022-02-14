@@ -508,6 +508,56 @@
 <span id="503">503</span>
 <span id="504">504</span>
 <span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -530,6 +580,7 @@
 <span class="kw">use</span> <span class="ident">core::ptr</span>;
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">AtomicU64</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch</span>::{<span class="ident">interrupts</span>, <span class="ident">tls</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::{<span class="ident">PhysAddr</span>, <span class="ident">VirtAddr</span>};
 <span class="kw">use</span> <span class="ident">raw_cpuid</span>::{<span class="ident">CpuId</span>, <span class="ident">FeatureInfo</span>};
 <span class="kw">use</span> <span class="ident">spin::Once</span>;
@@ -538,7 +589,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi::madt</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::io</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">time</span>, <span class="ident">PHYSICAL_MEMORY_OFFSET</span>};
 
 <span class="kw">const</span> <span class="ident">APIC_SPURIOUS_VECTOR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xFF</span>;
 
@@ -561,7 +612,20 @@
 <span class="kw">const</span> <span class="ident">XAPIC_TPR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x080</span>;
 
 <span class="doccomment">/// Local APIC ID register. Read-only. See Section 10.12.5.1 for initial values.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">XAPIC_ID</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x020</span>;
+<span class="kw">const</span> <span class="ident">XAPIC_ID</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x020</span>;
+
+<span class="doccomment">/// LVT Timer register. Read/write. See Figure 10-8 for reserved bits.</span>
+<span class="kw">const</span> <span class="ident">XAPIC_LVT_TIMER</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x320</span>;
+
+<span class="doccomment">/// Initial Count register (for Timer). Read/write.</span>
+<span class="kw">const</span> <span class="ident">XAPIC_TIMER_INIT_COUNT</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x380</span>;
+
+<span class="doccomment">/// Divide Configuration Register (DCR; for Timer). Read/write. See</span>
+<span class="doccomment">/// Figure 10-10 for reserved bits.</span>
+<span class="kw">const</span> <span class="ident">XAPIC_TIMER_DIV_CONF</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x3E0</span>;
+
+<span class="doccomment">/// Current Count register (for Timer). Read-only.</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">XAPIC_TIMER_CURRENT_COUNT</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x390</span>;
 
 <span class="kw">const</span> <span class="ident">X2APIC_BASE_MSR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0x800</span>;
 
@@ -698,6 +762,42 @@
     <span class="doccomment">/// Returns the APIC type of this instance.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">apic_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ApicType</span> {
         <span class="self">self</span>.<span class="ident">apic_type</span>
+    }
+
+    <span class="doccomment">/// Stops the local APIC timer.</span>
+    <span class="kw">fn</span> <span class="ident">timer_stop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_INIT_COUNT</span>, <span class="number">0</span>);
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_TIMER</span>, <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>);
+        }
+    }
+
+    <span class="doccomment">/// Calibrates the local APIC timer using the programmable</span>
+    <span class="doccomment">/// interval timer.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timer_calibrate</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="ident">timer_stop</span>();
+
+        <span class="kw">const</span> <span class="ident">SAMPLES</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xfffff</span>;
+
+        <span class="kw">unsafe</span> {
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_TIMER</span>, (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>) <span class="op">|</span> <span class="number">0xff</span>); <span class="comment">// vector 0xff, masked</span>
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_DIV_CONF</span>, <span class="number">1</span>);
+
+            <span class="ident">time::set_reload_value</span>(<span class="number">0xffff</span>);
+
+            <span class="kw">let</span> <span class="ident">initial_pit_tick</span> <span class="op">=</span> <span class="ident">time::get_current_count</span>();
+            <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_TIMER_INIT_COUNT</span>, <span class="ident">SAMPLES</span>);
+
+            <span class="kw">while</span> <span class="self">self</span>.<span class="ident">read</span>(<span class="ident">XAPIC_TIMER_CURRENT_COUNT</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {}
+
+            <span class="kw">let</span> <span class="ident">final_pit_tick</span> <span class="op">=</span> <span class="ident">time::get_current_count</span>();
+            <span class="kw">let</span> <span class="ident">pit_ticks</span> <span class="op">=</span> <span class="ident">initial_pit_tick</span> <span class="op">-</span> <span class="ident">final_pit_tick</span>;
+            <span class="kw">let</span> <span class="ident">timer_frequency</span> <span class="op">=</span> (<span class="ident">SAMPLES</span> <span class="op">/</span> <span class="ident">pit_ticks</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">*</span> <span class="ident">time::PIT_DIVIDEND</span> <span class="kw">as</span> <span class="ident">u32</span>;
+
+            <span class="ident">tls::get_percpu</span>().<span class="ident">lapic_timer_frequency</span> <span class="op">=</span> <span class="ident">timer_frequency</span>;
+        }
+
+        <span class="self">self</span>.<span class="ident">timer_stop</span>();
     }
 
     <span class="doccomment">/// Sets the provided `value` to the ICR register of the instance.</span>
@@ -1014,5 +1114,5 @@
     <span class="kw">return</span> <span class="ident">apic_type</span>;
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (e789f3a3a 2022-02-11)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (1e12aef3f 2022-02-13)" ></div>
 </body></html>
