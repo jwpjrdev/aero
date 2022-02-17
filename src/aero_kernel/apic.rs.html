@@ -566,6 +566,12 @@
 <span id="561">561</span>
 <span id="562">562</span>
 <span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -588,6 +594,7 @@
 <span class="kw">use</span> <span class="ident">core::ptr</span>;
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">AtomicU64</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts::InterruptStack</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch</span>::{<span class="ident">interrupts</span>, <span class="ident">tls</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::{<span class="ident">PhysAddr</span>, <span class="ident">VirtAddr</span>};
 <span class="kw">use</span> <span class="ident">raw_cpuid</span>::{<span class="ident">CpuId</span>, <span class="ident">FeatureInfo</span>};
@@ -675,6 +682,11 @@
     }
 }
 
+<span class="kw">fn</span> <span class="ident">lapic_error_handler</span>(<span class="ident">stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
+    <span class="macro">log::error!</span>(<span class="string">&quot;Local apic error&quot;</span>);
+    <span class="macro">log::error!</span>(<span class="string">&quot;ESR={:#0x}&quot;</span>, <span class="ident"><span class="self">self</span>::get_local_apic</span>().<span class="ident">get_esr</span>());
+}
+
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LocalApic</span> {
     <span class="ident">address</span>: <span class="ident">VirtAddr</span>,
     <span class="ident">apic_type</span>: <span class="ident">ApicType</span>,
@@ -709,7 +721,7 @@
             <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_SVR</span>, <span class="number">0x100</span> <span class="op">|</span> <span class="ident">APIC_SPURIOUS_VECTOR</span>);
 
             <span class="kw">let</span> <span class="ident">lvt_err_vector</span> <span class="op">=</span> <span class="ident">interrupts::allocate_vector</span>();
-            <span class="ident">interrupts::register_handler</span>(<span class="ident">lvt_err_vector</span>, <span class="ident">interrupts::irq::lapic_error</span>);
+            <span class="ident">interrupts::register_handler</span>(<span class="ident">lvt_err_vector</span>, <span class="ident">lapic_error_handler</span>);
 
             <span class="comment">// Set up LVT (Local Vector Table) error.</span>
             <span class="self">self</span>.<span class="ident">write</span>(<span class="ident">XAPIC_LVT_ERROR</span>, <span class="ident">lvt_err_vector</span> <span class="kw">as</span> <span class="ident">u32</span>);
@@ -1130,5 +1142,5 @@
     <span class="kw">return</span> <span class="ident">apic_type</span>;
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (09cb29c64 2022-02-15)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0-nightly (75d9a0ae2 2022-02-16)" ></div>
 </body></html>
