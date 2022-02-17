@@ -137,20 +137,6 @@
 <span id="132">132</span>
 <span id="133">133</span>
 <span id="134">134</span>
-<span id="135">135</span>
-<span id="136">136</span>
-<span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
-<span id="140">140</span>
-<span id="141">141</span>
-<span id="142">142</span>
-<span id="143">143</span>
-<span id="144">144</span>
-<span id="145">145</span>
-<span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -182,17 +168,16 @@
 <span class="kw">use</span> <span class="ident">stivale_boot::v2::StivaleEpochTag</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::apic</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts</span>::{<span class="self">self</span>, <span class="ident">InterruptStack</span>, <span class="ident">INTERRUPT_CONTROLLER</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::scheduler</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts</span>::{<span class="ident">InterruptStack</span>, <span class="ident">INTERRUPT_CONTROLLER</span>};
+
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::io</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 
 <span class="kw">const</span> <span class="ident">PIT_FREQUENCY_HZ</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1000</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PIT_DIVIDEND</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1193182</span>;
 
-<span class="kw">const</span> <span class="ident">SCHED_TIMESLICE_MS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">15</span>;
-
-<span class="kw">static</span> <span class="ident">SCHED_TICKS</span>: <span class="ident">AtomicUsize</span> <span class="op">=</span> <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>);
 <span class="kw">static</span> <span class="ident">UPTIME_RAW</span>: <span class="ident">AtomicUsize</span> <span class="op">=</span> <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>);
 <span class="kw">static</span> <span class="ident">UPTIME_SEC</span>: <span class="ident">AtomicUsize</span> <span class="op">=</span> <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>);
 
@@ -242,8 +227,6 @@
 }
 
 <span class="kw">fn</span> <span class="ident">pit_irq_handler</span>(<span class="ident">_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
-    <span class="ident">INTERRUPT_CONTROLLER</span>.<span class="ident">eoi</span>();
-
     {
         <span class="kw">let</span> <span class="ident">interval</span> <span class="op">=</span> <span class="ident">aero_syscall::TimeSpec</span> {
             <span class="ident">tv_sec</span>: <span class="number">0</span>,
@@ -268,17 +251,6 @@
 
     <span class="kw">if</span> <span class="ident">value</span> <span class="op">%</span> <span class="ident">PIT_FREQUENCY_HZ</span> <span class="op">==</span> <span class="number">0</span> {
         <span class="ident">UPTIME_SEC</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Increment uptime seconds</span>
-    }
-
-    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">SCHED_TICKS</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Increment scheduler ticks.</span>
-
-    <span class="comment">// Check if the ticks are equal to the scheduler timeslice. If so, then</span>
-    <span class="comment">// reschedule.</span>
-    <span class="kw">if</span> <span class="ident">value</span> <span class="op">==</span> <span class="ident">SCHED_TIMESLICE_MS</span> {
-        <span class="ident">SCHED_TICKS</span>.<span class="ident">store</span>(<span class="number">0</span>, <span class="ident">Ordering::Relaxed</span>); <span class="comment">// Reset the scheduler ticks counter.</span>
-
-        <span class="ident">scheduler::get_scheduler</span>().<span class="ident">inner</span>.<span class="ident">preempt</span>();
-        <span class="kw">return</span>;
     }
 }
 
