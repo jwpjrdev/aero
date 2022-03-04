@@ -223,6 +223,12 @@
 <span id="218">218</span>
 <span id="219">219</span>
 <span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -246,8 +252,14 @@
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_EFER</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xc0000080</span>;
 
+<span class="doccomment">/// Map of BASE Address of FS (R/W)  See Table 35-2.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_FS_BASE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xC0000100</span>;
+
+<span class="doccomment">/// Map of BASE Address of GS (R/W)  See Table 35-2.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_GS_BASE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xc0000101</span>;
+
+<span class="doccomment">/// Swap Target of BASE Address of GS (R/W) See Table 35-2.</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_KERNEL_GSBASE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xc0000102</span>;
 
 <span class="doccomment">/// System Call Target Address (R/W).</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IA32_STAR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0xc0000081</span>;
@@ -444,5 +456,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (03a8cc7df 2022-02-21)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (10913c000 2022-03-03)" ></div>
 </body></html>

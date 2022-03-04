@@ -682,7 +682,7 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">lapic_error_handler</span>(<span class="ident">stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
+<span class="kw">fn</span> <span class="ident">lapic_error_handler</span>(<span class="ident">_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
     <span class="macro">log::error!</span>(<span class="string">&quot;Local apic error&quot;</span>);
     <span class="macro">log::error!</span>(<span class="string">&quot;ESR={:#0x}&quot;</span>, <span class="ident"><span class="self">self</span>::get_local_apic</span>().<span class="ident">get_esr</span>());
 }
@@ -1142,5 +1142,5 @@
     <span class="kw">return</span> <span class="ident">apic_type</span>;
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (03a8cc7df 2022-02-21)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (10913c000 2022-03-03)" ></div>
 </body></html>

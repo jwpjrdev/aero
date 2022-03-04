@@ -326,6 +326,18 @@
 <span id="321">321</span>
 <span id="322">322</span>
 <span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -387,23 +399,35 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">arch_prctl</span>(<span class="ident">command</span>: <span class="ident">usize</span>, <span class="ident">address</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
     <span class="kw">match</span> <span class="ident">command</span> {
-        <span class="ident">ARCH_SET_FS</span> =&gt; {
+        <span class="ident">ARCH_SET_FS</span> =&gt; <span class="kw">unsafe</span> {
             <span class="ident">scheduler::get_scheduler</span>()
                 .<span class="ident">current_task</span>()
                 .<span class="ident">arch_task_mut</span>()
                 .<span class="ident">set_fs_base</span>(<span class="ident">VirtAddr::new</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="ident">u64</span>));
 
             <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
-        }
+        },
 
         <span class="ident">ARCH_GET_FS</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">scheduler::get_scheduler</span>()
             .<span class="ident">current_task</span>()
-            .<span class="ident">arch_task_mut</span>()
+            .<span class="ident">arch_task</span>()
             .<span class="ident">get_fs_base</span>()
             .<span class="ident">as_u64</span>() <span class="kw">as</span> <span class="ident">usize</span>),
 
-        <span class="ident">ARCH_SET_GS</span> =&gt; <span class="macro">unimplemented!</span>(),
-        <span class="ident">ARCH_GET_GS</span> =&gt; <span class="macro">unimplemented!</span>(),
+        <span class="ident">ARCH_SET_GS</span> =&gt; <span class="kw">unsafe</span> {
+            <span class="ident">scheduler::get_scheduler</span>()
+                .<span class="ident">current_task</span>()
+                .<span class="ident">arch_task_mut</span>()
+                .<span class="ident">set_gs_base</span>(<span class="ident">VirtAddr::new</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="ident">u64</span>));
+
+            <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
+        },
+
+        <span class="ident">ARCH_GET_GS</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">scheduler::get_scheduler</span>()
+            .<span class="ident">current_task</span>()
+            .<span class="ident">arch_task</span>()
+            .<span class="ident">get_gs_base</span>()
+            .<span class="ident">as_u64</span>() <span class="kw">as</span> <span class="ident">usize</span>),
 
         <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EINVAL</span>),
     }
@@ -650,5 +674,5 @@
     <span class="kw">loop</span> {}
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (03a8cc7df 2022-02-21)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (10913c000 2022-03-03)" ></div>
 </body></html>

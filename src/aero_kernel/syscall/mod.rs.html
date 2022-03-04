@@ -285,34 +285,6 @@
 <span id="280">280</span>
 <span id="281">281</span>
 <span id="282">282</span>
-<span id="283">283</span>
-<span id="284">284</span>
-<span id="285">285</span>
-<span id="286">286</span>
-<span id="287">287</span>
-<span id="288">288</span>
-<span id="289">289</span>
-<span id="290">290</span>
-<span id="291">291</span>
-<span id="292">292</span>
-<span id="293">293</span>
-<span id="294">294</span>
-<span id="295">295</span>
-<span id="296">296</span>
-<span id="297">297</span>
-<span id="298">298</span>
-<span id="299">299</span>
-<span id="300">300</span>
-<span id="301">301</span>
-<span id="302">302</span>
-<span id="303">303</span>
-<span id="304">304</span>
-<span id="305">305</span>
-<span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
-<span id="310">310</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -391,6 +363,7 @@
 <span class="kw">use</span> <span class="ident">raw_cpuid::CpuId</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">time</span>::<span class="kw-2">*</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts::InterruptStack</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::signals</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch</span>::{<span class="ident">gdt::GdtEntryType</span>, <span class="ident">interrupts</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils</span>::{<span class="ident">io</span>, <span class="ident">StackHelper</span>};
@@ -443,44 +416,15 @@
     <span class="ident">ExecArgs</span> { <span class="ident">inner</span>: <span class="ident">result</span> }
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SyscallFrame</span> {
-    <span class="kw">pub</span> <span class="ident">rflags</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rip</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rsp</span>: <span class="ident">u64</span>,
-}
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Default</span>)]</span>
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RegistersFrame</span> {
-    <span class="kw">pub</span> <span class="ident">cr2</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rax</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rbx</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rcx</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rdx</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rsi</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rdi</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">rbp</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r8</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r9</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r10</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r11</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r12</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r13</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r14</span>: <span class="ident">u64</span>,
-    <span class="kw">pub</span> <span class="ident">r15</span>: <span class="ident">u64</span>,
-}
-
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>
-<span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">__inner_syscall</span>(<span class="ident">sys</span>: <span class="kw-2">&amp;mut</span> <span class="ident">SyscallFrame</span>, <span class="ident">stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">RegistersFrame</span>) {
-    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">rax</span> <span class="kw">as</span> <span class="ident">usize</span>;
-    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">rdi</span> <span class="kw">as</span> <span class="ident">usize</span>;
-    <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">rsi</span> <span class="kw">as</span> <span class="ident">usize</span>;
-    <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">rdx</span> <span class="kw">as</span> <span class="ident">usize</span>;
-    <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">r10</span> <span class="kw">as</span> <span class="ident">usize</span>;
-    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">r8</span> <span class="kw">as</span> <span class="ident">usize</span>;
-    <span class="kw">let</span> <span class="ident">g</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">r9</span> <span class="kw">as</span> <span class="ident">usize</span>;
+<span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span> <span class="ident">__inner_syscall</span>(<span class="ident">stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptStack</span>) {
+    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">rax</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">rdi</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">rsi</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">rdx</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">r10</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">r8</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">g</span> <span class="op">=</span> <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">r9</span> <span class="kw">as</span> <span class="ident">usize</span>;
 
     <span class="kw">match</span> <span class="ident">a</span> {
         <span class="ident">SYS_EXIT</span> =&gt; {}
@@ -488,8 +432,8 @@
     }
 
     <span class="kw">if</span> <span class="ident">a</span> <span class="op">==</span> <span class="ident">SYS_SIGRETURN</span> {
-        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">signals::sigreturn</span>(<span class="ident">sys</span>, <span class="ident">stack</span>);
-        <span class="ident">stack</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="ident">result</span> <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">signals::sigreturn</span>(<span class="ident">stack</span>);
+        <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="ident">result</span> <span class="kw">as</span> <span class="ident">u64</span>;
         <span class="kw">return</span>;
     }
 
@@ -586,8 +530,8 @@
         <span class="macro">uart_16550::serial_println!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">result_v</span>);
     }
 
-    <span class="ident"><span class="kw">crate</span>::arch::signals::syscall_check_signals</span>(<span class="ident">result_usize</span> <span class="kw">as</span> <span class="ident">isize</span>, <span class="ident">sys</span>, <span class="ident">stack</span>);
-    <span class="ident">stack</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="ident">result_usize</span>;
+    <span class="ident"><span class="kw">crate</span>::arch::signals::syscall_check_signals</span>(<span class="ident">result_usize</span> <span class="kw">as</span> <span class="ident">isize</span>, <span class="ident">stack</span>);
+    <span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="ident">result_usize</span>;
 }
 
 <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> {
@@ -624,5 +568,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (03a8cc7df 2022-02-21)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (10913c000 2022-03-03)" ></div>
 </body></html>
