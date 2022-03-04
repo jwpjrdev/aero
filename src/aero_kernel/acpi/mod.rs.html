@@ -350,7 +350,7 @@
                 <span class="kw">let</span> <span class="ident">xsdt</span> <span class="op">=</span> <span class="ident">rsdp::Rsdt</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">xsdt_addr</span>);
                 <span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">AcpiHeader::Xsdt</span>(<span class="ident">xsdt</span>);
 
-                <span class="macro">log::debug!</span>(<span class="string">&quot;Found XSDT at {:#x}&quot;</span>, <span class="ident">xsdt_addr</span>);
+                <span class="macro">log::debug!</span>(<span class="string">&quot;found XSDT at {:#x}&quot;</span>, <span class="ident">xsdt_addr</span>);
 
                 <span class="self">Self</span> { <span class="ident">header</span> }
             }
@@ -359,7 +359,7 @@
                 <span class="kw">let</span> <span class="ident">rsdt</span> <span class="op">=</span> <span class="ident">rsdp::Rsdt</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">rsdt_addr</span>);
                 <span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">AcpiHeader::Rsdt</span>(<span class="ident">rsdt</span>);
 
-                <span class="macro">log::debug!</span>(<span class="string">&quot;Found RSDT at {:#x}&quot;</span>, <span class="ident">rsdt_addr</span>);
+                <span class="macro">log::debug!</span>(<span class="string">&quot;found RSDT at {:#x}&quot;</span>, <span class="ident">rsdt_addr</span>);
 
                 <span class="self">Self</span> { <span class="ident">header</span> }
             }

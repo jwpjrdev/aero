@@ -617,13 +617,13 @@
     <span class="ident">root_dir</span>().<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="string">&quot;proc&quot;</span>)<span class="question-mark">?</span>;
 
     <span class="ident">initramfs::init</span>()<span class="question-mark">?</span>;
-    <span class="macro">log::info!</span>(<span class="string">&quot;Installed initramfs&quot;</span>);
+    <span class="macro">log::info!</span>(<span class="string">&quot;installed initramfs&quot;</span>);
 
     <span class="ident">devfs::init</span>()<span class="question-mark">?</span>;
-    <span class="macro">log::info!</span>(<span class="string">&quot;Installed devfs&quot;</span>);
+    <span class="macro">log::info!</span>(<span class="string">&quot;installed devfs&quot;</span>);
 
     <span class="ident">procfs::init</span>()<span class="question-mark">?</span>;
-    <span class="macro">log::info!</span>(<span class="string">&quot;Installed procfs&quot;</span>);
+    <span class="macro">log::info!</span>(<span class="string">&quot;installed procfs&quot;</span>);
 
     <span class="prelude-val">Ok</span>(())
 }
