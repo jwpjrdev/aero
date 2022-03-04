@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["init",""],["init_ap",""],["run",""]],"mod":[["scheduler",""],["signals",""],["task",""],["vm",""]]});
+initSidebarItems({"fn":[["run",""]],"mod":[["scheduler",""],["signals",""],["task",""],["vm",""]]});

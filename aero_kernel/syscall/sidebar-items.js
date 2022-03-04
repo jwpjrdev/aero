@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["__inner_syscall",""],["exec_args_from_slice",""],["init",""],["syscall_handler",""]],"mod":[["fs",""],["ipc",""],["net",""],["process",""],["time",""]],"struct":[["ExecArgs",""]]});
+initSidebarItems({"fn":[["__inner_syscall",""],["exec_args_from_slice",""]],"mod":[["fs",""],["ipc",""],["net",""],["process",""],["time",""]],"struct":[["ExecArgs",""]]});
