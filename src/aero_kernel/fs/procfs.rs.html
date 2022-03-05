@@ -303,6 +303,17 @@
 <span id="298">298</span>
 <span id="299">299</span>
 <span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
 <span class="kw">use</span> <span class="ident">alloc::collections::BTreeMap</span>;
@@ -328,6 +339,19 @@
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">value</span> {
         <span class="ident">map</span>[<span class="ident">key</span>] <span class="op">=</span> <span class="ident">serde_json::Value::String</span>(<span class="ident">value</span>);
     }
+}
+
+<span class="kw">fn</span> <span class="ident">get_cmdline_cached</span>() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> {
+    <span class="kw">static</span> <span class="ident">CACHED</span>: <span class="ident">Once</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Once::new</span>();
+
+    <span class="ident">CACHED</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
+        <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="kw-2">*</span>;
+
+        <span class="macro">json!</span>({
+            <span class="string">&quot;cmdline&quot;</span>: <span class="ident"><span class="kw">crate</span>::cmdline::get_raw_cmdline</span>(),
+        })
+        .<span class="ident">to_string</span>()
+    })
 }
 
 <span class="kw">fn</span> <span class="ident">get_cpuinfo_cached</span>() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> {
@@ -383,6 +407,8 @@
 
 <span class="kw">enum</span> <span class="ident">FileContents</span> {
     <span class="ident">CpuInfo</span>,
+    <span class="ident">CmdLine</span>,
+
     <span class="prelude-val">None</span>,
 }
 
@@ -395,7 +421,6 @@
 <span class="kw">struct</span> <span class="ident">LockedProcINode</span>(<span class="ident">RwLock</span><span class="op">&lt;</span><span class="ident">ProcINode</span><span class="op">&gt;</span>);
 
 <span class="kw">impl</span> <span class="ident">LockedProcINode</span> {
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">node</span>: <span class="ident">ProcINode</span>) -&gt; <span class="self">Self</span> {
         <span class="self">Self</span>(<span class="ident">RwLock::new</span>(<span class="ident">node</span>))
     }
@@ -428,16 +453,13 @@
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::EntryExists</span>);
         }
 
-        <span class="kw">let</span> <span class="ident">filesystem</span> <span class="op">=</span> <span class="ident">this</span>
-            .<span class="ident">filesystem</span>
-            .<span class="ident">upgrade</span>()
-            .<span class="ident">expect</span>(<span class="string">&quot;Failed to upgrade to strong filesystem&quot;</span>);
+        <span class="kw">let</span> <span class="ident">filesystem</span> <span class="op">=</span> <span class="ident">this</span>.<span class="ident">filesystem</span>.<span class="ident">upgrade</span>().<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">inode</span> <span class="op">=</span> <span class="ident">filesystem</span>.<span class="ident">allocate_inode</span>(<span class="ident">file_type</span>, <span class="ident">contents</span>);
         <span class="kw">let</span> <span class="ident">inode_cached</span> <span class="op">=</span> <span class="ident">icache</span>.<span class="ident">make_item_no_cache</span>(<span class="ident">CachedINode::new</span>(<span class="ident">inode</span>));
 
         <span class="ident">downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span>, <span class="ident">LockedProcINode</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">inode_cached</span>.<span class="ident">inner</span>())
-            .<span class="ident">expect</span>(<span class="string">&quot;Failed to downcast cached inode on creation&quot;</span>)
+            .<span class="ident">unwrap</span>()
             .<span class="ident">init</span>(
                 <span class="kw-2">&amp;</span><span class="ident">this</span>.<span class="ident">node</span>,
                 <span class="kw-2">&amp;</span><span class="ident">inode_cached</span>.<span class="ident">downgrade</span>(),
@@ -456,18 +478,17 @@
     <span class="kw">fn</span> <span class="ident">read_at</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>, <span class="ident">buffer</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">this</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">read</span>();
 
-        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">this</span>.<span class="ident">contents</span> {
-            <span class="ident">FileContents::CpuInfo</span> =&gt; {
-                <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">get_cpuinfo_cached</span>();
-
-                <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">core::cmp::min</span>(<span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">offset</span>);
-                <span class="ident">buffer</span>[..<span class="ident">count</span>].<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>.<span class="ident">as_bytes</span>()[<span class="ident">offset</span>..]);
-
-                <span class="prelude-val">Ok</span>(<span class="ident">count</span>)
-            }
+        <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">this</span>.<span class="ident">contents</span> {
+            <span class="ident">FileContents::CpuInfo</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">get_cpuinfo_cached</span>()),
+            <span class="ident">FileContents::CmdLine</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">get_cmdline_cached</span>()),
 
             <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>),
-        }
+        }<span class="question-mark">?</span>;
+
+        <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">core::cmp::min</span>(<span class="ident">buffer</span>.<span class="ident">len</span>(), <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">offset</span>);
+        <span class="ident">buffer</span>[..<span class="ident">count</span>].<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>.<span class="ident">as_bytes</span>()[<span class="ident">offset</span>..<span class="ident">offset</span> <span class="op">+</span> <span class="ident">count</span>]);
+
+        <span class="prelude-val">Ok</span>(<span class="ident">count</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">lookup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dir</span>: <span class="ident">DirCacheItem</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">DirCacheItem</span><span class="op">&gt;</span> {
@@ -558,8 +579,7 @@
 
         <span class="ident">root_dir</span>.<span class="ident">filesystem</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Arc::downgrade</span>(<span class="kw-2">&amp;</span><span class="ident">copy</span>));
 
-        <span class="kw">let</span> <span class="ident">down</span> <span class="op">=</span> <span class="ident">downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span>, <span class="ident">LockedProcINode</span><span class="op">&gt;</span>(<span class="ident">root_cached</span>.<span class="ident">inner</span>())
-            .<span class="ident">expect</span>(<span class="string">&quot;cannot downcast inode to ram inode&quot;</span>);
+        <span class="kw">let</span> <span class="ident">down</span> <span class="op">=</span> <span class="ident">downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span>, <span class="ident">LockedProcINode</span><span class="op">&gt;</span>(<span class="ident">root_cached</span>.<span class="ident">inner</span>()).<span class="ident">unwrap</span>();
 
         <span class="ident">down</span>.<span class="ident">init</span>(
             <span class="kw-2">&amp;</span><span class="ident">ramfs</span>.<span class="ident">root_inode</span>.<span class="ident">downgrade</span>(),
@@ -569,6 +589,8 @@
         );
 
         <span class="ident">down</span>.<span class="ident">make_inode</span>(<span class="string">&quot;cpuinfo&quot;</span>, <span class="ident">FileType::File</span>, <span class="ident">FileContents::CpuInfo</span>)<span class="question-mark">?</span>;
+        <span class="ident">down</span>.<span class="ident">make_inode</span>(<span class="string">&quot;cmdline&quot;</span>, <span class="ident">FileType::File</span>, <span class="ident">FileContents::CmdLine</span>)<span class="question-mark">?</span>;
+
         <span class="prelude-val">Ok</span>(<span class="ident">ramfs</span>)
     }
 

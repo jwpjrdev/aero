@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["parse",""],["parse_number",""],["resolve_module",""]],"struct":[["CommandLine",""]]});
+initSidebarItems({"fn":[["get_raw_cmdline","Returns the raw kernel command line string."],["parse",""],["parse_number",""],["resolve_module",""]],"static":[["RAW_CMDLINE_STR",""]],"struct":[["CommandLine",""]]});
