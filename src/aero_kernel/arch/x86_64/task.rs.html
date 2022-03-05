@@ -435,7 +435,7 @@
 <span class="kw">use</span> <span class="ident">core::alloc::Layout</span>;
 <span class="kw">use</span> <span class="ident">core::ptr::Unique</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts::InterruptStack</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::interrupts::InterruptErrorStack</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::cache::DirCacheItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall::ExecArgs</span>;
@@ -542,13 +542,13 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stack_ptr</span> <span class="op">=</span> <span class="ident">task_stack</span> <span class="kw">as</span> <span class="ident">u64</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stack</span> <span class="op">=</span> <span class="ident">StackHelper::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">stack_ptr</span>);
 
-        <span class="kw">let</span> <span class="ident">kframe</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">stack</span>.<span class="ident">offset</span>::<span class="op">&lt;</span><span class="ident">InterruptStack</span><span class="op">&gt;</span>() };
+        <span class="kw">let</span> <span class="ident">kframe</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">stack</span>.<span class="ident">offset</span>::<span class="op">&lt;</span><span class="ident">InterruptErrorStack</span><span class="op">&gt;</span>() };
 
-        <span class="ident">kframe</span>.<span class="ident">iret</span>.<span class="ident">ss</span> <span class="op">=</span> <span class="number">0x10</span>; <span class="comment">// kernel stack segment</span>
-        <span class="ident">kframe</span>.<span class="ident">iret</span>.<span class="ident">cs</span> <span class="op">=</span> <span class="number">0x08</span>; <span class="comment">// kernel code segment</span>
-        <span class="ident">kframe</span>.<span class="ident">iret</span>.<span class="ident">rip</span> <span class="op">=</span> <span class="ident">entry_point</span>.<span class="ident">as_u64</span>();
-        <span class="ident">kframe</span>.<span class="ident">iret</span>.<span class="ident">rsp</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">task_stack</span>.<span class="ident">sub</span>(<span class="number">8</span>) <span class="kw">as</span> <span class="ident">u64</span> };
-        <span class="ident">kframe</span>.<span class="ident">iret</span>.<span class="ident">rflags</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">enable_interrupts</span> { <span class="number">0x200</span> } <span class="kw">else</span> { <span class="number">0x00</span> };
+        <span class="ident">kframe</span>.<span class="ident">stack</span>.<span class="ident">iret</span>.<span class="ident">ss</span> <span class="op">=</span> <span class="number">0x10</span>; <span class="comment">// kernel stack segment</span>
+        <span class="ident">kframe</span>.<span class="ident">stack</span>.<span class="ident">iret</span>.<span class="ident">cs</span> <span class="op">=</span> <span class="number">0x08</span>; <span class="comment">// kernel code segment</span>
+        <span class="ident">kframe</span>.<span class="ident">stack</span>.<span class="ident">iret</span>.<span class="ident">rip</span> <span class="op">=</span> <span class="ident">entry_point</span>.<span class="ident">as_u64</span>();
+        <span class="ident">kframe</span>.<span class="ident">stack</span>.<span class="ident">iret</span>.<span class="ident">rsp</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">task_stack</span>.<span class="ident">sub</span>(<span class="number">8</span>) <span class="kw">as</span> <span class="ident">u64</span> };
+        <span class="ident">kframe</span>.<span class="ident">stack</span>.<span class="ident">iret</span>.<span class="ident">rflags</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">enable_interrupts</span> { <span class="number">0x200</span> } <span class="kw">else</span> { <span class="number">0x00</span> };
 
         <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> {
             <span class="kw">fn</span> <span class="ident">iretq_init</span>();
@@ -603,11 +603,11 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new_stack</span> <span class="op">=</span> <span class="ident">StackHelper::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">new_stack_ptr</span>);
 
         <span class="kw">unsafe</span> {
-            <span class="kw">let</span> <span class="ident">registers_frame</span> <span class="op">=</span> <span class="ident">new_stack</span>.<span class="ident">offset</span>::<span class="op">&lt;</span><span class="ident">InterruptStack</span><span class="op">&gt;</span>();
-            <span class="kw">let</span> <span class="ident">old_registers_frame</span> <span class="op">=</span> <span class="ident">old_stack</span>.<span class="ident">offset</span>::<span class="op">&lt;</span><span class="ident">InterruptStack</span><span class="op">&gt;</span>();
+            <span class="kw">let</span> <span class="ident">registers_frame</span> <span class="op">=</span> <span class="ident">new_stack</span>.<span class="ident">offset</span>::<span class="op">&lt;</span><span class="ident">InterruptErrorStack</span><span class="op">&gt;</span>();
+            <span class="kw">let</span> <span class="ident">old_registers_frame</span> <span class="op">=</span> <span class="ident">old_stack</span>.<span class="ident">offset</span>::<span class="op">&lt;</span><span class="ident">InterruptErrorStack</span><span class="op">&gt;</span>();
 
             <span class="kw-2">*</span><span class="ident">registers_frame</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">old_registers_frame</span>;
-            <span class="ident">registers_frame</span>.<span class="ident">scratch</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="number">0x00</span>; <span class="comment">// Set the syscall result to 0</span>
+            <span class="ident">registers_frame</span>.<span class="ident">stack</span>.<span class="ident">scratch</span>.<span class="ident">rax</span> <span class="op">=</span> <span class="number">0x00</span>; <span class="comment">// Set the syscall result to 0</span>
         }
 
         <span class="comment">// Prepare the trampoline...</span>
