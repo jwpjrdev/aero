@@ -234,6 +234,19 @@
 <span id="229">229</span>
 <span id="230">230</span>
 <span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -292,6 +305,20 @@
 <span class="doccomment">//! | 32     | access                  |</span>
 <span class="doccomment">//! | 33     | pipe                    |</span>
 <span class="doccomment">//! | 34     | unlink                  |</span>
+<span class="doccomment">//! | 35     | gethostname             |</span>
+<span class="doccomment">//! | 36     | sethostname             |</span>
+<span class="doccomment">//! | 37     | info                    |</span>
+<span class="doccomment">//! | 38     | clone                   |</span>
+<span class="doccomment">//! | 39     | sigreturn               |</span>
+<span class="doccomment">//! | 40     | sigaction               |</span>
+<span class="doccomment">//! | 41     | sigprocmask             |</span>
+<span class="doccomment">//! | 42     | dup                     |</span>
+<span class="doccomment">//! | 43     | fcntl                   |</span>
+<span class="doccomment">//! | 44     | dup2                    |</span>
+<span class="doccomment">//! | 45     | ipc_send                |</span>
+<span class="doccomment">//! | 46     | ipc_recv                |</span>
+<span class="doccomment">//! | 47     | ipc_discover_root       |</span>
+<span class="doccomment">//! | 48     | ipc_become_root         |</span>
 
 <span class="kw">use</span> <span class="ident">core::mem::MaybeUninit</span>;
 
@@ -375,7 +402,6 @@
         <span class="ident">SYS_SHUTDOWN</span> =&gt; <span class="ident">process::shutdown</span>(),
         <span class="ident">SYS_FORK</span> =&gt; <span class="ident">process::fork</span>(),
         <span class="ident">SYS_MMAP</span> =&gt; <span class="ident">process::mmap</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>, <span class="ident">f</span>, <span class="ident">g</span>),
-        <span class="ident">SYS_ARCH_PRCTL</span> =&gt; <span class="ident">process::arch_prctl</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_MUNMAP</span> =&gt; <span class="ident">process::munmap</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_EXEC</span> =&gt; <span class="ident">process::exec</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>, <span class="ident">f</span>, <span class="ident">g</span>),
         <span class="ident">SYS_LOG</span> =&gt; <span class="ident">process::log</span>(<span class="ident">b</span>, <span class="ident">c</span>),
@@ -466,5 +492,5 @@
     <span class="ident">result_usize</span>
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (10913c000 2022-03-03)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (9fcbc3205 2022-03-04)" ></div>
 </body></html>

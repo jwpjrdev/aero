@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["init","Initializes support for the `syscall` and `sysret` instructions for the current CPU."],["x86_64_do_syscall",""],["x86_64_syscall_handler",""]]});
+initSidebarItems({"constant":[["ARCH_GET_FS",""],["ARCH_GET_GS",""],["ARCH_SET_FS",""],["ARCH_SET_GS",""]],"fn":[["arch_prctl",""],["init","Initializes support for the `syscall` and `sysret` instructions for the current CPU."],["x86_64_do_syscall",""],["x86_64_syscall_handler",""]]});
