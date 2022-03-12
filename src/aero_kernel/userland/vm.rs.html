@@ -1012,6 +1012,34 @@
 <span id="1007">1007</span>
 <span id="1008">1008</span>
 <span id="1009">1009</span>
+<span id="1010">1010</span>
+<span id="1011">1011</span>
+<span id="1012">1012</span>
+<span id="1013">1013</span>
+<span id="1014">1014</span>
+<span id="1015">1015</span>
+<span id="1016">1016</span>
+<span id="1017">1017</span>
+<span id="1018">1018</span>
+<span id="1019">1019</span>
+<span id="1020">1020</span>
+<span id="1021">1021</span>
+<span id="1022">1022</span>
+<span id="1023">1023</span>
+<span id="1024">1024</span>
+<span id="1025">1025</span>
+<span id="1026">1026</span>
+<span id="1027">1027</span>
+<span id="1028">1028</span>
+<span id="1029">1029</span>
+<span id="1030">1030</span>
+<span id="1031">1031</span>
+<span id="1032">1032</span>
+<span id="1033">1033</span>
+<span id="1034">1034</span>
+<span id="1035">1035</span>
+<span id="1036">1036</span>
+<span id="1037">1037</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1382,49 +1410,77 @@
         }
     }
 
+    <span class="doccomment">/// Copies the contents of the `page` page to a newly allocated frame and maps it to</span>
+    <span class="doccomment">/// the `page` page with the provided `protection` protection flags.</span>
+    <span class="kw">fn</span> <span class="ident">map_copied</span>(
+        <span class="ident">offset_table</span>: <span class="kw-2">&amp;mut</span> <span class="ident">OffsetPageTable</span>,
+        <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>,
+        <span class="ident">protection</span>: <span class="ident">MMapProt</span>,
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="comment">// Allocate a new frame to hold the contents.</span>
+        <span class="kw">let</span> <span class="ident">new_frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>() }
+            .<span class="ident">expect</span>(<span class="string">&quot;map_copied: failed to allocate frame&quot;</span>);
+
+        <span class="kw">let</span> <span class="ident">old_slice</span> <span class="op">=</span> <span class="kw">unsafe</span> {
+            <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">page</span>.<span class="ident">start_address</span>().<span class="ident">as_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>();
+            <span class="ident">core::slice::from_raw_parts</span>(<span class="ident">ptr</span>, <span class="ident">Size4KiB::SIZE</span> <span class="kw">as</span> <span class="kw">_</span>)
+        };
+
+        <span class="kw">let</span> <span class="ident">new_slice</span> <span class="op">=</span> <span class="kw">unsafe</span> {
+            <span class="kw">let</span> <span class="ident">phys</span> <span class="op">=</span> <span class="ident">new_frame</span>.<span class="ident">start_address</span>().<span class="ident">as_u64</span>();
+            <span class="kw">let</span> <span class="ident">virt</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">phys</span>;
+            <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">virt</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>();
+
+            <span class="ident">core::slice::from_raw_parts_mut</span>(<span class="ident">ptr</span>, <span class="ident">Size4KiB::SIZE</span> <span class="kw">as</span> <span class="kw">_</span>)
+        };
+
+        <span class="comment">// Copy the contents from the old frame to the newly allocated frame.</span>
+        <span class="ident">new_slice</span>.<span class="ident">copy_from_slice</span>(<span class="ident">old_slice</span>);
+
+        <span class="comment">// Re-map the page to the newly allocated frame and with the provided</span>
+        <span class="comment">// protection flags.</span>
+        <span class="ident">offset_table</span>.<span class="ident">unmap</span>(<span class="ident">page</span>).<span class="ident">unwrap</span>().<span class="number">1</span>.<span class="ident">ignore</span>();
+
+        <span class="comment">// NOTE: We operate on an active page table, so we flush the changes.</span>
+        <span class="kw">unsafe</span> {
+            <span class="ident">offset_table</span>
+                .<span class="ident">map_to</span>(
+                    <span class="ident">page</span>,
+                    <span class="ident">new_frame</span>,
+                    <span class="ident">PageTableFlags::PRESENT</span> <span class="op">|</span> <span class="ident">PageTableFlags::USER_ACCESSIBLE</span> <span class="op">|</span> <span class="ident">protection</span>.<span class="ident">into</span>(),
+                    <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
+                )<span class="question-mark">?</span>
+                .<span class="ident">flush</span>();
+        }
+
+        <span class="prelude-val">Ok</span>(())
+    }
+
     <span class="doccomment">/// Handler routine for a COW (Copy-On-Write) pages. A COW page is shared between multiple processes</span>
     <span class="doccomment">/// until a write occurs after which a private copy is made for the writing process. A COW page</span>
     <span class="doccomment">/// is recognised because the VMA for the region is marked writable even though the individual page</span>
     <span class="doccomment">/// table entry is not.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Panics</span>
+    <span class="doccomment">/// * The provided `address` is not aligned to a page boundary.</span>
     <span class="kw">fn</span> <span class="ident">handle_cow</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">offset_table</span>: <span class="kw-2">&amp;mut</span> <span class="ident">OffsetPageTable</span>,
         <span class="ident">address</span>: <span class="ident">VirtAddr</span>,
         <span class="ident">copy</span>: <span class="ident">bool</span>,
     ) -&gt; <span class="ident">bool</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">TranslateResult::Mapped</span> { <span class="ident">frame</span>, .. } <span class="op">=</span> <span class="ident">offset_table</span>.<span class="ident">translate</span>(<span class="ident">address</span>) {
-            <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">start_address</span>();
-            <span class="kw">let</span> <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Page::containing_address</span>(<span class="ident">address</span>);
+        <span class="macro">debug_assert!</span>(<span class="ident">address</span>.<span class="ident">is_aligned</span>(<span class="ident">Size4KiB::SIZE</span>));
 
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">vm_frame</span>) <span class="op">=</span> <span class="ident">addr</span>.<span class="ident">as_vm_frame</span>() {
+        <span class="kw">let</span> <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Page::containing_address</span>(<span class="ident">address</span>);
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">TranslateResult::Mapped</span> { <span class="ident">frame</span>, .. } <span class="op">=</span> <span class="ident">offset_table</span>.<span class="ident">translate</span>(<span class="ident">address</span>) {
+            <span class="kw">let</span> <span class="ident">phys_addr</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">start_address</span>();
+
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">vm_frame</span>) <span class="op">=</span> <span class="ident">phys_addr</span>.<span class="ident">as_vm_frame</span>() {
                 <span class="kw">if</span> <span class="ident">vm_frame</span>.<span class="ident">ref_count</span>() <span class="op">&gt;</span> <span class="number">1</span> <span class="op">|</span><span class="op">|</span> <span class="ident">copy</span> {
                     <span class="comment">// This page is used by more then one process, so make it a private copy.</span>
                     <span class="macro">log::trace!</span>(<span class="string">&quot;    - making {:?} into a private copy&quot;</span>, <span class="ident">page</span>);
-
-                    <span class="kw">let</span> <span class="ident">frame</span> <span class="op">=</span> <span class="ident">pmm_alloc</span>(<span class="ident">BuddyOrdering::Size4KiB</span>);
-
-                    <span class="kw">unsafe</span> {
-                        <span class="ident">address</span>.<span class="ident">as_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>().<span class="ident">copy_to</span>(
-                            (<span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">frame</span>.<span class="ident">as_u64</span>()).<span class="ident">as_mut_ptr</span>(),
-                            <span class="ident">Size4KiB::SIZE</span> <span class="kw">as</span> <span class="kw">_</span>,
-                        );
-                    }
-
-                    <span class="ident">offset_table</span>.<span class="ident">unmap</span>(<span class="ident">page</span>).<span class="ident">expect</span>(<span class="string">&quot;unmap faild&quot;</span>).<span class="number">1</span>.<span class="ident">flush</span>();
-                    <span class="kw">let</span> <span class="ident">frame</span> <span class="op">=</span> <span class="ident">PhysFrame::containing_address</span>(<span class="ident">frame</span>);
-
-                    <span class="kw">unsafe</span> {
-                        <span class="ident">offset_table</span>.<span class="ident">map_to</span>(
-                            <span class="ident">page</span>,
-                            <span class="ident">frame</span>,
-                            <span class="ident">PageTableFlags::PRESENT</span>
-                                <span class="op">|</span> <span class="ident">PageTableFlags::USER_ACCESSIBLE</span>
-                                <span class="op">|</span> <span class="self">self</span>.<span class="ident">protection</span>.<span class="ident">into</span>(),
-                            <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
-                        )
-                    }
-                    .<span class="ident">expect</span>(<span class="string">&quot;page mapping failed&quot;</span>)
-                    .<span class="ident">flush</span>();
+                    <span class="ident"><span class="self">Self</span>::map_copied</span>(<span class="ident">offset_table</span>, <span class="ident">page</span>, <span class="self">self</span>.<span class="ident">protection</span>).<span class="ident">unwrap</span>();
                 } <span class="kw">else</span> {
                     <span class="comment">// This page is used by only one process, so make it writable.</span>
                     <span class="macro">log::trace!</span>(<span class="string">&quot;    - making {:?} writable&quot;</span>, <span class="ident">page</span>);
@@ -1437,7 +1493,7 @@
                                 <span class="op">|</span> <span class="self">self</span>.<span class="ident">protection</span>.<span class="ident">into</span>(),
                         )
                     }
-                    .<span class="ident">expect</span>(<span class="string">&quot;failed to update page table flags&quot;</span>)
+                    .<span class="ident">unwrap</span>()
                     .<span class="ident">flush</span>();
                 }
 
@@ -2022,5 +2078,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (03918badd 2022-03-07)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (335ffbfa5 2022-03-11)" ></div>
 </body></html>
