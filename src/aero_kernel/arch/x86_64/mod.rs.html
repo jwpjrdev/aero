@@ -343,8 +343,8 @@
     .<span class="ident">next</span>((<span class="kw-2">&amp;</span><span class="ident">UNMAP_NULL</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">StivaleUnmapNullHeaderTag</span>).<span class="ident">cast</span>());
 
 <span class="doccomment">/// The stivale2 specification says we need to define a &quot;header structure&quot;.</span>
-<span class="doccomment">/// This structure needs to reside in the .stivale2hdr ELF section in order</span>
-<span class="doccomment">/// for the bootloader to find it. We use the #[linker_section] and #[used] macros to</span>
+<span class="doccomment">/// This structure needs to reside in the `.stivale2hdr` ELF section in order</span>
+<span class="doccomment">/// for the bootloader to find it. We use the `#[linker_section]` and `#[used]` macros to</span>
 <span class="doccomment">/// tell the compiler to put the following structure in said section.</span>
 <span class="attribute">#[<span class="ident">link_section</span> <span class="op">=</span> <span class="string">&quot;.stivale2hdr&quot;</span>]</span>
 <span class="attribute">#[<span class="ident">no_mangle</span>]</span>

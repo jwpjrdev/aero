@@ -442,6 +442,20 @@
 <span id="437">437</span>
 <span id="438">438</span>
 <span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -739,6 +753,20 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_address</span>(<span class="self">self</span>) -&gt; <span class="ident">PhysAddr</span> {
         <span class="self">self</span>.<span class="ident">start_address</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_slice_mut</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut</span> [<span class="ident">T</span>] {
+        <span class="macro">assert!</span>(<span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">&lt;</span> <span class="ident">S::SIZE</span> <span class="kw">as</span> <span class="ident">usize</span>);
+
+        <span class="comment">// TODO: Move the physical to virtual address translation to the `PhysAddr` structure.</span>
+        <span class="kw">let</span> <span class="ident">virt</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">start_address</span>.<span class="ident">as_u64</span>() };
+        <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">virt</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>();
+
+        <span class="comment">// SAFETY: The size of the slice is equal to the size of the frame and the</span>
+        <span class="comment">// pointer is valid.</span>
+        <span class="kw">unsafe</span> {
+            <span class="ident">core::slice::from_raw_parts_mut</span>(<span class="ident">ptr</span>, <span class="ident">S::SIZE</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">/</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>())
+        }
     }
 }
 

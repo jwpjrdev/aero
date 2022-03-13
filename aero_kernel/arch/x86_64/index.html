@@ -22,8 +22,8 @@ as we can only enable it in protected mode.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="static" href="static.STACK.html" title="aero_kernel::arch::x86_64::STACK static">STACK</a></div><div class="item-right docblock-short"><p>We need to tell the stivale bootloader where we want our stack to be.
 We are going to allocate our stack as an uninitialised array in .bss.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="static" href="static.STIVALE_HDR.html" title="aero_kernel::arch::x86_64::STIVALE_HDR static">STIVALE_HDR</a></div><div class="item-right docblock-short"><p>The stivale2 specification says we need to define a “header structure”.
-This structure needs to reside in the .stivale2hdr ELF section in order
-for the bootloader to find it. We use the #[linker_section] and #[used] macros to
+This structure needs to reside in the <code>.stivale2hdr</code> ELF section in order
+for the bootloader to find it. We use the <code>#[linker_section]</code> and <code>#[used]</code> macros to
 tell the compiler to put the following structure in said section.</p>
 </div></div><div class="item-row"><div class="item-left module-item"><a class="static" href="static.UNMAP_NULL.html" title="aero_kernel::arch::x86_64::UNMAP_NULL static">UNMAP_NULL</a></div><div class="item-right docblock-short"><p>We are now going to define a unmap null header teg. This tells the bootloader to
 to unmap the first page of the virtual address space before passing control to the kernel.</p>

@@ -16,7 +16,6 @@ sourcesIndex["lazy_static"] = {"name":"","files":["core_lazy.rs","lib.rs"]};
 sourcesIndex["linked_list_allocator"] = {"name":"","files":["hole.rs","lib.rs"]};
 sourcesIndex["lock_api"] = {"name":"","files":["lib.rs","mutex.rs","remutex.rs","rwlock.rs"]};
 sourcesIndex["log"] = {"name":"","files":["lib.rs","macros.rs"]};
-sourcesIndex["lru"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["memoffset"] = {"name":"","files":["lib.rs","offset_of.rs","raw_field.rs","span_of.rs"]};
 sourcesIndex["once_cell"] = {"name":"","files":["lib.rs","race.rs"]};
 sourcesIndex["raw_cpuid"] = {"name":"","files":["extended.rs","lib.rs"]};

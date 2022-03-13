@@ -392,7 +392,6 @@
 <span id="387">387</span>
 <span id="388">388</span>
 <span id="389">389</span>
-<span id="390">390</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -641,6 +640,7 @@
         <span class="ident">envv</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExecArgs</span><span class="op">&gt;</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">address_space</span> <span class="op">=</span> <span class="ident">AddressSpace::new</span>()<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">loaded_binary</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">load_bin</span>(<span class="ident">executable</span>).<span class="ident">expect</span>(<span class="string">&quot;exec: failed to load ELF&quot;</span>);
 
         <span class="comment">// mmap the userland stack...</span>
         <span class="ident">vm</span>.<span class="ident">mmap</span>(
@@ -655,8 +655,6 @@
         <span class="ident">vm</span>.<span class="ident">log</span>();
 
         <span class="ident">address_space</span>.<span class="ident">switch</span>(); <span class="comment">// Perform the address space switch</span>
-
-        <span class="kw">let</span> <span class="ident">loaded_binary</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">load_bin</span>(<span class="ident">executable</span>).<span class="ident">expect</span>(<span class="string">&quot;exec: failed to load ELF&quot;</span>);
 
         <span class="self">self</span>.<span class="ident">context</span> <span class="op">=</span> <span class="ident">Unique::dangling</span>();
         <span class="self">self</span>.<span class="ident">address_space</span> <span class="op">=</span> <span class="ident">address_space</span>; <span class="comment">// Update the address space reference</span>
