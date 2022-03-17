@@ -429,8 +429,6 @@
 <span id="424">424</span>
 <span id="425">425</span>
 <span id="426">426</span>
-<span id="427">427</span>
-<span id="428">428</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -637,7 +635,6 @@
                                 <span class="ident">page</span>,
                                 <span class="ident">frame</span>,
                                 <span class="ident">PageTableFlags::PRESENT</span> <span class="op">|</span> <span class="ident">PageTableFlags::WRITABLE</span>,
-                                <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
                             )
                         }
                         .<span class="ident">expect</span>(<span class="string">&quot;Failed to map frame to extend the heap&quot;</span>)
@@ -843,7 +840,6 @@
                 <span class="ident">Page::containing_address</span>(<span class="ident">VirtAddr::new</span>(<span class="ident">HEAP_START</span> <span class="kw">as</span> <span class="kw">_</span>)),
                 <span class="ident">frame</span>,
                 <span class="ident">PageTableFlags::PRESENT</span> <span class="op">|</span> <span class="ident">PageTableFlags::WRITABLE</span>,
-                <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
             )
             .<span class="ident">expect</span>(<span class="string">&quot;init_heap: failed to initialize the heap&quot;</span>)
             .<span class="ident">flush</span>();
@@ -860,5 +856,5 @@
     <span class="ident">kmemleak::MEM_LEAK_CATCHER</span>.<span class="ident">init</span>();
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (e95b10ba4 2022-03-13)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (461e80780 2022-03-16)" ></div>
 </body></html>

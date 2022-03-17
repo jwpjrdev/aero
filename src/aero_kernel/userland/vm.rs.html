@@ -1049,9 +1049,6 @@
 <span id="1044">1044</span>
 <span id="1045">1045</span>
 <span id="1046">1046</span>
-<span id="1047">1047</span>
-<span id="1048">1048</span>
-<span id="1049">1049</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1340,7 +1337,6 @@
                     <span class="ident">PageTableFlags::USER_ACCESSIBLE</span>
                         <span class="op">|</span> <span class="ident">PageTableFlags::PRESENT</span>
                         <span class="op">|</span> <span class="self">self</span>.<span class="ident">protection</span>.<span class="ident">into</span>(),
-                    <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
                 )
             }
             .<span class="ident">expect</span>(<span class="string">&quot;Failed to identity map userspace private mapping&quot;</span>)
@@ -1404,7 +1400,6 @@
                         <span class="ident">PageTableFlags::PRESENT</span>
                             <span class="op">|</span> <span class="ident">PageTableFlags::USER_ACCESSIBLE</span>
                             <span class="op">|</span> <span class="self">self</span>.<span class="ident">protection</span>.<span class="ident">into</span>(),
-                        <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
                     )
                 }
                 .<span class="ident">expect</span>(<span class="string">&quot;failed to map allocated frame for private file read&quot;</span>)
@@ -1460,7 +1455,6 @@
                     <span class="ident">page</span>,
                     <span class="ident">new_frame</span>,
                     <span class="ident">PageTableFlags::PRESENT</span> <span class="op">|</span> <span class="ident">PageTableFlags::USER_ACCESSIBLE</span> <span class="op">|</span> <span class="ident">protection</span>.<span class="ident">into</span>(),
-                    <span class="kw-2">&amp;mut</span> <span class="ident">FRAME_ALLOCATOR</span>,
                 )<span class="question-mark">?</span>
                 .<span class="ident">flush</span>();
         }
@@ -2102,5 +2096,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (e95b10ba4 2022-03-13)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (461e80780 2022-03-16)" ></div>
 </body></html>

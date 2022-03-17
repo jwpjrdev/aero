@@ -1353,57 +1353,6 @@
 <span id="1348">1348</span>
 <span id="1349">1349</span>
 <span id="1350">1350</span>
-<span id="1351">1351</span>
-<span id="1352">1352</span>
-<span id="1353">1353</span>
-<span id="1354">1354</span>
-<span id="1355">1355</span>
-<span id="1356">1356</span>
-<span id="1357">1357</span>
-<span id="1358">1358</span>
-<span id="1359">1359</span>
-<span id="1360">1360</span>
-<span id="1361">1361</span>
-<span id="1362">1362</span>
-<span id="1363">1363</span>
-<span id="1364">1364</span>
-<span id="1365">1365</span>
-<span id="1366">1366</span>
-<span id="1367">1367</span>
-<span id="1368">1368</span>
-<span id="1369">1369</span>
-<span id="1370">1370</span>
-<span id="1371">1371</span>
-<span id="1372">1372</span>
-<span id="1373">1373</span>
-<span id="1374">1374</span>
-<span id="1375">1375</span>
-<span id="1376">1376</span>
-<span id="1377">1377</span>
-<span id="1378">1378</span>
-<span id="1379">1379</span>
-<span id="1380">1380</span>
-<span id="1381">1381</span>
-<span id="1382">1382</span>
-<span id="1383">1383</span>
-<span id="1384">1384</span>
-<span id="1385">1385</span>
-<span id="1386">1386</span>
-<span id="1387">1387</span>
-<span id="1388">1388</span>
-<span id="1389">1389</span>
-<span id="1390">1390</span>
-<span id="1391">1391</span>
-<span id="1392">1392</span>
-<span id="1393">1393</span>
-<span id="1394">1394</span>
-<span id="1395">1395</span>
-<span id="1396">1396</span>
-<span id="1397">1397</span>
-<span id="1398">1398</span>
-<span id="1399">1399</span>
-<span id="1400">1400</span>
-<span id="1401">1401</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1579,29 +1528,24 @@
     <span class="doccomment">/// because of TLB races. It&#39;s worth noting that all the above requirements</span>
     <span class="doccomment">/// also apply to shared mappings, including the aliasing requirements.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">frame_allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span>,
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
     {
         <span class="kw">let</span> <span class="ident">parent_table_flags</span> <span class="op">=</span> <span class="ident">flags</span>
             <span class="op">&amp;</span> (<span class="ident">PageTableFlags::PRESENT</span>
                 <span class="op">|</span> <span class="ident">PageTableFlags::WRITABLE</span>
                 <span class="op">|</span> <span class="ident">PageTableFlags::USER_ACCESSIBLE</span>);
 
-        <span class="self">self</span>.<span class="ident">map_to_with_table_flags</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>, <span class="ident">frame_allocator</span>)
+        <span class="self">self</span>.<span class="ident">map_to_with_table_flags</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>)
     }
 
     <span class="doccomment">/// Creates a new mapping in the page table.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This function might need additional physical frames to create new page tables. These</span>
-    <span class="doccomment">/// frames are allocated from the `allocator` argument. At most three frames are required.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The flags of the parent table(s) can be explicitly specified. Those flags are used for</span>
     <span class="doccomment">/// newly created table entries, and for existing entries the flags are added.</span>
@@ -1637,17 +1581,15 @@
     <span class="doccomment">/// the same in all address spaces, otherwise undefined behavior can occur</span>
     <span class="doccomment">/// because of TLB races. It&#39;s worth noting that all the above requirements</span>
     <span class="doccomment">/// also apply to shared mappings, including the aliasing requirements.</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
         <span class="ident">parent_table_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">frame_allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="self">Self</span>: <span class="ident">Sized</span>,
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>;
+        <span class="self">Self</span>: <span class="ident">Sized</span>;
 
     <span class="doccomment">/// Removes a mapping from the page table and returns the frame that used to be mapped.</span>
     <span class="doccomment">///</span>
@@ -1682,20 +1624,18 @@
     <span class="doccomment">/// This is a convencience function that invokes [`Mapper::map_to`] internally, so</span>
     <span class="doccomment">/// all safety requirements of it also apply for this function.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">identity_map</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">identity_map</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">frame_allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="self">Self</span>: <span class="ident">Sized</span>,
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
         <span class="ident">S</span>: <span class="ident">PageSize</span>,
         <span class="self">Self</span>: <span class="ident">Mapper</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
     {
         <span class="kw">let</span> <span class="ident">page</span> <span class="op">=</span> <span class="ident">Page::containing_address</span>(<span class="ident">VirtAddr::new</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>().<span class="ident">as_u64</span>()));
-        <span class="self">self</span>.<span class="ident">map_to</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">frame_allocator</span>)
+        <span class="self">self</span>.<span class="ident">map_to</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>)
     }
 }
 
@@ -1818,28 +1758,22 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">map_to_2mib</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">fn</span> <span class="ident">map_to_2mib</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
         <span class="ident">parent_table_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
-    {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">is_alloc_4</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
         <span class="kw">let</span> <span class="ident">p4</span>;
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">level_5_paging_enabled</span> {
             <span class="kw">let</span> <span class="ident">p5</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">page_table</span>;
-            <span class="kw">let</span> (<span class="ident">alloc</span>, <span class="ident">yes</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">page_table_walker</span>.<span class="ident">create_next_table</span>(
-                <span class="kw-2">&amp;mut</span> <span class="ident">p5</span>[<span class="ident">page</span>.<span class="ident">p5_index</span>()],
-                <span class="ident">parent_table_flags</span>,
-                <span class="ident">allocator</span>,
-            )<span class="question-mark">?</span>;
+            <span class="kw">let</span> (<span class="ident">alloc</span>, <span class="ident">yes</span>) <span class="op">=</span> <span class="self">self</span>
+                .<span class="ident">page_table_walker</span>
+                .<span class="ident">create_next_table</span>(<span class="kw-2">&amp;mut</span> <span class="ident">p5</span>[<span class="ident">page</span>.<span class="ident">p5_index</span>()], <span class="ident">parent_table_flags</span>)<span class="question-mark">?</span>;
 
             <span class="ident">p4</span> <span class="op">=</span> <span class="ident">yes</span>;
             <span class="ident">is_alloc_4</span> <span class="op">=</span> <span class="ident">alloc</span>;
@@ -1847,17 +1781,13 @@
             <span class="ident">p4</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">page_table</span>;
         }
 
-        <span class="kw">let</span> (<span class="ident">is_alloc_3</span>, <span class="ident">p3</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">page_table_walker</span>.<span class="ident">create_next_table</span>(
-            <span class="kw-2">&amp;mut</span> <span class="ident">p4</span>[<span class="ident">page</span>.<span class="ident">p4_index</span>()],
-            <span class="ident">parent_table_flags</span>,
-            <span class="ident">allocator</span>,
-        )<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">is_alloc_3</span>, <span class="ident">p3</span>) <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">page_table_walker</span>
+            .<span class="ident">create_next_table</span>(<span class="kw-2">&amp;mut</span> <span class="ident">p4</span>[<span class="ident">page</span>.<span class="ident">p4_index</span>()], <span class="ident">parent_table_flags</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> (<span class="ident">is_alloc_2</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">page_table_walker</span>.<span class="ident">create_next_table</span>(
-            <span class="kw-2">&amp;mut</span> <span class="ident">p3</span>[<span class="ident">page</span>.<span class="ident">p3_index</span>()],
-            <span class="ident">parent_table_flags</span>,
-            <span class="ident">allocator</span>,
-        )<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">is_alloc_2</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">page_table_walker</span>
+            .<span class="ident">create_next_table</span>(<span class="kw-2">&amp;mut</span> <span class="ident">p3</span>[<span class="ident">page</span>.<span class="ident">p3_index</span>()], <span class="ident">parent_table_flags</span>)<span class="question-mark">?</span>;
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">p2</span>[<span class="ident">page</span>.<span class="ident">p2_index</span>()].<span class="ident">is_unused</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">MapToError::PageAlreadyMapped</span>(<span class="ident">frame</span>));
@@ -1881,28 +1811,22 @@
         <span class="prelude-val">Ok</span>(<span class="ident">MapperFlush::new</span>(<span class="ident">page</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">map_to_4kib</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">fn</span> <span class="ident">map_to_4kib</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
         <span class="ident">parent_table_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
-    {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">p4</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">is_alloc_4</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">level_5_paging_enabled</span> {
             <span class="kw">let</span> <span class="ident">p5</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">page_table</span>;
-            <span class="kw">let</span> (<span class="ident">alloc</span>, <span class="ident">yes</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">page_table_walker</span>.<span class="ident">create_next_table</span>(
-                <span class="kw-2">&amp;mut</span> <span class="ident">p5</span>[<span class="ident">page</span>.<span class="ident">p5_index</span>()],
-                <span class="ident">parent_table_flags</span>,
-                <span class="ident">allocator</span>,
-            )<span class="question-mark">?</span>;
+            <span class="kw">let</span> (<span class="ident">alloc</span>, <span class="ident">yes</span>) <span class="op">=</span> <span class="self">self</span>
+                .<span class="ident">page_table_walker</span>
+                .<span class="ident">create_next_table</span>(<span class="kw-2">&amp;mut</span> <span class="ident">p5</span>[<span class="ident">page</span>.<span class="ident">p5_index</span>()], <span class="ident">parent_table_flags</span>)<span class="question-mark">?</span>;
 
             <span class="ident">p4</span> <span class="op">=</span> <span class="ident">yes</span>;
             <span class="ident">is_alloc_4</span> <span class="op">=</span> <span class="ident">alloc</span>;
@@ -1910,23 +1834,17 @@
             <span class="ident">p4</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">page_table</span>;
         }
 
-        <span class="kw">let</span> (<span class="ident">is_alloc_3</span>, <span class="ident">p3</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">page_table_walker</span>.<span class="ident">create_next_table</span>(
-            <span class="kw-2">&amp;mut</span> <span class="ident">p4</span>[<span class="ident">page</span>.<span class="ident">p4_index</span>()],
-            <span class="ident">parent_table_flags</span>,
-            <span class="ident">allocator</span>,
-        )<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">is_alloc_3</span>, <span class="ident">p3</span>) <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">page_table_walker</span>
+            .<span class="ident">create_next_table</span>(<span class="kw-2">&amp;mut</span> <span class="ident">p4</span>[<span class="ident">page</span>.<span class="ident">p4_index</span>()], <span class="ident">parent_table_flags</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> (<span class="ident">is_alloc_2</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">page_table_walker</span>.<span class="ident">create_next_table</span>(
-            <span class="kw-2">&amp;mut</span> <span class="ident">p3</span>[<span class="ident">page</span>.<span class="ident">p3_index</span>()],
-            <span class="ident">parent_table_flags</span>,
-            <span class="ident">allocator</span>,
-        )<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">is_alloc_2</span>, <span class="ident">p2</span>) <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">page_table_walker</span>
+            .<span class="ident">create_next_table</span>(<span class="kw-2">&amp;mut</span> <span class="ident">p3</span>[<span class="ident">page</span>.<span class="ident">p3_index</span>()], <span class="ident">parent_table_flags</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> (<span class="ident">is_alloc_1</span>, <span class="ident">p1</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">page_table_walker</span>.<span class="ident">create_next_table</span>(
-            <span class="kw-2">&amp;mut</span> <span class="ident">p2</span>[<span class="ident">page</span>.<span class="ident">p2_index</span>()],
-            <span class="ident">parent_table_flags</span>,
-            <span class="ident">allocator</span>,
-        )<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">is_alloc_1</span>, <span class="ident">p1</span>) <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">page_table_walker</span>
+            .<span class="ident">create_next_table</span>(<span class="kw-2">&amp;mut</span> <span class="ident">p2</span>[<span class="ident">page</span>.<span class="ident">p2_index</span>()], <span class="ident">parent_table_flags</span>)<span class="question-mark">?</span>;
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">p1</span>[<span class="ident">page</span>.<span class="ident">p1_index</span>()].<span class="ident">is_unused</span>() {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">MapToError::PageAlreadyMapped</span>(<span class="ident">frame</span>));
@@ -1957,18 +1875,14 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span>: <span class="ident">PageTableFrameMapping</span><span class="op">&gt;</span> <span class="ident">Mapper</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">MappedPageTable</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
         <span class="ident">parent_table_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
-    {
-        <span class="self">self</span>.<span class="ident">map_to_2mib</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>, <span class="ident">allocator</span>)
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">map_to_2mib</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">unmap</span>(
@@ -2081,18 +1995,14 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span>: <span class="ident">PageTableFrameMapping</span><span class="op">&gt;</span> <span class="ident">Mapper</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">MappedPageTable</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
         <span class="ident">parent_table_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
-    {
-        <span class="self">self</span>.<span class="ident">map_to_4kib</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>, <span class="ident">allocator</span>)
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">map_to_4kib</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">unmap</span>(
@@ -2339,19 +2249,15 @@
     <span class="doccomment">/// Returns `MapToError::FrameAllocationFailed` if the entry is unused and the allocator</span>
     <span class="doccomment">/// returned `None`. Returns `MapToError::ParentEntryHugePage` if the `HUGE_PAGE` flag is set</span>
     <span class="doccomment">/// in the passed entry.</span>
-    <span class="kw">fn</span> <span class="ident">create_next_table</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">fn</span> <span class="ident">create_next_table</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">entry</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="ident">PageTableEntry</span>,
         <span class="ident">insert_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">bool</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="ident">PageTable</span>), <span class="ident">PageTableCreateError</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
-    {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">bool</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="kw-2">mut</span> <span class="ident">PageTable</span>), <span class="ident">PageTableCreateError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">created</span>;
 
         <span class="kw">if</span> <span class="ident">entry</span>.<span class="ident">is_unused</span>() {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">frame</span>) <span class="op">=</span> <span class="ident">allocator</span>.<span class="ident">allocate_frame</span>() {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">frame</span>) <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>() } {
                 <span class="ident">entry</span>.<span class="ident">set_frame</span>(<span class="ident">frame</span>, <span class="ident">insert_flags</span>);
                 <span class="ident">created</span> <span class="op">=</span> <span class="bool-val">true</span>;
             } <span class="kw">else</span> {
@@ -2526,19 +2432,15 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Mapper</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">OffsetPageTable</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
         <span class="ident">parent_table_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
-    {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>
-            .<span class="ident">map_to_with_table_flags</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>, <span class="ident">allocator</span>)
+            .<span class="ident">map_to_with_table_flags</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>)
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -2566,19 +2468,15 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Mapper</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">OffsetPageTable</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">map_to_with_table_flags</span>(
         <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
         <span class="ident">page</span>: <span class="ident">Page</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>,
         <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>,
         <span class="ident">flags</span>: <span class="ident">PageTableFlags</span>,
         <span class="ident">parent_table_flags</span>: <span class="ident">PageTableFlags</span>,
-        <span class="ident">allocator</span>: <span class="kw-2">&amp;mut</span> <span class="ident">A</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span>,
-    {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MapperFlush</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>, <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>
-            .<span class="ident">map_to_with_table_flags</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>, <span class="ident">allocator</span>)
+            .<span class="ident">map_to_with_table_flags</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">flags</span>, <span class="ident">parent_table_flags</span>)
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -2806,5 +2704,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (e95b10ba4 2022-03-13)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (461e80780 2022-03-16)" ></div>
 </body></html>
