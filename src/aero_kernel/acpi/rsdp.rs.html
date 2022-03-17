@@ -204,6 +204,9 @@
 <span id="199">199</span>
 <span id="200">200</span>
 <span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -226,7 +229,7 @@
 <span class="kw">use</span> <span class="ident">core::marker::PhantomData</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::sdt::Sdt</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::VirtAddr</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::{<span class="ident">PhysAddr</span>, <span class="ident">VirtAddr</span>};
 
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">validate_rsdt_checksum</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">RsdtHeader</span><span class="op">&gt;</span>(<span class="ident">header</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">T</span>) -&gt; <span class="ident">bool</span> {
     <span class="kw">if</span> <span class="ident">header</span>.<span class="ident">signature</span>() <span class="op">==</span> <span class="string">b&quot;RSD PTR &quot;</span> {
@@ -330,9 +333,10 @@
         <span class="kw">let</span> <span class="ident">header_data_address</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">header</span>.<span class="ident">data_address</span>() <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u32</span>;
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">entries_count</span>() {
-            <span class="kw">let</span> <span class="ident">item_addr_phys</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">header_data_address</span>.<span class="ident">add</span>(<span class="ident">i</span>)) } <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="kw">let</span> <span class="ident">item_addr_virt</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">item_addr_phys</span> };
-
+            <span class="kw">let</span> <span class="ident">item_addr_virt</span> <span class="op">=</span> <span class="kw">unsafe</span> {
+                <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">header_data_address</span>.<span class="ident">add</span>(<span class="ident">i</span>);
+                <span class="ident">PhysAddr::new</span>(<span class="kw-2">*</span><span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">as_hhdm_virt</span>()
+            };
             <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Sdt::from_address</span>(<span class="ident">item_addr_virt</span>) };
 
             <span class="kw">if</span> <span class="ident">item</span>.<span class="ident">signature</span> <span class="op">==</span> <span class="ident">signature</span>.<span class="ident">as_bytes</span>() {
@@ -365,8 +369,10 @@
         <span class="kw">let</span> <span class="ident">header_data_address</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">header</span>.<span class="ident">data_address</span>() <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u64</span>;
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">entries_count</span>() {
-            <span class="kw">let</span> <span class="ident">item_addr_phys</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">header_data_address</span>.<span class="ident">add</span>(<span class="ident">i</span>)) };
-            <span class="kw">let</span> <span class="ident">item_addr_virt</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">item_addr_phys</span> };
+            <span class="kw">let</span> <span class="ident">item_addr_virt</span> <span class="op">=</span> <span class="kw">unsafe</span> {
+                <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">header_data_address</span>.<span class="ident">add</span>(<span class="ident">i</span>);
+                <span class="ident">PhysAddr::new</span>(<span class="kw-2">*</span><span class="ident">ptr</span>).<span class="ident">as_hhdm_virt</span>()
+            };
 
             <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">Sdt::from_address</span>(<span class="ident">item_addr_virt</span>) };
 
@@ -393,7 +399,7 @@
         <span class="kw">let</span> <span class="ident">valid</span> <span class="op">=</span> <span class="ident">validate_rsdt_checksum</span>(<span class="ident">v20</span>);
         <span class="macro">assert!</span>(<span class="ident">valid</span>, <span class="string">&quot;rsdp: failed to validate RSDP v20 checksum&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">xsdt_address</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">v20</span>.<span class="ident">xsdt_address</span> };
+        <span class="kw">let</span> <span class="ident">xsdt_address</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">v20</span>.<span class="ident">xsdt_address</span>).<span class="ident">as_hhdm_virt</span>();
         <span class="kw">return</span> <span class="ident">RsdtAddress::Xsdt</span>(<span class="ident">xsdt_address</span>);
     } <span class="kw">else</span> {
         <span class="kw">let</span> <span class="ident">v10</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">rsdp_address</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">Rsdp10</span>) };
@@ -401,7 +407,7 @@
 
         <span class="macro">assert!</span>(<span class="ident">valid</span>, <span class="string">&quot;rsdp: failed to validate RSDP v10 checksum&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">rsdt_address</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">v10</span>.<span class="ident">rsdt_address</span> <span class="kw">as</span> <span class="ident">u64</span> };
+        <span class="kw">let</span> <span class="ident">rsdt_address</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">v10</span>.<span class="ident">rsdt_address</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">as_hhdm_virt</span>();
         <span class="kw">return</span> <span class="ident">RsdtAddress::Rsdt</span>(<span class="ident">rsdt_address</span>);
     }
 }

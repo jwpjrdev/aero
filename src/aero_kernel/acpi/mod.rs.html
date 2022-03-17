@@ -292,6 +292,7 @@
 <span id="287">287</span>
 <span id="288">288</span>
 <span id="289">289</span>
+<span id="290">290</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -392,7 +393,8 @@
         <span class="macro">log::trace!</span>(<span class="string">&quot;AML: Reading byte from {:#x}&quot;</span>, <span class="ident">address</span>);
 
         <span class="kw">unsafe</span> {
-            (<span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">address</span>)
+            <span class="ident">PhysAddr::new</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="ident">u64</span>)
+                .<span class="ident">as_hhdm_virt</span>()
                 .<span class="ident">as_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>()
                 .<span class="ident">read_volatile</span>()
         }
@@ -515,7 +517,7 @@
 
 <span class="doccomment">/// Initialize the ACPI tables.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init</span>(<span class="ident">rsdp_address</span>: <span class="ident">PhysAddr</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">aml::AmlError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">rsdp_address</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">rsdp_address</span>.<span class="ident">as_u64</span>() };
+    <span class="kw">let</span> <span class="ident">rsdp_address</span> <span class="op">=</span> <span class="ident">rsdp_address</span>.<span class="ident">as_hhdm_virt</span>();
     <span class="kw">let</span> <span class="ident">acpi_table</span> <span class="op">=</span> <span class="ident">AcpiTable::new</span>(<span class="ident">rsdp_address</span>);
 
     <span class="kw">macro</span> <span class="ident">init_table</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">sig</span>:<span class="ident">path</span> =&gt; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ty</span>:<span class="ident">ty</span>) {
@@ -556,7 +558,7 @@
         <span class="comment">// The DSDT table is put inside the FADT table, instead of listing it in another ACPI table. So</span>
         <span class="comment">// we need to extract the DSDT table from the FADT table.</span>
         <span class="kw">let</span> <span class="ident">_dsdt_stream</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-            <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">fadt</span>.<span class="ident">dsdt</span> <span class="kw">as</span> <span class="ident">u64</span>;
+            <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">fadt</span>.<span class="ident">dsdt</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">as_hhdm_virt</span>();
             <span class="kw">let</span> <span class="ident">sdt</span> <span class="op">=</span> <span class="ident">Sdt::from_address</span>(<span class="ident">addr</span>);
 
             <span class="ident">core::slice::from_raw_parts</span>(<span class="ident">sdt</span>.<span class="ident">data_address</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">sdt</span>.<span class="ident">data_len</span>())

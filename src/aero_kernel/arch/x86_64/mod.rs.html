@@ -270,8 +270,6 @@
 <span id="265">265</span>
 <span id="266">266</span>
 <span id="267">267</span>
-<span id="268">268</span>
-<span id="269">269</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -402,17 +400,15 @@
     }
 
     <span class="ident"><span class="kw">crate</span>::UNWIND_INFO</span>.<span class="ident">call_once</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="kw">unsafe</span> {
-        <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> (<span class="ident">kernel_info</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">StivaleKernelFileV2Tag</span>) <span class="kw">as</span> <span class="ident">u64</span>;
-        <span class="kw">let</span> <span class="ident">new_addr</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">addr</span>;
-
-        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">new_addr</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">StivaleKernelFileV2Tag</span><span class="op">&gt;</span>()
+        <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">PhysAddr::new</span>((<span class="ident">kernel_info</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">StivaleKernelFileV2Tag</span>) <span class="kw">as</span> <span class="ident">u64</span>)
+            .<span class="ident">as_hhdm_virt</span>()
+            .<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">StivaleKernelFileV2Tag</span><span class="op">&gt;</span>())
     });
 
     <span class="ident"><span class="kw">crate</span>::time::EPOCH_TAG</span>.<span class="ident">call_once</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="kw">unsafe</span> {
-        <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> (<span class="ident">epoch</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">StivaleEpochTag</span>) <span class="kw">as</span> <span class="ident">u64</span>;
-        <span class="kw">let</span> <span class="ident">new_addr</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">addr</span>;
-
-        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">new_addr</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">StivaleEpochTag</span><span class="op">&gt;</span>()
+        <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">PhysAddr::new</span>((<span class="ident">epoch</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">StivaleEpochTag</span>) <span class="kw">as</span> <span class="ident">u64</span>)
+            .<span class="ident">as_hhdm_virt</span>()
+            .<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">StivaleEpochTag</span><span class="op">&gt;</span>())
     });
 
     <span class="ident"><span class="kw">crate</span>::INITRD_MODULE</span>.<span class="ident">call_once</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
@@ -434,7 +430,7 @@
 
     <span class="comment">// Parse the kernel command line.</span>
     <span class="kw">let</span> <span class="ident">command_line</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">boot_info</span>.<span class="ident">command_line</span>().<span class="ident">map_or</span>(<span class="string">&quot;&quot;</span>, <span class="op">|</span><span class="ident">cmd</span><span class="op">|</span> <span class="kw">unsafe</span> {
-        <span class="kw">let</span> <span class="ident">cmdline</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">cmd</span>.<span class="ident">command_line</span>;
+        <span class="kw">let</span> <span class="ident">cmdline</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">cmd</span>.<span class="ident">command_line</span>).<span class="ident">as_hhdm_virt</span>();
 
         <span class="comment">// SAFETY: The bootloader has provided a pointer that points to a valid C</span>
         <span class="comment">// string with a NULL terminator of size less than `usize::MAX`, whose content</span>

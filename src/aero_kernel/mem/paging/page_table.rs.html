@@ -780,7 +780,7 @@
             .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">e</span>)<span class="op">|</span> <span class="ident">e</span>.<span class="ident">flags</span>().<span class="ident">contains</span>(<span class="ident">flags</span>))
             .<span class="ident">try_for_each</span>(<span class="op">|</span>(<span class="ident">idx</span>, <span class="ident">e</span>)<span class="op">|</span> {
                 <span class="kw">let</span> <span class="ident">table</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">e</span>.<span class="ident">addr</span>().<span class="ident">as_u64</span>();
+                    <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">e</span>.<span class="ident">addr</span>().<span class="ident">as_hhdm_virt</span>();
                     <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span><span class="ident">addr</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">PageTable</span><span class="op">&gt;</span>()
                 };
 

@@ -991,7 +991,6 @@
 <span id="986">986</span>
 <span id="987">987</span>
 <span id="988">988</span>
-<span id="989">989</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1255,8 +1254,7 @@
         <span class="kw">for</span> <span class="ident">buffer</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">buffer</span>.<span class="ident">iter</span>() {
             <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">core::cmp::min</span>(<span class="ident">remaning</span>, <span class="number">0x2000</span>);
 
-            <span class="kw">let</span> <span class="ident">buffer_address</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">buffer</span>.<span class="ident">start</span>.<span class="ident">as_u64</span>() };
-            <span class="kw">let</span> <span class="ident">buffer_pointer</span> <span class="op">=</span> <span class="ident">buffer_address</span>.<span class="ident">as_ptr</span>();
+            <span class="kw">let</span> <span class="ident">buffer_pointer</span> <span class="op">=</span> <span class="ident">buffer</span>.<span class="ident">start</span>.<span class="ident">as_hhdm_virt</span>().<span class="ident">as_ptr</span>();
             <span class="kw">let</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">core::slice::from_raw_parts</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(<span class="ident">buffer_pointer</span>, <span class="ident">count</span>) };
 
             <span class="comment">// Copy the data from the buffer into the given buffer with the</span>
@@ -1546,7 +1544,7 @@
     <span class="kw">fn</span> <span class="ident">cmd_header_at</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="ident">HbaCmdHeader</span> {
         <span class="comment">// Since the CLB holds the physical address, we make the address mapped</span>
         <span class="comment">// before reading it.</span>
-        <span class="kw">let</span> <span class="ident">clb_mapped</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">clb</span>.<span class="ident">get</span>().<span class="ident">as_u64</span>() };
+        <span class="kw">let</span> <span class="ident">clb_mapped</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">clb</span>.<span class="ident">get</span>().<span class="ident">as_hhdm_virt</span>();
         <span class="comment">// Get the address of the command header at `index`.</span>
         <span class="kw">let</span> <span class="ident">clb_addr</span> <span class="op">=</span> <span class="ident">clb_mapped</span> <span class="op">+</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">HbaCmdHeader</span><span class="op">&gt;</span>() <span class="op">*</span> <span class="ident">index</span>;
 

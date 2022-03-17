@@ -392,6 +392,8 @@
 <span id="387">387</span>
 <span id="388">388</span>
 <span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -589,10 +591,12 @@
 
         <span class="kw">let</span> <span class="ident">switch_stack</span> <span class="op">=</span> <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">frame</span>: <span class="ident">PhysFrame</span> <span class="op">=</span> <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>().<span class="ident">unwrap</span>();
-            <span class="kw">let</span> <span class="ident">phys</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">start_address</span>();
-            <span class="kw">let</span> <span class="ident">virt</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">phys</span>.<span class="ident">as_u64</span>();
 
-            <span class="ident">virt</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>().<span class="ident">add</span>(<span class="ident">Size4KiB::SIZE</span> <span class="kw">as</span> <span class="ident">usize</span>)
+            <span class="ident">frame</span>
+                .<span class="ident">start_address</span>()
+                .<span class="ident">as_hhdm_virt</span>()
+                .<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>()
+                .<span class="ident">add</span>(<span class="ident">Size4KiB::SIZE</span> <span class="kw">as</span> <span class="ident">usize</span>)
         };
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">old_stack_ptr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">context_switch_rsp</span>.<span class="ident">as_u64</span>();

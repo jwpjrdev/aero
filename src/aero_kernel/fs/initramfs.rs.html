@@ -86,6 +86,7 @@
 <span id="81">81</span>
 <span id="82">82</span>
 <span id="83">83</span>
+<span id="84">84</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -108,6 +109,7 @@
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>::{<span class="ident">FileSystemError</span>, <span class="ident">Path</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::PhysAddr</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache::DirCacheItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ramfs::RamFs</span>;
@@ -137,7 +139,7 @@
 
     <span class="kw">let</span> <span class="ident">initrd_module</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::INITRD_MODULE</span>.<span class="ident">get</span>().<span class="ident">unwrap</span>();
     <span class="kw">let</span> <span class="ident">initrd</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-        <span class="kw">let</span> <span class="ident">base</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">initrd_module</span>.<span class="ident">start</span>;
+        <span class="kw">let</span> <span class="ident">base</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">initrd_module</span>.<span class="ident">start</span>).<span class="ident">as_hhdm_virt</span>();
         <span class="kw">let</span> <span class="ident">length</span> <span class="op">=</span> <span class="ident">initrd_module</span>.<span class="ident">end</span> <span class="op">-</span> <span class="ident">initrd_module</span>.<span class="ident">start</span>;
 
         <span class="ident">core::slice::from_raw_parts</span>(<span class="ident">base</span>.<span class="ident">as_ptr</span>(), <span class="ident">length</span> <span class="kw">as</span> <span class="ident">usize</span>)

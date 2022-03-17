@@ -1012,7 +1012,7 @@
 <span class="doccomment">/// Read from the `io_apic_id` I/O APIC as described by the MADT.</span>
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">io_apic_read</span>(<span class="ident">io_apic_id</span>: <span class="ident">usize</span>, <span class="ident">register</span>: <span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
     <span class="kw">let</span> <span class="ident">io_apic</span> <span class="op">=</span> <span class="ident">madt::IO_APICS</span>.<span class="ident">read</span>()[<span class="ident">io_apic_id</span>];
-    <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">io_apic</span>.<span class="ident">io_apic_address</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">io_apic</span>.<span class="ident">io_apic_address</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">as_hhdm_virt</span>();
     <span class="kw">let</span> <span class="ident">ptr</span>: <span class="kw-2">*mut</span> <span class="ident">u32</span> <span class="op">=</span> <span class="ident">addr</span>.<span class="ident">as_mut_ptr</span>();
 
     <span class="ident">ptr::write_volatile</span>(<span class="ident">ptr</span>, <span class="ident">register</span>);
@@ -1022,7 +1022,7 @@
 <span class="doccomment">/// Write from the `io_apic_id` I/O APIC as described by the MADT.</span>
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">io_apic_write</span>(<span class="ident">io_apic_id</span>: <span class="ident">usize</span>, <span class="ident">register</span>: <span class="ident">u32</span>, <span class="ident">data</span>: <span class="ident">u32</span>) {
     <span class="kw">let</span> <span class="ident">io_apic</span> <span class="op">=</span> <span class="ident">madt::IO_APICS</span>.<span class="ident">read</span>()[<span class="ident">io_apic_id</span>];
-    <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">io_apic</span>.<span class="ident">io_apic_address</span> <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">io_apic</span>.<span class="ident">io_apic_address</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">as_hhdm_virt</span>();
     <span class="kw">let</span> <span class="ident">ptr</span>: <span class="kw-2">*mut</span> <span class="ident">u32</span> <span class="op">=</span> <span class="ident">addr</span>.<span class="ident">as_mut_ptr</span>();
 
     <span class="ident">ptr::write_volatile</span>(<span class="ident">ptr</span>, <span class="ident">register</span>);
