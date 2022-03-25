@@ -538,7 +538,7 @@
     ];
 
     <span class="kw">fn</span> <span class="ident">terminate</span>() {
-        <span class="ident">scheduler::get_scheduler</span>().<span class="ident">inner</span>.<span class="ident">exit</span>(<span class="number">1</span>);
+        <span class="ident">scheduler::get_scheduler</span>().<span class="ident">exit</span>(<span class="number">1</span>);
     }
 
     <span class="kw">fn</span> <span class="ident">terminate_thread</span>() {
@@ -878,7 +878,7 @@
     <span class="comment">// Check if a SIGKILL is pending, and if so, kill the task.</span>
     <span class="kw">if</span> <span class="ident">signals</span>.<span class="ident">is_pending</span>(<span class="ident">SIGKILL</span> <span class="kw">as</span> <span class="ident">u64</span>) {
         <span class="ident">signals</span>.<span class="ident">clear_pending</span>(<span class="ident">SIGKILL</span> <span class="kw">as</span> <span class="ident">u64</span>);
-        <span class="ident">scheduler::get_scheduler</span>().<span class="ident">inner</span>.<span class="ident">exit</span>(<span class="number">1</span>);
+        <span class="ident">scheduler::get_scheduler</span>().<span class="ident">exit</span>(<span class="number">1</span>);
     }
 
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">SIGNAL_COUNT</span> {

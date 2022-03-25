@@ -154,6 +154,12 @@
 <span id="149">149</span>
 <span id="150">150</span>
 <span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -181,6 +187,8 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::unwind</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::scheduler</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::io</span>;
+
+<span class="kw">const</span> <span class="ident">LOG_PF_PTABLE</span>: <span class="ident">bool</span> <span class="op">=</span> <span class="bool-val">true</span>;
 
 <span class="kw">macro</span> <span class="ident">interrupt_exception</span>(<span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>() =&gt; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">message</span>:<span class="ident">expr</span>) {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>(<span class="ident">stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">InterruptErrorStack</span>) {
@@ -266,7 +274,7 @@
             <span class="kw">let</span> <span class="ident">task</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>();
 
             <span class="macro">log::error!</span>(
-                <span class="string">&quot;process: (pid={}, pid={})&quot;</span>,
+                <span class="string">&quot;process: (tid={}, pid={})&quot;</span>,
                 <span class="ident">task</span>.<span class="ident">tid</span>().<span class="ident">as_usize</span>(),
                 <span class="ident">task</span>.<span class="ident">pid</span>().<span class="ident">as_usize</span>()
             );
@@ -277,8 +285,12 @@
                     .<span class="ident">expect</span>(<span class="string">&quot;userland application does not have a path set&quot;</span>)
             );
 
-            <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>().<span class="ident">vm</span>.<span class="ident">log</span>();
-            <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>().<span class="ident">file_table</span>.<span class="ident">log</span>();
+            <span class="ident">task</span>.<span class="ident">vm</span>.<span class="ident">log</span>();
+            <span class="ident">task</span>.<span class="ident">file_table</span>.<span class="ident">log</span>();
+
+            <span class="kw">if</span> <span class="ident">LOG_PF_PTABLE</span> {
+                <span class="ident">scheduler::get_scheduler</span>().<span class="ident">log_ptable</span>();
+            }
 
             <span class="ident">unwind::unwind_stack_trace</span>();
 
