@@ -394,6 +394,10 @@
 <span id="389">389</span>
 <span id="390">390</span>
 <span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -771,7 +775,11 @@
     }
 
     <span class="kw">unsafe</span> {
-        <span class="ident"><span class="kw">super</span>::gdt::get_task_state_segement</span>().<span class="ident">rsp</span>[<span class="number">0</span>] <span class="op">=</span> <span class="ident">to</span>.<span class="ident">context_switch_rsp</span>.<span class="ident">as_u64</span>();
+        <span class="comment">// Load the new thread&#39;s kernel stack pointer everywhere it&#39;s needed.</span>
+        <span class="kw">let</span> <span class="ident">kstackp</span> <span class="op">=</span> <span class="ident">to</span>.<span class="ident">context_switch_rsp</span>.<span class="ident">as_u64</span>();
+        <span class="ident"><span class="kw">super</span>::gdt::get_task_state_segement</span>().<span class="ident">rsp</span>[<span class="number">0</span>] <span class="op">=</span> <span class="ident">kstackp</span>;
+        <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_SYSENTER_ESP</span>, <span class="ident">kstackp</span>);
+
         <span class="ident">task_spinup</span>(<span class="kw-2">&amp;mut</span> <span class="ident">from</span>.<span class="ident">context</span>, <span class="ident">to</span>.<span class="ident">context</span>.<span class="ident">as_ref</span>());
 
         <span class="comment">// make a restore point for the current FS base.</span>
@@ -786,5 +794,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (1d9c262ee 2022-03-26)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (ee915c34e 2022-03-28)" ></div>
 </body></html>

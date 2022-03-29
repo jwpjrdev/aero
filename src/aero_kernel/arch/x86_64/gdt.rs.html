@@ -442,8 +442,6 @@
 <span id="437">437</span>
 <span id="438">438</span>
 <span id="439">439</span>
-<span id="440">440</span>
-<span id="441">441</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -572,16 +570,7 @@
             <span class="op">|</span> <span class="ident">GdtAccessFlags::PRIVILEGE</span>,
         <span class="ident">GdtEntryFlags::LONG_MODE</span>,
     ),
-    <span class="comment">// GDT dummy user code descriptor. Required for SYSEXIT.</span>
-    <span class="ident">GdtEntry::new</span>(
-        <span class="ident">GdtAccessFlags::PRESENT</span>
-            <span class="op">|</span> <span class="ident">GdtAccessFlags::RING_0</span>
-            <span class="op">|</span> <span class="ident">GdtAccessFlags::SYSTEM</span>
-            <span class="op">|</span> <span class="ident">GdtAccessFlags::EXECUTABLE</span>
-            <span class="op">|</span> <span class="ident">GdtAccessFlags::PRIVILEGE</span>,
-        <span class="ident">GdtEntryFlags::PROTECTED_MODE</span>,
-    ),
-    <span class="comment">// GDT user data descriptor.</span>
+    <span class="comment">// GDT user data descriptor. (used by SYSCALL)</span>
     <span class="ident">GdtEntry::new</span>(
         <span class="ident">GdtAccessFlags::PRESENT</span>
             <span class="op">|</span> <span class="ident">GdtAccessFlags::RING_3</span>
@@ -595,6 +584,14 @@
             <span class="op">|</span> <span class="ident">GdtAccessFlags::RING_3</span>
             <span class="op">|</span> <span class="ident">GdtAccessFlags::SYSTEM</span>
             <span class="op">|</span> <span class="ident">GdtAccessFlags::EXECUTABLE</span>
+            <span class="op">|</span> <span class="ident">GdtAccessFlags::PRIVILEGE</span>,
+        <span class="ident">GdtEntryFlags::LONG_MODE</span>,
+    ),
+    <span class="comment">// GDT user data descriptor. (used by SYSENTER)</span>
+    <span class="ident">GdtEntry::new</span>(
+        <span class="ident">GdtAccessFlags::PRESENT</span>
+            <span class="op">|</span> <span class="ident">GdtAccessFlags::RING_3</span>
+            <span class="op">|</span> <span class="ident">GdtAccessFlags::SYSTEM</span>
             <span class="op">|</span> <span class="ident">GdtAccessFlags::PRIVILEGE</span>,
         <span class="ident">GdtEntryFlags::LONG_MODE</span>,
     ),
@@ -635,7 +632,6 @@
     <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">KERNEL_CODE</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">1</span>;
     <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">KERNEL_DATA</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">2</span>;
     <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">KERNEL_TLS</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">3</span>;
-    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">USER_CODE32_UNUSED</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">4</span>;
     <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TSS</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">8</span>;
     <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TSS_HI</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">9</span>;
 }
@@ -886,5 +882,5 @@
     <span class="macro">asm!</span>(<span class="string">&quot;lgdt [{}]&quot;</span>, <span class="kw">in</span>(<span class="ident">reg</span>) <span class="ident">gdt_descriptor</span>, <span class="ident">options</span>(<span class="ident">nostack</span>));
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (1d9c262ee 2022-03-26)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (ee915c34e 2022-03-28)" ></div>
 </body></html>
