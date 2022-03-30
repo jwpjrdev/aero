@@ -403,9 +403,6 @@
 <span id="398">398</span>
 <span id="399">399</span>
 <span id="400">400</span>
-<span id="401">401</span>
-<span id="402">402</span>
-<span id="403">403</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -778,12 +775,9 @@
 <span class="kw">fn</span> <span class="ident">validate_stat_struct</span><span class="op">&lt;</span><span class="lifetime">&#39;struc</span><span class="op">&gt;</span>(
     <span class="ident">stat_struct</span>: <span class="ident">usize</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;struc</span> <span class="kw-2">mut</span> <span class="ident">aero_syscall::Stat</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">stat_struct</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">stat_struct</span> <span class="kw">as</span> <span class="kw">_</span>)
-        .<span class="ident">validate_user</span>()
-        .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EFAULT</span>)<span class="question-mark">?</span>;
-
-    <span class="comment">// SAFETY: The user provided address is validated above.</span>
-    <span class="prelude-val">Ok</span>(<span class="kw">unsafe</span> { <span class="ident">stat_struct</span>.<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Stat</span><span class="op">&gt;</span>() })
+    <span class="ident">VirtAddr::new</span>(<span class="ident">stat_struct</span> <span class="kw">as</span> <span class="kw">_</span>)
+        .<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Stat</span><span class="op">&gt;</span>()
+        .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EFAULT</span>)
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fstat</span>(<span class="ident">fd</span>: <span class="ident">usize</span>, <span class="ident">stat_struct</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {

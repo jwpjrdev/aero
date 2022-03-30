@@ -297,6 +297,31 @@
 <span id="292">292</span>
 <span id="293">293</span>
 <span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -316,7 +341,7 @@
  * along with Aero. If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */</span>
 
-<span class="kw">use</span> <span class="ident">aero_syscall::signal::SigAction</span>;
+<span class="kw">use</span> <span class="ident">aero_syscall::signal</span>::{<span class="ident">SigAction</span>, <span class="ident">SigProcMask</span>};
 <span class="kw">use</span> <span class="ident">aero_syscall</span>::{<span class="ident">AeroSyscallError</span>, <span class="ident">MMapFlags</span>, <span class="ident">MMapProt</span>};
 <span class="kw">use</span> <span class="ident">alloc::string::String</span>;
 <span class="kw">use</span> <span class="ident">spin</span>::{<span class="ident">Mutex</span>, <span class="ident">Once</span>};
@@ -539,6 +564,31 @@
         }
         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EINVAL</span>),
     }
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sigprocmask</span>(<span class="ident">how</span>: <span class="ident">usize</span>, <span class="ident">set</span>: <span class="ident">usize</span>, <span class="ident">old_set</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">set</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">set</span> <span class="kw">as</span> <span class="kw">_</span>)
+        .<span class="ident">copied_read</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>()
+        .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EFAULT</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let</span> <span class="ident">old_set</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">old_set</span> <span class="op">&gt;</span> <span class="number">0</span> {
+        <span class="prelude-val">Some</span>(
+            <span class="ident">VirtAddr::new</span>(<span class="ident">old_set</span> <span class="kw">as</span> <span class="kw">_</span>)
+                .<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>()
+                .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EFAULT</span>)<span class="question-mark">?</span>,
+        )
+    } <span class="kw">else</span> {
+        <span class="prelude-val">None</span>
+    };
+
+    <span class="kw">let</span> <span class="ident">how</span> <span class="op">=</span> <span class="ident">SigProcMask::from</span>(<span class="ident">how</span> <span class="kw">as</span> <span class="ident">u64</span>);
+
+    <span class="ident">scheduler::get_scheduler</span>()
+        .<span class="ident">current_task</span>()
+        .<span class="ident">signals</span>()
+        .<span class="ident">set_mask</span>(<span class="ident">how</span>, <span class="ident">set</span>, <span class="ident">old_set</span>);
+
+    <span class="prelude-val">Ok</span>(<span class="number">0</span>)
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sigaction</span>(
