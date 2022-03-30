@@ -533,6 +533,7 @@
 <span id="528">528</span>
 <span id="529">529</span>
 <span id="530">530</span>
+<span id="531">531</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1051,8 +1052,9 @@
             <span class="ident">parent</span>.<span class="ident">remove_child</span>(<span class="self">self</span>);
             <span class="ident">parent</span>.<span class="ident">zombies</span>.<span class="ident">add_zombie</span>(<span class="self">self</span>.<span class="ident">this</span>());
 
-            <span class="comment">// TODO: If the parent process is the process leader then</span>
-            <span class="comment">// signal SIGCHLD to the parent process.</span>
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_process_leader</span>() {
+                <span class="ident">parent</span>.<span class="ident">signal</span>(<span class="ident">aero_syscall::signal::SIGCHLD</span>);
+            }
         }
     }
 }
