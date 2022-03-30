@@ -248,6 +248,9 @@
 <span id="243">243</span>
 <span id="244">244</span>
 <span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -320,6 +323,8 @@
 <span class="doccomment">//! | 46     | ipc_recv                |</span>
 <span class="doccomment">//! | 47     | ipc_discover_root       |</span>
 <span class="doccomment">//! | 48     | ipc_become_root         |</span>
+<span class="doccomment">//! | 49     | stat                    |</span>
+<span class="doccomment">//! | 50     | fstat                   |</span>
 
 <span class="kw">use</span> <span class="ident">core::mem::MaybeUninit</span>;
 
@@ -435,6 +440,7 @@
         <span class="ident">SYS_DUP2</span> =&gt; <span class="ident">fs::dup2</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_FCNTL</span> =&gt; <span class="ident">fs::fcntl</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_STAT</span> =&gt; <span class="ident">fs::stat</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
+        <span class="ident">SYS_FSTAT</span> =&gt; <span class="ident">fs::fstat</span>(<span class="ident">b</span>, <span class="ident">c</span>),
 
         <span class="ident">SYS_SOCKET</span> =&gt; <span class="ident">net::socket</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_BIND</span> =&gt; <span class="ident">net::bind</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
