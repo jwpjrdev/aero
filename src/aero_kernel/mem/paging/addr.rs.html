@@ -554,6 +554,39 @@
 <span id="549">549</span>
 <span id="550">550</span>
 <span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -648,6 +681,39 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_mut_ptr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="self">self</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">T</span> {
         <span class="self">self</span>.<span class="ident">as_ptr</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">T</span>
+    }
+
+    <span class="doccomment">/// If the virtual address is a valid userland address, the [`Some`] varient is returned</span>
+    <span class="doccomment">/// contaning the address, else the [`None`] variant is returned.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Example</span>
+    <span class="doccomment">/// ```no_run</span>
+    <span class="doccomment">/// let address: VirtAddr = VirtAddr::new(stat)</span>
+    <span class="doccomment">///     .validate_user()</span>
+    <span class="doccomment">///     .ok_or(AeroSyscallError::EFAULT)?;</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_user</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="kw">crate</span>::arch::task::userland_last_address</span>() {
+            <span class="prelude-val">Some</span>(<span class="self">self</span>)
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
+        }
+    }
+
+    <span class="doccomment">/// Reads `sizeof(T)` bytes from the virtual address and returns a mutable reference</span>
+    <span class="doccomment">/// to the value (`&amp;mut T`).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Example</span>
+    <span class="doccomment">/// ```no_run</span>
+    <span class="doccomment">/// let address: SomeStruct = VirtAddr::new(0xcafebabe)</span>
+    <span class="doccomment">///     .read_mut::&lt;SomeStruct&gt;();</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Safety</span>
+    <span class="doccomment">/// * The virtual address must be valid.</span>
+    <span class="doccomment">/// * It must be safe to read `sizeof(T)` bytes from the virtual address.</span>
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">read_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;struc</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;struc</span> <span class="kw-2">mut</span> <span class="ident">T</span> {
+        <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="self">self</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">T</span>)
     }
 
     <span class="doccomment">/// Aligns the virtual address downwards to the given alignment.</span>
@@ -1106,5 +1172,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (ee915c34e 2022-03-28)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (9c06e1ba4 2022-03-29)" ></div>
 </body></html>

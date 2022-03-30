@@ -367,6 +367,26 @@
 <span id="362">362</span>
 <span id="363">363</span>
 <span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -392,6 +412,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode::DirEntry</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::pipe::Pipe</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>::{<span class="self">self</span>, <span class="ident">lookup_path</span>, <span class="ident">LookupMode</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::VirtAddr</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::scheduler</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::Path</span>;
@@ -731,6 +752,25 @@
         <span class="kw">_</span> =&gt; <span class="macro">unimplemented!</span>(),
     }
 }
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stat</span>(<span class="ident">path</span>: <span class="ident">usize</span>, <span class="ident">path_size</span>: <span class="ident">usize</span>, <span class="ident">stat_struct</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">stat_struct</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">stat_struct</span> <span class="kw">as</span> <span class="kw">_</span>)
+        .<span class="ident">validate_user</span>()
+        .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EFAULT</span>)<span class="question-mark">?</span>;
+
+    <span class="comment">// SAFETY: The user provided address is validated above.</span>
+    <span class="kw">let</span> <span class="ident">stat_struct</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">stat_struct</span>.<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::Stat</span><span class="op">&gt;</span>() };
+
+    <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">validate_str</span>(<span class="ident">path</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">path_size</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
+    <span class="macro">log::debug!</span>(<span class="string">&quot;sys_stat: {path}&quot;</span>);
+
+    <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="ident">path</span>);
+
+    <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">fs::lookup_path</span>(<span class="ident">path</span>)<span class="question-mark">?</span>;
+    <span class="kw-2">*</span><span class="ident">stat_struct</span> <span class="op">=</span> <span class="ident">file</span>.<span class="ident">inode</span>().<span class="ident">stat</span>()<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(<span class="number">0</span>)
+}
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (ee915c34e 2022-03-28)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (9c06e1ba4 2022-03-29)" ></div>
 </body></html>

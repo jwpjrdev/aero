@@ -399,6 +399,9 @@
 <span id="394">394</span>
 <span id="395">395</span>
 <span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -480,6 +483,9 @@
         <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>)
     }
 
+    <span class="kw">fn</span> <span class="ident">stat</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">aero_syscall::Stat</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>)
+    }
     <span class="doccomment">/// Creates a new dev inode with the provided `name` and the device `marker` in</span>
     <span class="doccomment">/// the filesystem.</span>
     <span class="doccomment">///</span>
@@ -796,5 +802,5 @@
     <span class="ident">dcache</span>.<span class="ident">get</span>(<span class="ident">cache_key</span>)
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (ee915c34e 2022-03-28)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (9c06e1ba4 2022-03-29)" ></div>
 </body></html>
