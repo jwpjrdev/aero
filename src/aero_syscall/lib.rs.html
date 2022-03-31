@@ -949,6 +949,8 @@
 <span id="944">944</span>
 <span id="945">945</span>
 <span id="946">946</span>
+<span id="947">947</span>
+<span id="948">948</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1169,8 +1171,10 @@
         <span class="ident">prelude::SYS_IPC_RECV</span> =&gt; <span class="string">&quot;ipc_recv&quot;</span>,
         <span class="ident">prelude::SYS_IPC_DISCOVER_ROOT</span> =&gt; <span class="string">&quot;ipc_discover_root&quot;</span>,
         <span class="ident">prelude::SYS_IPC_BECOME_ROOT</span> =&gt; <span class="string">&quot;ipc_become_root&quot;</span>,
+        <span class="ident">prelude::SYS_STAT</span> =&gt; <span class="string">&quot;stat&quot;</span>,
+        <span class="ident">prelude::SYS_FSTAT</span> =&gt; <span class="string">&quot;fstat&quot;</span>,
 
-        <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;unknown syscall&quot;</span>),
+        <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;unknown syscall {syscall}&quot;</span>),
     }
 }
 
@@ -1392,7 +1396,7 @@
 
 <span class="doccomment">/// Inner helper function that converts the syscall result value into the</span>
 <span class="doccomment">/// Rust [`Result`] type.</span>
-<span class="kw">fn</span> <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span>: <span class="ident">isize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span>: <span class="ident">isize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">value</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="ident">usize</span>)
     } <span class="kw">else</span> {
