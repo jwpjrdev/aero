@@ -455,6 +455,10 @@
 <span id="450">450</span>
 <span id="451">451</span>
 <span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -625,6 +629,10 @@
             <span class="ident">sa_flags</span>: <span class="self">self</span>.<span class="ident">flags</span>.<span class="ident">bits</span>(),
             <span class="ident">sa_sigaction</span>: <span class="number">0</span>,
         }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flags</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">SignalFlags</span> {
+        <span class="self">self</span>.<span class="ident">flags</span>
     }
 }
 
