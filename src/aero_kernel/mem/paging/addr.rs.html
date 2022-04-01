@@ -589,7 +589,6 @@
 <span id="584">584</span>
 <span id="585">585</span>
 <span id="586">586</span>
-<span id="587">587</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -695,7 +694,7 @@
     <span class="doccomment">///    .read_mut::&lt;SomeStruct&gt;();</span>
     <span class="doccomment">///    .ok_or(AeroSyscallError::EFAULT)?;</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;struc</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;struc</span> <span class="kw-2">mut</span> <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;struc</span>, <span class="ident">T</span>: <span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;struc</span> <span class="kw-2">mut</span> <span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">validate_read</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() {
             <span class="prelude-val">Some</span>(<span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="self">self</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">T</span>) })
         } <span class="kw">else</span> {
@@ -705,8 +704,7 @@
 
     <span class="doccomment">/// Returns if the address is valid to read `sizeof(T)` bytes at the address.</span>
     <span class="kw">fn</span> <span class="ident">validate_read</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="kw-2">*</span><span class="self">self</span> <span class="op">&lt;</span> <span class="ident"><span class="kw">crate</span>::arch::task::userland_last_address</span>()
-            <span class="op">&amp;&amp;</span> (<span class="kw-2">*</span><span class="self">self</span> <span class="op">+</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()) <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="kw">crate</span>::arch::task::userland_last_address</span>()
+        (<span class="kw-2">*</span><span class="self">self</span> <span class="op">+</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()) <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="kw">crate</span>::arch::task::userland_last_address</span>()
     }
 
     <span class="doccomment">/// Validate reads `sizeof(T)` bytes from the virtual address and returns a copy</span>
@@ -719,7 +717,7 @@
     <span class="doccomment">///    .ok_or(AeroSyscallError::EFAULT)?;</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">copied_read</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">read_mut</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">t</span>)
+        <span class="self">self</span>.<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">t</span>)
     }
 
     <span class="doccomment">/// Aligns the virtual address downwards to the given alignment.</span>
@@ -1178,5 +1176,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (c5cf08d37 2022-03-30)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (0677edc86 2022-03-31)" ></div>
 </body></html>

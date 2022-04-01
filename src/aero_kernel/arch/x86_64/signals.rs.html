@@ -267,7 +267,7 @@
             <span class="kw">let</span> <span class="ident">old_mask</span> <span class="op">=</span> <span class="ident">signals</span>.<span class="ident">blocked_mask</span>();
 
             <span class="kw">let</span> <span class="ident">signal_frame</span> <span class="op">=</span> <span class="ident">SignalFrame::from_interrupt</span>(<span class="ident">stack</span>, <span class="ident">old_mask</span>);
-            <span class="ident">signals</span>.<span class="ident">set_mask</span>(<span class="ident">SigProcMask::Block</span>, <span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">signal</span>, <span class="prelude-val">None</span>);
+            <span class="ident">signals</span>.<span class="ident">set_mask</span>(<span class="ident">SigProcMask::Block</span>, <span class="prelude-val">Some</span>(<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">signal</span>), <span class="prelude-val">None</span>);
 
             <span class="comment">// We cannot straight away update the stack pointer from the stack</span>
             <span class="comment">// helper, since it will created a reference to a packed field which</span>
@@ -312,7 +312,7 @@
 
             <span class="kw">let</span> <span class="ident">signal_frame</span> <span class="op">=</span>
                 <span class="ident">SignalFrame::from_syscall</span>(<span class="ident">restart_syscall</span>, <span class="ident">syscall_result</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">stack</span>, <span class="ident">old_mask</span>);
-            <span class="ident">signals</span>.<span class="ident">set_mask</span>(<span class="ident">SigProcMask::Block</span>, <span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">signal</span>, <span class="prelude-val">None</span>);
+            <span class="ident">signals</span>.<span class="ident">set_mask</span>(<span class="ident">SigProcMask::Block</span>, <span class="prelude-val">Some</span>(<span class="number">1u64</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">signal</span>), <span class="prelude-val">None</span>);
 
             <span class="comment">// We cannot straight away update the stack pointer from the stack</span>
             <span class="comment">// helper, since it will created a reference to a packed field which</span>
@@ -348,7 +348,7 @@
 
     <span class="ident">current_task</span>.<span class="ident">signals</span>().<span class="ident">set_mask</span>(
         <span class="ident">aero_syscall::signal::SigProcMask::Set</span>,
-        <span class="ident">signal_frame</span>.<span class="ident">sigmask</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">signal_frame</span>.<span class="ident">sigmask</span>),
         <span class="prelude-val">None</span>,
     );
 
@@ -370,5 +370,5 @@
     <span class="ident">result</span> <span class="kw">as</span> <span class="ident">usize</span>
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (c5cf08d37 2022-03-30)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (0677edc86 2022-03-31)" ></div>
 </body></html>
