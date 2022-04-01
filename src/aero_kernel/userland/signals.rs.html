@@ -868,7 +868,7 @@
     <span class="doccomment">/// * If `old_set` is not `None`, the previous value of the signal mask is</span>
     <span class="doccomment">/// stored in oldset.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// * NOTE: If `set` is `None`, then the signal mask is unchanged (i.e., `how` is</span>
+    <span class="doccomment">/// * If `set` is `None`, then the signal mask is unchanged (i.e., `how` is</span>
     <span class="doccomment">/// ignored), but the current value of the signal mask is returned in `old_set`</span>
     <span class="doccomment">/// (if it is not `None`).</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_mask</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">how</span>: <span class="ident">SigProcMask</span>, <span class="ident">set</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>, <span class="ident">old_set</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">u64</span><span class="op">&gt;</span>) {
