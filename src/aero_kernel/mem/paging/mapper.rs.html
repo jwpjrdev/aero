@@ -1335,22 +1335,6 @@
 <span id="1330">1330</span>
 <span id="1331">1331</span>
 <span id="1332">1332</span>
-<span id="1333">1333</span>
-<span id="1334">1334</span>
-<span id="1335">1335</span>
-<span id="1336">1336</span>
-<span id="1337">1337</span>
-<span id="1338">1338</span>
-<span id="1339">1339</span>
-<span id="1340">1340</span>
-<span id="1341">1341</span>
-<span id="1342">1342</span>
-<span id="1343">1343</span>
-<span id="1344">1344</span>
-<span id="1345">1345</span>
-<span id="1346">1346</span>
-<span id="1347">1347</span>
-<span id="1348">1348</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1922,14 +1906,6 @@
         <span class="ident">p2_entry</span>.<span class="ident">unref_vm_frame</span>();
         <span class="ident">p2_entry</span>.<span class="ident">set_unused</span>();
 
-        <span class="kw">let</span> <span class="ident">p3_entry</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">p3</span>[<span class="ident">page</span>.<span class="ident">p3_index</span>()];
-        <span class="ident">p3_entry</span>.<span class="ident">dec_entry_count</span>();
-
-        <span class="kw">if</span> <span class="ident">p3_entry</span>.<span class="ident">get_entry_count</span>() <span class="op">==</span> <span class="number">0</span> {
-            <span class="ident">p3_entry</span>.<span class="ident">unref_vm_frame</span>();
-            <span class="ident">p3_entry</span>.<span class="ident">set_unused</span>();
-        }
-
         <span class="prelude-val">Ok</span>((<span class="ident">frame</span>, <span class="ident">MapperFlush::new</span>(<span class="ident">page</span>)))
     }
 
@@ -2038,14 +2014,6 @@
 
         <span class="ident">p1_entry</span>.<span class="ident">unref_vm_frame</span>();
         <span class="ident">p1_entry</span>.<span class="ident">set_unused</span>();
-
-        <span class="kw">let</span> <span class="ident">p2_entry</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">p2</span>[<span class="ident">page</span>.<span class="ident">p2_index</span>()];
-        <span class="ident">p2_entry</span>.<span class="ident">dec_entry_count</span>();
-
-        <span class="kw">if</span> <span class="ident">p2_entry</span>.<span class="ident">get_entry_count</span>() <span class="op">==</span> <span class="number">0</span> {
-            <span class="ident">p2_entry</span>.<span class="ident">unref_vm_frame</span>();
-            <span class="ident">p2_entry</span>.<span class="ident">set_unused</span>();
-        }
 
         <span class="prelude-val">Ok</span>((<span class="ident">frame</span>, <span class="ident">MapperFlush::new</span>(<span class="ident">page</span>)))
     }
