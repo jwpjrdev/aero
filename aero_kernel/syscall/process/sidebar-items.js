@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["clone",""],["exec",""],["exit",""],["fork",""],["gethostname",""],["getpid",""],["gettid",""],["hostname",""],["info",""],["log",""],["mmap",""],["munmap",""],["sethostname",""],["shutdown",""],["sigaction",""],["sigprocmask",""],["uname",""],["waitpid",""]],"static":[["HOSTNAME",""]]});

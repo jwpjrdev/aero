@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["USERLAND_STACK_BOTTOM",""],["USERLAND_STACK_SIZE",""],["USERLAND_STACK_TOP",""]],"enum":[["AuxvType",""]],"fn":[["arch_task_spinup","Check out the module level documentation for more information."],["userland_last_address","Returns the first address outside the user range."]],"struct":[["ArchTask",""],["Context",""]]});
