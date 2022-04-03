@@ -960,69 +960,6 @@
 <span id="955">955</span>
 <span id="956">956</span>
 <span id="957">957</span>
-<span id="958">958</span>
-<span id="959">959</span>
-<span id="960">960</span>
-<span id="961">961</span>
-<span id="962">962</span>
-<span id="963">963</span>
-<span id="964">964</span>
-<span id="965">965</span>
-<span id="966">966</span>
-<span id="967">967</span>
-<span id="968">968</span>
-<span id="969">969</span>
-<span id="970">970</span>
-<span id="971">971</span>
-<span id="972">972</span>
-<span id="973">973</span>
-<span id="974">974</span>
-<span id="975">975</span>
-<span id="976">976</span>
-<span id="977">977</span>
-<span id="978">978</span>
-<span id="979">979</span>
-<span id="980">980</span>
-<span id="981">981</span>
-<span id="982">982</span>
-<span id="983">983</span>
-<span id="984">984</span>
-<span id="985">985</span>
-<span id="986">986</span>
-<span id="987">987</span>
-<span id="988">988</span>
-<span id="989">989</span>
-<span id="990">990</span>
-<span id="991">991</span>
-<span id="992">992</span>
-<span id="993">993</span>
-<span id="994">994</span>
-<span id="995">995</span>
-<span id="996">996</span>
-<span id="997">997</span>
-<span id="998">998</span>
-<span id="999">999</span>
-<span id="1000">1000</span>
-<span id="1001">1001</span>
-<span id="1002">1002</span>
-<span id="1003">1003</span>
-<span id="1004">1004</span>
-<span id="1005">1005</span>
-<span id="1006">1006</span>
-<span id="1007">1007</span>
-<span id="1008">1008</span>
-<span id="1009">1009</span>
-<span id="1010">1010</span>
-<span id="1011">1011</span>
-<span id="1012">1012</span>
-<span id="1013">1013</span>
-<span id="1014">1014</span>
-<span id="1015">1015</span>
-<span id="1016">1016</span>
-<span id="1017">1017</span>
-<span id="1018">1018</span>
-<span id="1019">1019</span>
-<span id="1020">1020</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1076,15 +1013,13 @@
 <span class="comment">// -----------------------------------------------------|</span>
 <span class="comment">// ```</span>
 
-<span class="kw">const</span> <span class="ident">DEFAULT_FONT_WIDTH</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">8</span>;
-<span class="kw">const</span> <span class="ident">DEFAULT_FONT_HEIGHT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">16</span>;
+<span class="kw">const</span> <span class="ident">FONT_WIDTH</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">8</span>;
+<span class="kw">const</span> <span class="ident">FONT_HEIGHT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">16</span>;
 
 <span class="kw">const</span> <span class="ident">DEFAULT_MARGIN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">64</span> <span class="op">/</span> <span class="number">2</span>;
-
 <span class="kw">const</span> <span class="ident">TAB_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 
 <span class="doccomment">/// The amount of VGA font glyphs.</span>
-<span class="kw">const</span> <span class="ident">VGA_FONT_GLYPHS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">256</span>;
 
 <span class="kw">const</span> <span class="ident">MARGIN_GRADIENT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 <span class="kw">const</span> <span class="ident">DWORD_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>();
@@ -1241,12 +1176,7 @@
     <span class="ident">map</span>: <span class="ident">Box</span><span class="op">&lt;</span>[<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">*mut</span> <span class="ident">QueueCharacter</span><span class="op">&gt;</span>]<span class="op">&gt;</span>,
     <span class="ident">bg_canvas</span>: <span class="ident">Box</span><span class="op">&lt;</span>[<span class="ident">u32</span>]<span class="op">&gt;</span>,
 
-    <span class="ident">vga_font_bool</span>: <span class="ident">Box</span><span class="op">&lt;</span>[<span class="ident">bool</span>]<span class="op">&gt;</span>,
-
     <span class="ident">queue_cursor</span>: <span class="ident">usize</span>,
-
-    <span class="ident">glyph_width</span>: <span class="ident">usize</span>,
-    <span class="ident">glyph_height</span>: <span class="ident">usize</span>,
 
     <span class="ident">offset_x</span>: <span class="ident">usize</span>,
     <span class="ident">offset_y</span>: <span class="ident">usize</span>,
@@ -1262,17 +1192,11 @@
         <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">horizontal_resolution</span>;
         <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">vertical_resolution</span>;
 
-        <span class="kw">let</span> <span class="ident">glyph_width</span> <span class="op">=</span> <span class="ident">DEFAULT_FONT_WIDTH</span>;
-        <span class="kw">let</span> <span class="ident">glyph_height</span> <span class="op">=</span> <span class="ident">DEFAULT_FONT_HEIGHT</span>;
+        <span class="kw">let</span> <span class="ident">offset_x</span> <span class="op">=</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">+</span> ((<span class="ident">width</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">%</span> <span class="ident">FONT_WIDTH</span>) <span class="op">/</span> <span class="number">2</span>;
+        <span class="kw">let</span> <span class="ident">offset_y</span> <span class="op">=</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">+</span> ((<span class="ident">height</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">%</span> <span class="ident">FONT_HEIGHT</span>) <span class="op">/</span> <span class="number">2</span>;
 
-        <span class="kw">let</span> <span class="ident">offset_x</span> <span class="op">=</span>
-            <span class="ident">DEFAULT_MARGIN</span> <span class="op">+</span> ((<span class="ident">info</span>.<span class="ident">horizontal_resolution</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">%</span> <span class="ident">glyph_width</span>) <span class="op">/</span> <span class="number">2</span>;
-
-        <span class="kw">let</span> <span class="ident">offset_y</span> <span class="op">=</span>
-            <span class="ident">DEFAULT_MARGIN</span> <span class="op">+</span> ((<span class="ident">info</span>.<span class="ident">horizontal_resolution</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">%</span> <span class="ident">glyph_height</span>) <span class="op">/</span> <span class="number">2</span>;
-
-        <span class="kw">let</span> <span class="ident">cols</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">horizontal_resolution</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">/</span> <span class="ident">glyph_width</span>;
-        <span class="kw">let</span> <span class="ident">rows</span> <span class="op">=</span> (<span class="ident">info</span>.<span class="ident">vertical_resolution</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">/</span> <span class="ident">glyph_height</span>;
+        <span class="kw">let</span> <span class="ident">cols</span> <span class="op">=</span> (<span class="ident">width</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">/</span> <span class="ident">FONT_WIDTH</span>;
+        <span class="kw">let</span> <span class="ident">rows</span> <span class="op">=</span> (<span class="ident">height</span> <span class="op">-</span> <span class="ident">DEFAULT_MARGIN</span> <span class="op">*</span> <span class="number">2</span>) <span class="op">/</span> <span class="ident">FONT_HEIGHT</span>;
 
         <span class="kw">let</span> <span class="ident">grid_size</span> <span class="op">=</span> <span class="ident">rows</span> <span class="op">*</span> <span class="ident">cols</span> <span class="op">*</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">Character</span><span class="op">&gt;</span>();
         <span class="kw">let</span> <span class="ident">grid</span> <span class="op">=</span> <span class="ident">mem::alloc_boxed_buffer</span>::<span class="op">&lt;</span><span class="ident">Character</span><span class="op">&gt;</span>(<span class="ident">grid_size</span>);
@@ -1285,50 +1209,6 @@
 
         <span class="kw">let</span> <span class="ident">bg_canvas_size</span> <span class="op">=</span> <span class="ident">width</span> <span class="op">*</span> <span class="ident">height</span> <span class="op">*</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>();
         <span class="kw">let</span> <span class="ident">bg_canvas</span> <span class="op">=</span> <span class="ident">mem::alloc_boxed_buffer</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>(<span class="ident">bg_canvas_size</span>);
-
-        <span class="kw">let</span> <span class="ident">vga_font_bool_size</span> <span class="op">=</span> <span class="ident">VGA_FONT_GLYPHS</span>
-            <span class="op">*</span> <span class="ident">DEFAULT_FONT_HEIGHT</span>
-            <span class="op">*</span> <span class="ident">DEFAULT_FONT_WIDTH</span>
-            <span class="op">*</span> <span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>();
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vga_font_bool</span> <span class="op">=</span> <span class="ident">mem::alloc_boxed_buffer</span>::<span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>(<span class="ident">vga_font_bool_size</span>);
-
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">VGA_FONT_GLYPHS</span> {
-            <span class="comment">// Each glyph is a bitmap:</span>
-            <span class="kw">let</span> <span class="ident">glyph</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">FONT</span>[<span class="ident">i</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_HEIGHT</span>] <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u8</span>;
-
-            <span class="kw">for</span> <span class="ident">y</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">DEFAULT_FONT_HEIGHT</span> {
-                <span class="comment">// NOTE: the characters in VGA fonts are always one byte wide.</span>
-                <span class="comment">// 9 dot wide fonts have 8 dots and one empty column, except</span>
-                <span class="comment">// characters 0xC0-0xDF replicate column 9.</span>
-                <span class="kw">for</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">8</span> {
-                    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span>
-                        <span class="ident">i</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_HEIGHT</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_WIDTH</span> <span class="op">+</span> <span class="ident">y</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_WIDTH</span> <span class="op">+</span> <span class="ident">x</span>;
-
-                    <span class="kw">unsafe</span> {
-                        <span class="kw">if</span> (<span class="kw-2">*</span><span class="ident">glyph</span>.<span class="ident">offset</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">isize</span>) <span class="op">&amp;</span> (<span class="number">0x80</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">x</span>)) <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-                            <span class="ident">vga_font_bool</span>[<span class="ident">offset</span>] <span class="op">=</span> <span class="bool-val">true</span>;
-                        } <span class="kw">else</span> {
-                            <span class="ident">vga_font_bool</span>[<span class="ident">offset</span>] <span class="op">=</span> <span class="bool-val">false</span>;
-                        }
-                    }
-                }
-
-                <span class="comment">// Fill columns above 8 like VGA Line Graphics Mode does:</span>
-                <span class="kw">for</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">8</span>..<span class="ident">DEFAULT_FONT_WIDTH</span> {
-                    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span>
-                        <span class="ident">i</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_HEIGHT</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_WIDTH</span> <span class="op">+</span> <span class="ident">y</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_WIDTH</span> <span class="op">+</span> <span class="ident">x</span>;
-
-                    <span class="kw">if</span> <span class="ident">i</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0xC0</span> <span class="op">&amp;&amp;</span> <span class="ident">i</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">0xDF</span> {
-                        <span class="kw">unsafe</span> {
-                            <span class="ident">vga_font_bool</span>[<span class="ident">offset</span>] <span class="op">=</span> (<span class="kw-2">*</span><span class="ident">glyph</span>.<span class="ident">offset</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">isize</span>) <span class="op">&amp;</span> <span class="number">1</span>) <span class="op">!</span><span class="op">=</span> <span class="number">0</span>;
-                        }
-                    } <span class="kw">else</span> {
-                        <span class="ident">vga_font_bool</span>[<span class="ident">offset</span>] <span class="op">=</span> <span class="bool-val">false</span>;
-                    }
-                }
-            }
-        }
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="self">Self</span> {
             <span class="ident">buffer</span>,
@@ -1351,23 +1231,18 @@
             <span class="ident">map</span>,
             <span class="ident">bg_canvas</span>,
 
-            <span class="ident">glyph_height</span>,
-            <span class="ident">glyph_width</span>,
+            <span class="ident">queue_cursor</span>: <span class="number">0</span>,
 
             <span class="ident">offset_x</span>,
             <span class="ident">offset_y</span>,
-
-            <span class="ident">vga_font_bool</span>,
-
-            <span class="ident">queue_cursor</span>: <span class="number">0</span>,
 
             <span class="ident">cursor_visibility</span>: <span class="bool-val">true</span>,
             <span class="ident">auto_flush</span>: <span class="bool-val">true</span>,
         };
 
         <span class="kw">let</span> <span class="ident">image</span> <span class="op">=</span> <span class="ident">cmdline</span>.<span class="ident">term_background</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="ident">parse_bmp_image</span>(<span class="ident">a</span>));
-        <span class="ident">this</span>.<span class="ident">generate_canvas</span>(<span class="ident">image</span>);
 
+        <span class="ident">this</span>.<span class="ident">generate_canvas</span>(<span class="ident">image</span>);
         <span class="ident">this</span>.<span class="ident">clear</span>(<span class="bool-val">true</span>);
         <span class="ident">this</span>.<span class="ident">double_buffer_flush</span>();
 
@@ -1391,8 +1266,7 @@
 
         <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">info</span>.<span class="ident">horizontal_resolution</span>;
         <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">info</span>.<span class="ident">vertical_resolution</span>;
-
-        <span class="kw">let</span> <span class="ident">colsize</span> <span class="op">=</span> <span class="ident">image</span>.<span class="ident">bpp</span> <span class="op">/</span> <span class="number">8</span>;
+        <span class="kw">let</span> <span class="ident">col_size</span> <span class="op">=</span> <span class="ident">image</span>.<span class="ident">bpp</span> <span class="op">/</span> <span class="number">8</span>;
 
         <span class="comment">// Tiled Image:</span>
         <span class="comment">// for y in ystart..yend {</span>
@@ -1437,7 +1311,7 @@
 
             <span class="kw">for</span> <span class="ident">x</span> <span class="kw">in</span> <span class="ident">xstart</span>..<span class="ident">xend</span> {
                 <span class="kw">let</span> <span class="ident">img_pixel</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-                    (<span class="ident">image</span>.<span class="ident">image</span>.<span class="ident">as_ptr</span>()).<span class="ident">add</span>(<span class="ident">fixedp6_to_int</span>(<span class="ident">img_x</span>) <span class="op">*</span> <span class="ident">colsize</span> <span class="op">+</span> <span class="ident">off</span>) <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u32</span>
+                    (<span class="ident">image</span>.<span class="ident">image</span>.<span class="ident">as_ptr</span>()).<span class="ident">add</span>(<span class="ident">fixedp6_to_int</span>(<span class="ident">img_x</span>) <span class="op">*</span> <span class="ident">col_size</span> <span class="op">+</span> <span class="ident">off</span>) <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u32</span>
                 };
 
                 <span class="kw">let</span> <span class="ident">i</span> <span class="op">=</span> <span class="ident">blender</span>(<span class="ident">x</span>, <span class="ident">y</span>, <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="ident">img_pixel</span> });
@@ -1499,14 +1373,15 @@
         <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">info</span>.<span class="ident">vertical_resolution</span>;
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">image</span>) <span class="op">=</span> <span class="ident">image</span> {
-            <span class="kw">let</span> <span class="ident">frame_height</span> <span class="op">=</span> <span class="ident">height</span> <span class="op">/</span> <span class="number">2</span> <span class="op">-</span> (<span class="self">self</span>.<span class="ident">glyph_height</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">rows</span>) <span class="op">/</span> <span class="number">2</span>;
-            <span class="kw">let</span> <span class="ident">frame_width</span> <span class="op">=</span> <span class="ident">width</span> <span class="op">/</span> <span class="number">2</span> <span class="op">-</span> (<span class="self">self</span>.<span class="ident">glyph_width</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">cols</span>) <span class="op">/</span> <span class="number">2</span>;
+            <span class="kw">let</span> <span class="ident">frame_width</span> <span class="op">=</span> <span class="ident">width</span> <span class="op">/</span> <span class="number">2</span> <span class="op">-</span> (<span class="ident">FONT_WIDTH</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">cols</span>) <span class="op">/</span> <span class="number">2</span>;
+            <span class="kw">let</span> <span class="ident">frame_height</span> <span class="op">=</span> <span class="ident">height</span> <span class="op">/</span> <span class="number">2</span> <span class="op">-</span> (<span class="ident">FONT_HEIGHT</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">rows</span>) <span class="op">/</span> <span class="number">2</span>;
 
-            <span class="kw">let</span> <span class="ident">frame_height_end</span> <span class="op">=</span> <span class="ident">frame_height</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">glyph_height</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">rows</span>;
-            <span class="kw">let</span> <span class="ident">frame_width_end</span> <span class="op">=</span> <span class="ident">frame_width</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">glyph_width</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">cols</span>;
+            <span class="kw">let</span> <span class="ident">frame_width_end</span> <span class="op">=</span> <span class="ident">frame_width</span> <span class="op">+</span> <span class="ident">FONT_WIDTH</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">cols</span>;
+            <span class="kw">let</span> <span class="ident">frame_height_end</span> <span class="op">=</span> <span class="ident">frame_height</span> <span class="op">+</span> <span class="ident">FONT_HEIGHT</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">rows</span>;
 
             <span class="kw">let</span> <span class="ident">fheight</span> <span class="op">=</span> <span class="ident">frame_height</span> <span class="op">-</span> <span class="ident">MARGIN_GRADIENT</span>;
             <span class="kw">let</span> <span class="ident">fheight_end</span> <span class="op">=</span> <span class="ident">frame_height_end</span> <span class="op">+</span> <span class="ident">MARGIN_GRADIENT</span>;
+
             <span class="kw">let</span> <span class="ident">fwidth</span> <span class="op">=</span> <span class="ident">frame_width</span> <span class="op">-</span> <span class="ident">MARGIN_GRADIENT</span>;
             <span class="kw">let</span> <span class="ident">fwidth_end</span> <span class="op">=</span> <span class="ident">frame_width_end</span> <span class="op">+</span> <span class="ident">MARGIN_GRADIENT</span>;
 
@@ -1514,7 +1389,6 @@
             <span class="self">self</span>.<span class="ident">loop_external</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>, <span class="number">0</span>, <span class="ident">width</span>, <span class="ident">fheight_end</span>, <span class="ident">height</span>);
             <span class="self">self</span>.<span class="ident">loop_external</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>, <span class="number">0</span>, <span class="ident">fwidth</span>, <span class="ident">fheight</span>, <span class="ident">fheight_end</span>);
             <span class="self">self</span>.<span class="ident">loop_external</span>(<span class="kw-2">&amp;</span><span class="ident">image</span>, <span class="ident">fwidth_end</span>, <span class="ident">width</span>, <span class="ident">fheight</span>, <span class="ident">fheight_end</span>);
-
             <span class="self">self</span>.<span class="ident">loop_internal</span>(
                 <span class="kw-2">&amp;</span><span class="ident">image</span>,
                 <span class="ident">frame_width</span>,
@@ -1630,21 +1504,26 @@
     }
 
     <span class="kw">fn</span> <span class="ident">plot_char</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">x</span>: <span class="ident">usize</span>, <span class="ident">y</span>: <span class="ident">usize</span>, <span class="ident">char</span>: <span class="ident">Character</span>) {
+        <span class="kw">let</span> <span class="ident">ch</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">char</span>.<span class="ident">char</span> {
+            <span class="ident">ch</span> <span class="kw">if</span> <span class="ident">ch</span>.<span class="ident">is_ascii</span>() =&gt; <span class="ident">ch</span>,
+            <span class="kw">_</span> =&gt; <span class="string">&#39;?&#39;</span> <span class="kw">as</span> <span class="ident">char</span>,
+        };
+
         <span class="kw">if</span> <span class="ident">x</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">cols</span> <span class="op">|</span><span class="op">|</span> <span class="ident">y</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">rows</span> {
             <span class="kw">return</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">offset_x</span> <span class="op">+</span> <span class="ident">x</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">glyph_width</span>;
-        <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">offset_y</span> <span class="op">+</span> <span class="ident">y</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">glyph_height</span>;
-
+        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">offset_x</span> <span class="op">+</span> <span class="ident">x</span> <span class="op">*</span> <span class="ident">FONT_WIDTH</span>;
+        <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">offset_y</span> <span class="op">+</span> <span class="ident">y</span> <span class="op">*</span> <span class="ident">FONT_HEIGHT</span>;
         <span class="kw">let</span> <span class="ident">glyph</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-            <span class="self">self</span>.<span class="ident">vga_font_bool</span>
-                .<span class="ident">as_ptr</span>()
-                .<span class="ident">add</span>(<span class="ident">char</span>.<span class="ident">char</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_HEIGHT</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_WIDTH</span>)
+            <span class="ident">core::slice::from_raw_parts</span>(
+                <span class="ident">FONT</span>.<span class="ident">as_ptr</span>().<span class="ident">offset</span>(<span class="ident">ch</span> <span class="kw">as</span> <span class="ident">isize</span> <span class="op">*</span> <span class="ident">FONT_HEIGHT</span> <span class="kw">as</span> <span class="ident">isize</span>) <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u8</span>,
+                <span class="ident">FONT_HEIGHT</span>,
+            )
         };
 
         <span class="comment">// naming: fx, fy for font coordinates and gx, gy for glyph coordinates</span>
-        <span class="kw">for</span> <span class="ident">gy</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">glyph_height</span> {
+        <span class="kw">for</span> <span class="ident">gy</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">FONT_HEIGHT</span> {
             <span class="kw">let</span> <span class="ident">fb_line</span> <span class="op">=</span> <span class="kw">unsafe</span> {
                 <span class="self">self</span>.<span class="ident">buffer</span>
                     .<span class="ident">as_mut_ptr</span>()
@@ -1657,23 +1536,18 @@
                     .<span class="ident">add</span>(<span class="ident">x</span> <span class="op">+</span> (<span class="ident">y</span> <span class="op">+</span> <span class="ident">gy</span>) <span class="op">*</span> <span class="self">self</span>.<span class="ident">info</span>.<span class="ident">horizontal_resolution</span>)
             };
 
-            <span class="kw">for</span> <span class="ident">fx</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">DEFAULT_FONT_WIDTH</span> {
-                <span class="kw">let</span> <span class="ident">draw</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="ident">glyph</span>.<span class="ident">add</span>(<span class="ident">gy</span> <span class="op">*</span> <span class="ident">DEFAULT_FONT_WIDTH</span> <span class="op">+</span> <span class="ident">fx</span>) };
-
-                <span class="kw">let</span> <span class="ident">bg</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">char</span>.<span class="ident">bg</span> <span class="op">==</span> <span class="ident">u32::MAX</span> {
-                    <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="ident">canvas_line</span>.<span class="ident">add</span>(<span class="ident">fx</span>) }
+            <span class="kw">for</span> <span class="ident">gx</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">FONT_WIDTH</span> {
+                <span class="kw">let</span> <span class="ident">draw</span> <span class="op">=</span> <span class="ident">glyph</span>[<span class="ident">gy</span>] <span class="op">&amp;</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">FONT_WIDTH</span> <span class="op">-</span> <span class="ident">gx</span>)) <span class="op">!</span><span class="op">=</span> <span class="number">0</span>;
+                <span class="kw">let</span> <span class="ident">color</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">draw</span> {
+                    <span class="ident">char</span>.<span class="ident">fg</span>
+                } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">char</span>.<span class="ident">bg</span> <span class="op">==</span> <span class="ident">u32::MAX</span> {
+                    <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="ident">canvas_line</span>.<span class="ident">add</span>(<span class="ident">gx</span>) }
                 } <span class="kw">else</span> {
                     <span class="ident">char</span>.<span class="ident">bg</span>
                 };
 
-                <span class="kw">let</span> <span class="ident">fg</span> <span class="op">=</span> <span class="ident">char</span>.<span class="ident">fg</span>;
-
                 <span class="kw">unsafe</span> {
-                    <span class="kw">if</span> <span class="ident">draw</span> {
-                        <span class="kw-2">*</span><span class="ident">fb_line</span>.<span class="ident">add</span>(<span class="ident">fx</span>) <span class="op">=</span> <span class="ident">fg</span>;
-                    } <span class="kw">else</span> {
-                        <span class="kw-2">*</span><span class="ident">fb_line</span>.<span class="ident">add</span>(<span class="ident">fx</span>) <span class="op">=</span> <span class="ident">bg</span>;
-                    }
+                    <span class="kw-2">*</span><span class="ident">fb_line</span>.<span class="ident">add</span>(<span class="ident">gx</span>) <span class="op">=</span> <span class="ident">color</span>;
                 }
             }
         }
@@ -2044,5 +1918,5 @@
     <span class="ident">DEBUG_RENDY</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Mutex::new</span>(<span class="ident">rendy</span>));
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (eb82facb1 2022-04-01)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (76d770ac2 2022-04-02)" ></div>
 </body></html>
