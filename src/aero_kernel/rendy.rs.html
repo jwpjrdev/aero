@@ -1531,7 +1531,7 @@
             };
 
             <span class="kw">for</span> <span class="ident">gx</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">FONT_WIDTH</span> {
-                <span class="kw">let</span> <span class="ident">draw</span> <span class="op">=</span> <span class="ident">glyph</span>[<span class="ident">gy</span>] <span class="op">&amp;</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">FONT_WIDTH</span> <span class="op">-</span> <span class="ident">gx</span>)) <span class="op">!</span><span class="op">=</span> <span class="number">0</span>;
+                <span class="kw">let</span> <span class="ident">draw</span> <span class="op">=</span> <span class="ident">glyph</span>[<span class="ident">gy</span>] <span class="op">&amp;</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> (<span class="ident">FONT_WIDTH</span> <span class="op">-</span> <span class="ident">gx</span> <span class="op">-</span> <span class="number">1</span>)) <span class="op">!</span><span class="op">=</span> <span class="number">0</span>;
                 <span class="kw">let</span> <span class="ident">color</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">draw</span> {
                     <span class="ident">char</span>.<span class="ident">fg</span>
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">char</span>.<span class="ident">bg</span> <span class="op">==</span> <span class="ident">u32::MAX</span> {
