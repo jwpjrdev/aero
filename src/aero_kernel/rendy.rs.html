@@ -957,9 +957,6 @@
 <span id="952">952</span>
 <span id="953">953</span>
 <span id="954">954</span>
-<span id="955">955</span>
-<span id="956">956</span>
-<span id="957">957</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -997,7 +994,8 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 
-<span class="kw">static</span> <span class="ident">FONT</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="macro">include_bytes!</span>(<span class="string">&quot;../../font.bin&quot;</span>);
+<span class="kw">static</span> <span class="ident">FONT</span>: <span class="kw-2">&amp;</span>[[<span class="ident">u8</span>; <span class="ident">FONT_HEIGHT</span>]; <span class="ident">FONT_GLYPHS</span>] <span class="op">=</span>
+    <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="ident">core::mem::transmute</span>(<span class="kw-2">*</span><span class="macro">include_bytes!</span>(<span class="string">&quot;../../font.bin&quot;</span>)) };
 
 <span class="comment">// This is an example of how the rendered screen will look like:</span>
 <span class="comment">//</span>
@@ -1015,6 +1013,7 @@
 
 <span class="kw">const</span> <span class="ident">FONT_WIDTH</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">8</span>;
 <span class="kw">const</span> <span class="ident">FONT_HEIGHT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">16</span>;
+<span class="kw">const</span> <span class="ident">FONT_GLYPHS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">256</span>;
 
 <span class="kw">const</span> <span class="ident">DEFAULT_MARGIN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">64</span> <span class="op">/</span> <span class="number">2</span>;
 <span class="kw">const</span> <span class="ident">TAB_SIZE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
@@ -1515,12 +1514,7 @@
 
         <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">offset_x</span> <span class="op">+</span> <span class="ident">x</span> <span class="op">*</span> <span class="ident">FONT_WIDTH</span>;
         <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">offset_y</span> <span class="op">+</span> <span class="ident">y</span> <span class="op">*</span> <span class="ident">FONT_HEIGHT</span>;
-        <span class="kw">let</span> <span class="ident">glyph</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-            <span class="ident">core::slice::from_raw_parts</span>(
-                <span class="ident">FONT</span>.<span class="ident">as_ptr</span>().<span class="ident">offset</span>(<span class="ident">ch</span> <span class="kw">as</span> <span class="ident">isize</span> <span class="op">*</span> <span class="ident">FONT_HEIGHT</span> <span class="kw">as</span> <span class="ident">isize</span>) <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">u8</span>,
-                <span class="ident">FONT_HEIGHT</span>,
-            )
-        };
+        <span class="kw">let</span> <span class="ident">glyph</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">FONT</span>[<span class="ident">ch</span> <span class="kw">as</span> <span class="ident">usize</span>];
 
         <span class="comment">// naming: fx, fy for font coordinates and gx, gy for glyph coordinates</span>
         <span class="kw">for</span> <span class="ident">gy</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">FONT_HEIGHT</span> {
@@ -1918,5 +1912,5 @@
     <span class="ident">DEBUG_RENDY</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Mutex::new</span>(<span class="ident">rendy</span>));
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0-nightly (76d770ac2 2022-04-02)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (60e50fc1c 2022-04-04)" ></div>
 </body></html>
