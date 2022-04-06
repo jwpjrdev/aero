@@ -614,14 +614,6 @@
 <span id="609">609</span>
 <span id="610">610</span>
 <span id="611">611</span>
-<span id="612">612</span>
-<span id="613">613</span>
-<span id="614">614</span>
-<span id="615">615</span>
-<span id="616">616</span>
-<span id="617">617</span>
-<span id="618">618</span>
-<span id="619">619</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -676,7 +668,7 @@
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LockedFrameAllocator</span> {
-    <span class="kw">fn</span> <span class="ident">allocate_frame</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">allocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="number">0</span>
             .<span class="ident">get</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> {
@@ -687,7 +679,7 @@
             .<span class="ident">unwrap_or</span>(<span class="prelude-val">None</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="number">0</span>
             .<span class="ident">get</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="ident">m</span>.<span class="ident">lock</span>().<span class="ident">deallocate_frame_inner</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>(), <span class="number">0</span>))
@@ -696,7 +688,7 @@
 }
 
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LockedFrameAllocator</span> {
-    <span class="kw">fn</span> <span class="ident">allocate_frame</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">allocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="number">0</span>
             .<span class="ident">get</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> {
@@ -707,7 +699,7 @@
             .<span class="ident">unwrap_or</span>(<span class="prelude-val">None</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="number">0</span>
             .<span class="ident">get</span>()
             .<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="ident">m</span>.<span class="ident">lock</span>().<span class="ident">deallocate_frame_inner</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>(), <span class="number">1</span>))
@@ -766,31 +758,29 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BuddyOrdering</span> {
     <span class="ident">Size4KiB</span> <span class="op">=</span> <span class="number">0</span>,
     <span class="ident">Size8KiB</span> <span class="op">=</span> <span class="number">1</span>,
-    <span class="ident">Size2MiB</span> <span class="op">=</span> <span class="number">2</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pmm_alloc</span>(<span class="ident">ordering</span>: <span class="ident">BuddyOrdering</span>) -&gt; <span class="ident">PhysAddr</span> {
     <span class="kw">let</span> <span class="ident">ordering</span> <span class="op">=</span> <span class="ident">ordering</span> <span class="kw">as</span> <span class="ident">usize</span>;
     <span class="macro">debug_assert!</span>(<span class="ident">ordering</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">BUDDY_SIZE</span>.<span class="ident">len</span>());
 
-    <span class="kw">unsafe</span> {
-        <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident"><span class="kw">super</span>::FRAME_ALLOCATOR</span>
-            .<span class="number">0</span>
-            .<span class="ident">get</span>()
-            .<span class="ident">expect</span>(<span class="string">&quot;pmm: frame allocator not initialized&quot;</span>)
-            .<span class="ident">lock</span>()
-            .<span class="ident">allocate_frame_inner</span>(<span class="ident">ordering</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;pmm: out of memory&quot;</span>);
+    <span class="kw">let</span> <span class="ident">addr</span> <span class="op">=</span> <span class="ident"><span class="kw">super</span>::FRAME_ALLOCATOR</span>
+        .<span class="number">0</span>
+        .<span class="ident">get</span>()
+        .<span class="ident">expect</span>(<span class="string">&quot;pmm: frame allocator not initialized&quot;</span>)
+        .<span class="ident">lock</span>()
+        .<span class="ident">allocate_frame_inner</span>(<span class="ident">ordering</span>)
+        .<span class="ident">expect</span>(<span class="string">&quot;pmm: out of memory&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">virt</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span> <span class="op">+</span> <span class="ident">addr</span>.<span class="ident">as_u64</span>();
-        <span class="kw">let</span> <span class="ident">fill_size</span> <span class="op">=</span> <span class="ident">BUDDY_SIZE</span>[<span class="ident">ordering</span>] <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="ident">core::slice::from_raw_parts_mut</span>(<span class="ident">virt</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(), <span class="ident">fill_size</span>);
+    <span class="kw">let</span> <span class="ident">virt</span> <span class="op">=</span> <span class="ident">addr</span>.<span class="ident">as_hhdm_virt</span>();
 
-        <span class="comment">// We always zero out memory for security reasons.</span>
-        <span class="ident">slice</span>.<span class="ident">fill</span>(<span class="number">0x00</span>);
+    <span class="kw">let</span> <span class="ident">fill_size</span> <span class="op">=</span> <span class="ident">BUDDY_SIZE</span>[<span class="ident">ordering</span>] <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">core::slice::from_raw_parts_mut</span>(<span class="ident">virt</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>(), <span class="ident">fill_size</span>) };
 
-        <span class="ident">addr</span>
-    }
+    <span class="comment">// We always zero out memory for security reasons.</span>
+    <span class="ident">slice</span>.<span class="ident">fill</span>(<span class="number">0x00</span>);
+
+    <span class="ident">addr</span>
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
@@ -1138,14 +1128,12 @@
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init_vm_frames</span>() {
     <span class="ident">VM_FRAMES</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
-        <span class="kw">let</span> <span class="ident">frame_count</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-            <span class="ident"><span class="kw">super</span>::FRAME_ALLOCATOR</span>
-                .<span class="number">0</span>
-                .<span class="ident">get</span>()
-                .<span class="ident">unwrap</span>()
-                .<span class="ident">lock_irq</span>()
-                .<span class="ident">frame_count</span>()
-        };
+        <span class="kw">let</span> <span class="ident">frame_count</span> <span class="op">=</span> <span class="ident"><span class="kw">super</span>::FRAME_ALLOCATOR</span>
+            .<span class="number">0</span>
+            .<span class="ident">get</span>()
+            .<span class="ident">unwrap</span>()
+            .<span class="ident">lock_irq</span>()
+            .<span class="ident">frame_count</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">frames</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="op">&lt;</span><span class="ident">VmFrame</span><span class="op">&gt;</span><span class="ident">::new</span>();
         <span class="ident">frames</span>.<span class="ident">resize_with</span>(<span class="ident">frame_count</span>, <span class="ident">VmFrame::new</span>);
@@ -1209,14 +1197,12 @@
         <span class="comment">// The frame is not mapped yet, so the ref count should be 0.</span>
         <span class="macro">assert_eq!</span>(<span class="ident">vm_frame</span>.<span class="ident">ref_count</span>(), <span class="number">0</span>);
 
-        <span class="kw">unsafe</span> {
-            <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">FRAME_ALLOCATOR</span>
-                .<span class="number">0</span>
-                .<span class="ident">get</span>()
-                .<span class="ident">unwrap</span>()
-                .<span class="ident">lock</span>()
-                .<span class="ident">is_free</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>(), <span class="number">0</span>));
-        }
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">FRAME_ALLOCATOR</span>
+            .<span class="number">0</span>
+            .<span class="ident">get</span>()
+            .<span class="ident">unwrap</span>()
+            .<span class="ident">lock</span>()
+            .<span class="ident">is_free</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>(), <span class="number">0</span>));
 
         <span class="kw">unsafe</span> { <span class="ident">offset_table</span>.<span class="ident">map_to</span>(<span class="ident">page</span>, <span class="ident">frame</span>, <span class="ident">PageTableFlags::PRESENT</span>) }
             .<span class="ident">unwrap</span>()
@@ -1231,16 +1217,14 @@
         <span class="comment">// the frame should be deallocated.</span>
         <span class="macro">assert_eq!</span>(<span class="ident">vm_frame</span>.<span class="ident">ref_count</span>(), <span class="number">0</span>);
 
-        <span class="kw">unsafe</span> {
-            <span class="macro">assert!</span>(<span class="ident">FRAME_ALLOCATOR</span>
-                .<span class="number">0</span>
-                .<span class="ident">get</span>()
-                .<span class="ident">unwrap</span>()
-                .<span class="ident">lock</span>()
-                .<span class="ident">is_free</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>(), <span class="number">0</span>));
-        }
+        <span class="macro">assert!</span>(<span class="ident">FRAME_ALLOCATOR</span>
+            .<span class="number">0</span>
+            .<span class="ident">get</span>()
+            .<span class="ident">unwrap</span>()
+            .<span class="ident">lock</span>()
+            .<span class="ident">is_free</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>(), <span class="number">0</span>));
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (60e50fc1c 2022-04-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
 </body></html>

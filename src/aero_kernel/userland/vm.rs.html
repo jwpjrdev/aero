@@ -1034,15 +1034,6 @@
 <span id="1029">1029</span>
 <span id="1030">1030</span>
 <span id="1031">1031</span>
-<span id="1032">1032</span>
-<span id="1033">1033</span>
-<span id="1034">1034</span>
-<span id="1035">1035</span>
-<span id="1036">1036</span>
-<span id="1037">1037</span>
-<span id="1038">1038</span>
-<span id="1039">1039</span>
-<span id="1040">1040</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1419,7 +1410,8 @@
         <span class="ident">protection</span>: <span class="ident">MMapProt</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">MapToError</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="comment">// Allocate a new frame to hold the contents.</span>
-        <span class="kw">let</span> <span class="ident">new_frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>() }
+        <span class="kw">let</span> <span class="ident">new_frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">FRAME_ALLOCATOR</span>
+            .<span class="ident">allocate_frame</span>()
             .<span class="ident">expect</span>(<span class="string">&quot;map_copied: failed to allocate frame&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">old_slice</span> <span class="op">=</span> <span class="kw">unsafe</span> {
@@ -1953,20 +1945,10 @@
         })
     }
 
+    <span class="doccomment">/// Clears all of the mappings without unmapping them. The caller is responsible</span>
+    <span class="doccomment">/// for going through the page table and unmapping all of the pages.</span>
     <span class="kw">fn</span> <span class="ident">clear</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cursor</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">mappings</span>.<span class="ident">cursor_front_mut</span>();
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">address_space</span> <span class="op">=</span> <span class="ident">AddressSpace::this</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset_table</span> <span class="op">=</span> <span class="ident">address_space</span>.<span class="ident">offset_page_table</span>();
-
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">map</span>) <span class="op">=</span> <span class="ident">cursor</span>.<span class="ident">current</span>() {
-            <span class="comment">// now this should automatically free the physical page backed by this mapping</span>
-            <span class="comment">// if the reference count of that frame is 0 since we have now unmapped it.</span>
-            <span class="ident">map</span>.<span class="ident">unmap</span>(<span class="kw-2">&amp;mut</span> <span class="ident">offset_table</span>, <span class="ident">map</span>.<span class="ident">start_addr</span>, <span class="ident">map</span>.<span class="ident">end_addr</span>)
-                .<span class="ident">expect</span>(<span class="string">&quot;vm_clear: unexpected error while unmapping&quot;</span>);
-
-            <span class="ident">cursor</span>.<span class="ident">remove_current</span>();
-        }
+        <span class="self">self</span>.<span class="ident">mappings</span>.<span class="ident">clear</span>()
     }
 
     <span class="kw">fn</span> <span class="ident">munmap</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">address</span>: <span class="ident">VirtAddr</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">bool</span> {
@@ -2084,5 +2066,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (60e50fc1c 2022-04-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
 </body></html>

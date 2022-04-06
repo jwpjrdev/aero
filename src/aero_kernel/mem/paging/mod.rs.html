@@ -105,9 +105,6 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
-<span id="103">103</span>
-<span id="104">104</span>
-<span id="105">105</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -147,7 +144,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::controlregs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span>;
 
-<span class="kw">pub</span> <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">FRAME_ALLOCATOR</span>: <span class="ident">LockedFrameAllocator</span> <span class="op">=</span> <span class="ident">LockedFrameAllocator::new_uninit</span>();
+<span class="kw">pub</span> <span class="kw">static</span> <span class="ident">FRAME_ALLOCATOR</span>: <span class="ident">LockedFrameAllocator</span> <span class="op">=</span> <span class="ident">LockedFrameAllocator::new_uninit</span>();
 
 <span class="macro">bitflags::bitflags!</span> {
     <span class="doccomment">/// Describes an page fault error code.</span>
@@ -197,10 +194,7 @@
     <span class="kw">let</span> <span class="ident">active_level_4</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">active_level_4_table</span>() };
     <span class="kw">let</span> <span class="ident">offset_table</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">OffsetPageTable::new</span>(<span class="ident">active_level_4</span>, <span class="ident">PHYSICAL_MEMORY_OFFSET</span>) };
 
-    <span class="kw">unsafe</span> {
-        <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">init</span>(<span class="ident">memory_regions</span>);
-    }
-
+    <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">init</span>(<span class="ident">memory_regions</span>);
     <span class="prelude-val">Ok</span>(<span class="ident">offset_table</span>)
 }
 
@@ -214,5 +208,5 @@
     <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span><span class="ident">page_table_ptr</span>
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (60e50fc1c 2022-04-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
 </body></html>

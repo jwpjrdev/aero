@@ -458,9 +458,6 @@
 <span id="453">453</span>
 <span id="454">454</span>
 <span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
-<span id="458">458</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -545,11 +542,8 @@
 
                 <span class="kw">if</span> <span class="ident">count</span> <span class="op">==</span> <span class="number">0</span> {
                     <span class="comment">// No references to this frame, deallocate it.</span>
-                    <span class="kw">unsafe</span> {
-                        <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">deallocate_frame</span>(
-                            <span class="ident">PhysFrame</span>::<span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="ident">::containing_address</span>(<span class="self">self</span>.<span class="ident">addr</span>()),
-                        );
-                    }
+                    <span class="ident">FRAME_ALLOCATOR</span>
+                        .<span class="ident">deallocate_frame</span>(<span class="ident">PhysFrame</span>::<span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="ident">::containing_address</span>(<span class="self">self</span>.<span class="ident">addr</span>()));
 
                     <span class="kw">return</span> <span class="bool-val">true</span>;
                 }
@@ -920,5 +914,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (60e50fc1c 2022-04-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
 </body></html>

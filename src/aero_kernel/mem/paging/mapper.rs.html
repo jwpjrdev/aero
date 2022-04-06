@@ -1335,6 +1335,7 @@
 <span id="1330">1330</span>
 <span id="1331">1331</span>
 <span id="1332">1332</span>
+<span id="1333">1333</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1375,8 +1376,8 @@
 <span class="doccomment">/// the `allocate_frame` method returns only unique unused frames.</span>
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">trait</span> <span class="ident">FrameAllocator</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">PageSize</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Allocate a frame of the appropriate size and return it if possible.</span>
-    <span class="kw">fn</span> <span class="ident">allocate_frame</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span>;
-    <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>);
+    <span class="kw">fn</span> <span class="ident">allocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>);
 }
 
 <span class="doccomment">/// An empty convencience trait that requires the `Mapper` trait for all page sizes.</span>
@@ -2223,7 +2224,7 @@
         <span class="kw">let</span> <span class="ident">created</span>;
 
         <span class="kw">if</span> <span class="ident">entry</span>.<span class="ident">is_unused</span>() {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">frame</span>) <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>() } {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">frame</span>) <span class="op">=</span> <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>() {
                 <span class="ident">entry</span>.<span class="ident">set_frame</span>(<span class="ident">frame</span>, <span class="ident">insert_flags</span>);
                 <span class="ident">created</span> <span class="op">=</span> <span class="bool-val">true</span>;
             } <span class="kw">else</span> {
@@ -2496,7 +2497,8 @@
             <span class="kw">let</span> <span class="ident">created</span>;
 
             <span class="kw">if</span> <span class="op">!</span><span class="ident">entry</span>.<span class="ident">flags</span>().<span class="ident">contains</span>(<span class="ident">PageTableFlags::PRESENT</span>) {
-                <span class="kw">let</span> <span class="ident">frame</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>() }
+                <span class="kw">let</span> <span class="ident">frame</span> <span class="op">=</span> <span class="ident">FRAME_ALLOCATOR</span>
+                    .<span class="ident">allocate_frame</span>()
                     .<span class="ident">ok_or</span>(<span class="ident">MapToError::FrameAllocationFailed</span>)<span class="question-mark">?</span>;
 
                 <span class="ident">entry</span>.<span class="ident">set_frame</span>(
@@ -2668,5 +2670,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (60e50fc1c 2022-04-04)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
 </body></html>
