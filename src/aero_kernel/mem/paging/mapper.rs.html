@@ -1336,6 +1336,10 @@
 <span id="1331">1331</span>
 <span id="1332">1332</span>
 <span id="1333">1333</span>
+<span id="1334">1334</span>
+<span id="1335">1335</span>
+<span id="1336">1336</span>
+<span id="1337">1337</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -2383,6 +2387,10 @@
             <span class="ident">inner</span>: <span class="ident">MappedPageTable::new</span>(<span class="ident">page_table</span>, <span class="ident">phys_offset</span>),
         }
     }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">page_table</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="ident">PageTable</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">page_table</span>
+    }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
@@ -2670,5 +2678,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
 </body></html>

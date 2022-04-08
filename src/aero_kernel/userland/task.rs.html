@@ -1112,7 +1112,7 @@
     }
 
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">into_zombie</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="comment">// TODO: Deallocate the arch task&#39;s resources.</span>
+        <span class="self">self</span>.<span class="ident">arch_task_mut</span>().<span class="ident">dealloc</span>();
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_parent</span>() {
             <span class="ident">parent</span>.<span class="ident">remove_child</span>(<span class="self">self</span>);
@@ -1132,5 +1132,5 @@
 <span class="macro">intrusive_collections::intrusive_adapter!</span>(<span class="kw">pub</span> <span class="ident">SchedTaskAdapter</span> <span class="op">=</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span> : <span class="ident">Task</span> { <span class="ident">link</span>: <span class="ident">LinkedListLink</span> });
 <span class="macro">intrusive_collections::intrusive_adapter!</span>(<span class="kw">pub</span> <span class="ident">TaskAdapter</span> <span class="op">=</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span> : <span class="ident">Task</span> { <span class="ident">clink</span>: <span class="ident">LinkedListLink</span> });
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
 </body></html>

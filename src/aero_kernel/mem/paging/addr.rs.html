@@ -589,6 +589,11 @@
 <span id="584">584</span>
 <span id="585">585</span>
 <span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -700,6 +705,11 @@
         } <span class="kw">else</span> {
             <span class="prelude-val">None</span>
         }
+    }
+
+    <span class="doccomment">/// Converts this HHDM (Higher Half Direct Map) virtual address to its physical address.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_hhdm_phys</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">PhysAddr</span> {
+        <span class="kw">unsafe</span> { <span class="ident">PhysAddr::new</span>(<span class="self">self</span>.<span class="ident">clone</span>() <span class="op">-</span> <span class="ident"><span class="kw">crate</span>::PHYSICAL_MEMORY_OFFSET</span>) }
     }
 
     <span class="doccomment">/// Returns if the address is valid to read `sizeof(T)` bytes at the address.</span>
@@ -1176,5 +1186,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
 </body></html>

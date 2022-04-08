@@ -614,6 +614,23 @@
 <span id="609">609</span>
 <span id="610">610</span>
 <span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -677,6 +694,10 @@
                     .<span class="ident">map</span>(<span class="op">|</span><span class="ident">f</span><span class="op">|</span> <span class="ident">PhysFrame::containing_address</span>(<span class="ident">f</span>))
             })
             .<span class="ident">unwrap_or</span>(<span class="prelude-val">None</span>)
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">frame</span><span class="op">|</span> {
+                <span class="ident">frame</span>.<span class="ident">as_slice_mut</span>().<span class="ident">fill</span>(<span class="number">0</span>);
+                <span class="ident">frame</span>
+            })
     }
 
     <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span>) {
@@ -697,6 +718,10 @@
                     .<span class="ident">map</span>(<span class="op">|</span><span class="ident">f</span><span class="op">|</span> <span class="ident">PhysFrame::containing_address</span>(<span class="ident">f</span>))
             })
             .<span class="ident">unwrap_or</span>(<span class="prelude-val">None</span>)
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">frame</span><span class="op">|</span> {
+                <span class="ident">frame</span>.<span class="ident">as_slice_mut</span>().<span class="ident">fill</span>(<span class="number">0</span>);
+                <span class="ident">frame</span>
+            })
     }
 
     <span class="kw">fn</span> <span class="ident">deallocate_frame</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">frame</span>: <span class="ident">PhysFrame</span><span class="op">&lt;</span><span class="ident">Size2MiB</span><span class="op">&gt;</span>) {
@@ -1164,8 +1189,9 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dec_ref_count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">lock</span>.<span class="ident">lock</span>();
 
-        <span class="macro">assert!</span>(<span class="ident">this</span>.<span class="ident">use_count</span> <span class="op">&gt;</span> <span class="number">0</span>);
-        <span class="ident">this</span>.<span class="ident">use_count</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
+        <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">use_count</span> <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="ident">this</span>.<span class="ident">use_count</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
+        }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inc_ref_count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
@@ -1190,6 +1216,14 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset_table</span> <span class="op">=</span> <span class="ident">address_space</span>.<span class="ident">offset_page_table</span>();
 
         <span class="kw">let</span> <span class="ident">frame</span>: <span class="ident">PhysFrame</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">FRAME_ALLOCATOR</span>.<span class="ident">allocate_frame</span>().<span class="ident">unwrap</span>() };
+
+        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">FRAME_ALLOCATOR</span>
+            .<span class="number">0</span>
+            .<span class="ident">get</span>()
+            .<span class="ident">unwrap</span>()
+            .<span class="ident">lock</span>()
+            .<span class="ident">is_free</span>(<span class="ident">frame</span>.<span class="ident">start_address</span>(), <span class="number">0</span>));
+
         <span class="kw">let</span> <span class="ident">page</span> <span class="op">=</span> <span class="ident">Page</span>::<span class="op">&lt;</span><span class="ident">Size4KiB</span><span class="op">&gt;</span><span class="ident">::containing_address</span>(<span class="ident">VirtAddr::new</span>(<span class="number">0xcafebabedea</span>));
 
         <span class="kw">let</span> <span class="ident">vm_frame</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">start_address</span>().<span class="ident">as_vm_frame</span>().<span class="ident">unwrap</span>();
@@ -1226,5 +1260,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (306ba8357 2022-04-05)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
 </body></html>
