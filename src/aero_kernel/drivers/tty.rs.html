@@ -824,6 +824,41 @@
 <span id="819">819</span>
 <span id="820">820</span>
 <span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -850,6 +885,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::devfs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::rendy</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode::INodeInterface</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::VirtAddr</span>;
@@ -1088,12 +1124,12 @@
                 <span class="kw">let</span> <span class="ident">winsize</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">arg</span> <span class="kw">as</span> <span class="ident">u64</span>);
                 <span class="kw">let</span> <span class="ident">winsize</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="ident">winsize</span>.<span class="ident">as_mut_ptr</span>::<span class="op">&lt;</span><span class="ident">aero_syscall::WinSize</span><span class="op">&gt;</span>()) };
 
-                <span class="kw">let</span> (<span class="ident">rows</span>, <span class="ident">cols</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_rows_cols</span>();
+                <span class="kw">let</span> (<span class="ident">rows</span>, <span class="ident">cols</span>) <span class="op">=</span> <span class="ident">rendy::get_rows_cols</span>();
 
                 <span class="ident">winsize</span>.<span class="ident">ws_row</span> <span class="op">=</span> <span class="ident">rows</span> <span class="kw">as</span> <span class="ident">u16</span>;
                 <span class="ident">winsize</span>.<span class="ident">ws_col</span> <span class="op">=</span> <span class="ident">cols</span> <span class="kw">as</span> <span class="ident">u16</span>;
 
-                <span class="kw">let</span> (<span class="ident">xpixel</span>, <span class="ident">ypixel</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_resolution</span>();
+                <span class="kw">let</span> (<span class="ident">xpixel</span>, <span class="ident">ypixel</span>) <span class="op">=</span> <span class="ident">rendy::get_resolution</span>();
 
                 <span class="ident">winsize</span>.<span class="ident">ws_xpixel</span> <span class="op">=</span> <span class="ident">xpixel</span> <span class="kw">as</span> <span class="ident">u16</span>;
                 <span class="ident">winsize</span>.<span class="ident">ws_ypixel</span> <span class="op">=</span> <span class="ident">ypixel</span> <span class="kw">as</span> <span class="ident">u16</span>;
@@ -1197,7 +1233,7 @@
             }
 
             <span class="kw">if</span> <span class="ident">termios</span>.<span class="ident">c_lflag</span>.<span class="ident">contains</span>(<span class="ident">aero_syscall::TermiosLFlag::ECHO</span>) {
-                <span class="macro">crate::rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">character</span>);
+                <span class="macro">rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">character</span>);
             }
         };
 
@@ -1207,7 +1243,7 @@
 
                 <span class="kw">if</span> <span class="ident">stdin</span>.<span class="ident">back_buffer</span>.<span class="ident">pop</span>().<span class="ident">is_some</span>() {
                     <span class="kw">if</span> <span class="ident">termios</span>.<span class="ident">c_lflag</span>.<span class="ident">contains</span>(<span class="ident">aero_syscall::TermiosLFlag::ECHO</span>) {
-                        <span class="ident"><span class="kw">crate</span>::rendy::backspace</span>();
+                        <span class="ident">rendy::backspace</span>();
                         <span class="ident">stdin</span>.<span class="ident">cursor</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
                     }
                 }
@@ -1254,7 +1290,7 @@
                 <span class="ident">stdin</span>.<span class="ident">cursor</span> <span class="op">=</span> <span class="number">0</span>;
 
                 <span class="kw">if</span> <span class="ident">termios</span>.<span class="ident">c_lflag</span>.<span class="ident">contains</span>(<span class="ident">aero_syscall::TermiosLFlag::ECHO</span>) {
-                    <span class="macro">crate::rendy::print!</span>(<span class="string">&quot;\n&quot;</span>);
+                    <span class="macro">rendy::print!</span>(<span class="string">&quot;\n&quot;</span>);
                 }
 
                 <span class="self">self</span>.<span class="ident">block_queue</span>.<span class="ident">notify_complete</span>();
@@ -1280,8 +1316,8 @@
                     <span class="kw">return</span>;
                 }
 
-                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
-                <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">-</span> <span class="number">1</span>, <span class="ident">y</span>);
+                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+                <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">-</span> <span class="number">1</span>, <span class="ident">y</span>);
 
                 <span class="ident">stdin</span>.<span class="ident">cursor</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
             }
@@ -1295,8 +1331,8 @@
                     <span class="kw">return</span>;
                 }
 
-                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
-                <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">y</span>);
+                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+                <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">y</span>);
 
                 <span class="ident">stdin</span>.<span class="ident">advance_cursor</span>();
             }
@@ -1349,22 +1385,22 @@
 
 <span class="kw">impl</span> <span class="ident">vte::Perform</span> <span class="kw">for</span> <span class="ident">AnsiEscape</span> {
     <span class="kw">fn</span> <span class="ident">print</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">char</span>: <span class="ident">char</span>) {
-        <span class="macro">crate::rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">char</span>);
+        <span class="macro">rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">char</span>);
     }
 
     <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">byte</span>: <span class="ident">u8</span>) {
         <span class="kw">let</span> <span class="ident">char</span> <span class="op">=</span> <span class="ident">byte</span> <span class="kw">as</span> <span class="ident">char</span>;
 
         <span class="kw">match</span> <span class="ident">char</span> {
-            <span class="string">&#39;\n&#39;</span> <span class="op">|</span> <span class="string">&#39;\t&#39;</span> =&gt; <span class="macro">crate::rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">char</span>),
+            <span class="string">&#39;\n&#39;</span> <span class="op">|</span> <span class="string">&#39;\t&#39;</span> =&gt; <span class="macro">rendy::print!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">char</span>),
 
             <span class="string">&#39;\r&#39;</span> =&gt; {
-                <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
-                <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="number">0</span>, <span class="ident">y</span>)
+                <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+                <span class="ident">rendy::set_cursor_position</span>(<span class="number">0</span>, <span class="ident">y</span>)
             }
 
             <span class="string">&#39;\u{8}&#39;</span> =&gt; {
-                <span class="ident"><span class="kw">crate</span>::rendy::backspace</span>();
+                <span class="ident">rendy::backspace</span>();
             }
 
             <span class="kw">_</span> =&gt; {}
@@ -1394,7 +1430,7 @@
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">x</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">x</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> { <span class="ident">x</span> <span class="op">-</span> <span class="number">1</span> } <span class="kw">else</span> { <span class="ident">x</span> };
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">y</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">y</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> { <span class="ident">y</span> <span class="op">-</span> <span class="number">1</span> } <span class="kw">else</span> { <span class="ident">y</span> };
 
-                <span class="kw">let</span> (<span class="ident">rows</span>, <span class="ident">cols</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_term_info</span>();
+                <span class="kw">let</span> (<span class="ident">rows</span>, <span class="ident">cols</span>) <span class="op">=</span> <span class="ident">rendy::get_term_info</span>();
 
                 <span class="comment">// Make sure the provided coordinates are valid.</span>
                 <span class="kw">if</span> <span class="ident">x</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">cols</span> {
@@ -1406,14 +1442,14 @@
                 }
 
                 <span class="comment">// Move the cursor to the position.</span>
-                <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="ident">x</span>, <span class="ident">y</span>);
+                <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span>, <span class="ident">y</span>);
             }
 
             <span class="string">&#39;l&#39;</span> <span class="op">|</span> <span class="string">&#39;h&#39;</span> =&gt; <span class="kw">match</span> <span class="ident">params</span>.<span class="ident">iter</span>().<span class="ident">next</span>() {
                 <span class="prelude-val">Some</span>([<span class="number">25</span>]) =&gt; {
                     <span class="comment">// Disable the cursor if action == &#39;l` and enable it if action</span>
                     <span class="comment">// == &#39;h&#39;.</span>
-                    <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_visibility</span>(<span class="ident">action</span> <span class="op">==</span> <span class="string">&#39;h&#39;</span>)
+                    <span class="ident">rendy::set_cursor_visibility</span>(<span class="ident">action</span> <span class="op">==</span> <span class="string">&#39;h&#39;</span>)
                 }
 
                 <span class="kw">_</span> =&gt; <span class="macro">unimplemented!</span>(),
@@ -1421,30 +1457,28 @@
 
             <span class="comment">// Clears parts of the screen.</span>
             <span class="string">&#39;J&#39;</span> =&gt; {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>();
-
                 <span class="comment">// If `n` is missing, it defaults to 0.</span>
-                <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[<span class="number">0</span>])[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>().<span class="ident">next</span>().<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[<span class="number">0</span>])[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">usize</span>;
 
                 <span class="kw">match</span> <span class="ident">n</span> {
                     <span class="comment">// If `n` is 0 (or missing), clear from cursor to end of screen.</span>
                     <span class="number">0</span> =&gt; {
-                        <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
-                        <span class="kw">let</span> (<span class="ident">term_rows</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_rows_cols</span>();
+                        <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+                        <span class="kw">let</span> (<span class="ident">term_rows</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident">rendy::get_rows_cols</span>();
 
                         <span class="kw">let</span> <span class="ident">rows_remaining</span> <span class="op">=</span> <span class="ident">term_rows</span> <span class="op">-</span> (<span class="ident">y</span> <span class="op">+</span> <span class="number">1</span>);
                         <span class="kw">let</span> <span class="ident">cols_diff</span> <span class="op">=</span> <span class="ident">term_cols</span> <span class="op">-</span> (<span class="ident">x</span> <span class="op">+</span> <span class="number">1</span>);
                         <span class="kw">let</span> <span class="ident">to_clear</span> <span class="op">=</span> <span class="ident">rows_remaining</span> <span class="op">*</span> <span class="ident">term_cols</span> <span class="op">+</span> <span class="ident">cols_diff</span>;
 
-                        <span class="ident"><span class="kw">crate</span>::rendy::set_auto_flush</span>(<span class="bool-val">false</span>);
+                        <span class="ident">rendy::set_auto_flush</span>(<span class="bool-val">false</span>);
 
                         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">to_clear</span> {
-                            <span class="macro">crate::rendy::print!</span>(<span class="string">&quot; &quot;</span>);
+                            <span class="macro">rendy::print!</span>(<span class="string">&quot; &quot;</span>);
                         }
 
-                        <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="ident">x</span>, <span class="ident">y</span>);
-                        <span class="ident"><span class="kw">crate</span>::rendy::double_buffer_flush</span>();
-                        <span class="ident"><span class="kw">crate</span>::rendy::set_auto_flush</span>(<span class="bool-val">true</span>);
+                        <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span>, <span class="ident">y</span>);
+                        <span class="ident">rendy::double_buffer_flush</span>();
+                        <span class="ident">rendy::set_auto_flush</span>(<span class="bool-val">true</span>);
                     }
 
                     <span class="number">1</span> =&gt; <span class="macro">unimplemented!</span>(),
@@ -1453,7 +1487,7 @@
                     <span class="comment">//</span>
                     <span class="comment">// TODO(Andy-Python-Programmer): When we support scrollback buffer, if `n` is</span>
                     <span class="comment">// 3, clear the entire scrollback buffer as well.</span>
-                    <span class="number">2</span> <span class="op">|</span> <span class="number">3</span> =&gt; <span class="ident"><span class="kw">crate</span>::rendy::clear_screen</span>(<span class="bool-val">false</span>),
+                    <span class="number">2</span> <span class="op">|</span> <span class="number">3</span> =&gt; <span class="ident">rendy::clear_screen</span>(<span class="bool-val">false</span>),
 
                     <span class="comment">// Unknown value, do nothing.</span>
                     <span class="kw">_</span> =&gt; <span class="macro">unimplemented!</span>(),
@@ -1461,13 +1495,11 @@
             }
 
             <span class="string">&#39;C&#39;</span> =&gt; {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>();
-
                 <span class="comment">// If `n` is missing, it defaults to 1.</span>
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[<span class="number">1</span>])[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>().<span class="ident">next</span>().<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[<span class="number">1</span>])[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">usize</span>;
 
-                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
-                <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_rows_cols</span>();
+                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+                <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident">rendy::get_rows_cols</span>();
 
                 <span class="kw">if</span> <span class="ident">x</span> <span class="op">+</span> <span class="ident">n</span> <span class="op">&gt;</span> <span class="ident">term_cols</span> <span class="op">-</span> <span class="number">1</span> {
                     <span class="ident">n</span> <span class="op">=</span> (<span class="ident">term_cols</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">-</span> <span class="ident">x</span>;
@@ -1477,16 +1509,61 @@
                     <span class="ident">n</span> <span class="op">=</span> <span class="number">1</span>;
                 }
 
-                <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">+</span> <span class="ident">n</span>, <span class="ident">y</span>);
+                <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">+</span> <span class="ident">n</span>, <span class="ident">y</span>);
+            }
+
+            <span class="string">&#39;K&#39;</span> =&gt; {
+                <span class="comment">// If `n` is missing, it defaults to 0.</span>
+                <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>().<span class="ident">next</span>().<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[<span class="number">0</span>])[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">usize</span>;
+
+                <span class="comment">// NOTE: The cursor position does not change.</span>
+                <span class="kw">match</span> <span class="ident">n</span> {
+                    <span class="comment">// If `n` is 0 (or missing), clear from cursor to the end of the line.</span>
+                    <span class="number">0</span> =&gt; {
+                        <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+                        <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident">rendy::get_rows_cols</span>();
+
+                        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="ident">x</span>..<span class="ident">term_cols</span> {
+                            <span class="macro">rendy::print!</span>(<span class="string">&quot; &quot;</span>);
+                        }
+
+                        <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span>, <span class="ident">y</span>);
+                    }
+
+                    <span class="comment">// If `n` is 1, clear from cursor to beginning of the line.</span>
+                    <span class="number">1</span> =&gt; {
+                        <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+
+                        <span class="ident">rendy::set_cursor_position</span>(<span class="number">0</span>, <span class="ident">y</span>);
+
+                        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">x</span> {
+                            <span class="macro">rendy::print!</span>(<span class="string">&quot; &quot;</span>)
+                        }
+                    }
+
+                    <span class="comment">// If `n` is 2, clear entire line.</span>
+                    <span class="number">2</span> =&gt; {
+                        <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">term_cols</span>) <span class="op">=</span> <span class="ident">rendy::get_rows_cols</span>();
+                        <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
+
+                        <span class="ident">rendy::set_cursor_position</span>(<span class="number">0</span>, <span class="ident">y</span>);
+
+                        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">term_cols</span> {
+                            <span class="macro">rendy::print!</span>(<span class="string">&quot; &quot;</span>)
+                        }
+
+                        <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span>, <span class="ident">y</span>);
+                    }
+
+                    <span class="kw">_</span> =&gt; <span class="macro">unimplemented!</span>(),
+                }
             }
 
             <span class="string">&#39;D&#39;</span> =&gt; {
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>();
-
                 <span class="comment">// If `n` is missing, it defaults to 1.</span>
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">next</span>().<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[<span class="number">1</span>])[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>().<span class="ident">next</span>().<span class="ident">unwrap_or</span>(<span class="kw-2">&amp;</span>[<span class="number">1</span>])[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">usize</span>;
 
-                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::rendy::get_cursor_position</span>();
+                <span class="kw">let</span> (<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">rendy::get_cursor_position</span>();
 
                 <span class="comment">// If the cursor is already at the edge of the screen, this has no effect.</span>
                 <span class="kw">if</span> <span class="ident">n</span> <span class="op">&gt;</span> <span class="ident">x</span> {
@@ -1497,13 +1574,12 @@
                     <span class="ident">n</span> <span class="op">=</span> <span class="number">1</span>;
                 }
 
-                <span class="ident"><span class="kw">crate</span>::rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">-</span> <span class="ident">n</span>, <span class="ident">y</span>);
+                <span class="ident">rendy::set_cursor_position</span>(<span class="ident">x</span> <span class="op">-</span> <span class="ident">n</span>, <span class="ident">y</span>);
             }
 
             <span class="comment">// Sets colors and style of the characters following this code.</span>
             <span class="string">&#39;m&#39;</span> =&gt; {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">piter</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">iter</span>();
-
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bright</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
                 <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">param</span>) <span class="op">=</span> <span class="ident">piter</span>.<span class="ident">next</span>() {
@@ -1516,7 +1592,7 @@
                                 <span class="ident">bright</span> <span class="op">=</span> <span class="bool-val">false</span>;
                                 <span class="comment">// TODO: Turn off dim.</span>
 
-                                <span class="ident"><span class="kw">crate</span>::rendy::reset_default</span>();
+                                <span class="ident">rendy::reset_default</span>();
                             }
 
                             <span class="comment">// Bold or increased intensity:</span>
@@ -1552,7 +1628,7 @@
                                             <span class="ident">ANSI_COLORS</span>[<span class="ident">color</span> <span class="kw">as</span> <span class="ident">usize</span>]
                                         };
 
-                                        <span class="ident"><span class="kw">crate</span>::rendy::set_text_fg</span>(<span class="ident">ccode</span>);
+                                        <span class="ident">rendy::set_text_fg</span>(<span class="ident">ccode</span>);
                                     }
 
                                     <span class="ident">ParsedColor::Background</span>(<span class="ident">color</span>) =&gt; {
@@ -1562,7 +1638,7 @@
                                             <span class="ident">ANSI_COLORS</span>[<span class="ident">color</span> <span class="kw">as</span> <span class="ident">usize</span>]
                                         };
 
-                                        <span class="ident"><span class="kw">crate</span>::rendy::set_text_bg</span>(<span class="ident">ccode</span>);
+                                        <span class="ident">rendy::set_text_bg</span>(<span class="ident">ccode</span>);
                                     }
 
                                     <span class="ident">ParsedColor::Unknown</span> =&gt; {
@@ -1613,17 +1689,11 @@
 
                                         <span class="comment">// Background</span>
                                         <span class="kw">if</span> <span class="ident">code</span> <span class="op">==</span> <span class="number">48</span> {
-                                            <span class="ident">run_special_parser</span>(
-                                                <span class="ident"><span class="kw">crate</span>::rendy::set_text_bg</span>,
-                                                <span class="kw-2">&amp;mut</span> <span class="ident">piter</span>,
-                                            );
+                                            <span class="ident">run_special_parser</span>(<span class="ident">rendy::set_text_bg</span>, <span class="kw-2">&amp;mut</span> <span class="ident">piter</span>);
                                         }
                                         <span class="comment">// Foreground</span>
                                         <span class="kw">else</span> <span class="kw">if</span> <span class="ident">code</span> <span class="op">==</span> <span class="number">38</span> {
-                                            <span class="ident">run_special_parser</span>(
-                                                <span class="ident"><span class="kw">crate</span>::rendy::set_text_fg</span>,
-                                                <span class="kw-2">&amp;mut</span> <span class="ident">piter</span>,
-                                            );
+                                            <span class="ident">run_special_parser</span>(<span class="ident">rendy::set_text_fg</span>, <span class="kw-2">&amp;mut</span> <span class="ident">piter</span>);
                                         }
                                     }
                                 }
@@ -1646,5 +1716,5 @@
 
 <span class="macro">crate::module_init!</span>(<span class="ident">init_tty</span>);
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e745b4ddb 2022-04-07)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (90ca44752 2022-04-11)" ></div>
 </body></html>
