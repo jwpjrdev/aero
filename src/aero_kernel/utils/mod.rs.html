@@ -575,7 +575,7 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">aero_test::test</span>]</span>
+    <span class="attribute">#[<span class="ident">aero_proc::test</span>]</span>
     <span class="kw">fn</span> <span class="ident">unsigned_div_ceil</span>() {
         <span class="macro">assert_eq!</span>((<span class="number">8usize</span>).<span class="ident">ceil_div</span>(<span class="number">3</span>), <span class="number">3</span>);
         <span class="macro">assert_eq!</span>((<span class="number">7usize</span>).<span class="ident">ceil_div</span>(<span class="number">4</span>), <span class="number">2</span>);

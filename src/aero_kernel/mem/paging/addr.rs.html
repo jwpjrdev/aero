@@ -1160,13 +1160,13 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">aero_test::test</span>]</span>
+    <span class="attribute">#[<span class="ident">aero_proc::test</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">test_is_aligned</span>() {
         <span class="macro">assert!</span>(<span class="ident">is_aligned</span>(<span class="number">0x1000</span>, <span class="number">0x1000</span>));
         <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">is_aligned</span>(<span class="number">69</span>, <span class="number">0x1000</span>));
     }
 
-    <span class="attribute">#[<span class="ident">aero_test::test</span>]</span>
+    <span class="attribute">#[<span class="ident">aero_proc::test</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">test_align_up</span>() {
         <span class="comment">// align 1</span>
         <span class="macro">assert_eq!</span>(<span class="ident">align_up</span>(<span class="number">0</span>, <span class="number">1</span>), <span class="number">0</span>);

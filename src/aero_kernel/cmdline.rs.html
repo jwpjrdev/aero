@@ -252,7 +252,7 @@
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">aero_test::test</span>]</span>
+    <span class="attribute">#[<span class="ident">aero_proc::test</span>]</span>
     <span class="kw">fn</span> <span class="ident">number_parser_test</span>() {
         <span class="macro">assert_eq!</span>(<span class="ident">parse_number</span>(<span class="string">&quot;0xdeadbeef&quot;</span>).<span class="ident">unwrap</span>(), <span class="number">0xdeadbeef</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">parse_number</span>(<span class="string">&quot;0o546&quot;</span>).<span class="ident">unwrap</span>(), <span class="number">0o546</span>);
