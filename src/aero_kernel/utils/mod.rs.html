@@ -273,6 +273,25 @@
 <span id="268">268</span>
 <span id="269">269</span>
 <span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -295,36 +314,55 @@
 <span class="kw">use</span> <span class="ident">alloc</span>::{<span class="ident">alloc::alloc_zeroed</span>, <span class="ident">sync::Arc</span>};
 <span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">alloc::Layout</span>, <span class="ident">any::Any</span>, <span class="ident">cell::UnsafeCell</span>, <span class="ident">mem</span>, <span class="ident">ptr::Unique</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">apic::get_cpu_count</span>, <span class="ident">mem::paging::align_down</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{
+    <span class="ident">apic::get_cpu_count</span>,
+    <span class="ident">mem::paging</span>::{<span class="ident">align_down</span>, <span class="ident">VirtAddr</span>},
+};
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">buffer</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">io</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">linker</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">sync</span>;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_slice</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">ptr</span>: <span class="kw-2">*const</span> <span class="ident">T</span>, <span class="ident">len</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">T</span>]<span class="op">&gt;</span> {
-    <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
-        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>[])
-    } <span class="kw">else</span> {
-        <span class="prelude-val">Some</span>(<span class="kw">unsafe</span> { <span class="ident">core::slice::from_raw_parts</span>(<span class="ident">ptr</span>, <span class="ident">len</span>) })
-    }
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_mut_ptr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">ptr</span>: <span class="kw-2">*mut</span> <span class="ident">T</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw-2">mut</span> <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="ident">VirtAddr::new</span>(<span class="ident">ptr</span> <span class="kw">as</span> <span class="kw">_</span>).<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_ptr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">ptr</span>: <span class="kw-2">*const</span> <span class="ident">T</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="comment">// SAFETY: Safe to cast const pointer to mutable since the pointer is not</span>
+    <span class="comment">// mutated and the returned reference is immutable.</span>
+    <span class="ident">validate_mut_ptr</span>(<span class="ident">ptr</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">T</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">e</span>)
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_slice_mut</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">ptr</span>: <span class="kw-2">*mut</span> <span class="ident">T</span>, <span class="ident">len</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw-2">mut</span> [<span class="ident">T</span>]<span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">len</span> <span class="op">==</span> <span class="number">0</span> {
         <span class="prelude-val">Some</span>(<span class="kw-2">&amp;mut</span> [])
     } <span class="kw">else</span> {
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">validate_ptr</span>(<span class="ident">ptr</span>)<span class="question-mark">?</span>; <span class="comment">// ensure non-null and in-range</span>
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">validate_ptr</span>(<span class="kw">unsafe</span> { <span class="ident">ptr</span>.<span class="ident">add</span>(<span class="ident">len</span>) })<span class="question-mark">?</span>; <span class="comment">// ensure in-range</span>
+
+        <span class="comment">// SAFETY: We have validated the pointer above.</span>
         <span class="prelude-val">Some</span>(<span class="kw">unsafe</span> { <span class="ident">core::slice::from_raw_parts_mut</span>(<span class="ident">ptr</span>, <span class="ident">len</span>) })
     }
 }
 
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_slice</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">ptr</span>: <span class="kw-2">*const</span> <span class="ident">T</span>, <span class="ident">len</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">T</span>]<span class="op">&gt;</span> {
+    <span class="comment">// SAFETY: Safe to cast const pointer to mutable since the pointer is not</span>
+    <span class="comment">// mutated and the returned reference is immutable.</span>
+    <span class="ident">validate_slice_mut</span>(<span class="ident">ptr</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">T</span>, <span class="ident">len</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">e</span>)
+}
+
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_str</span>(<span class="ident">ptr</span>: <span class="kw-2">*const</span> <span class="ident">u8</span>, <span class="ident">len</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="ident">validate_slice</span>(<span class="ident">ptr</span>, <span class="ident">len</span>)<span class="question-mark">?</span>;
+    <span class="ident">core::str::from_utf8</span>(<span class="ident">slice</span>).<span class="ident">ok</span>()
+}
 
-    <span class="kw">match</span> <span class="ident">core::str::from_utf8</span>(<span class="ident">slice</span>) {
-        <span class="prelude-val">Ok</span>(<span class="ident">string</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">string</span>),
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
-    }
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_array_mut</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="kw">const</span> <span class="ident">COUNT</span>: <span class="ident">usize</span><span class="op">&gt;</span>(<span class="ident">ptr</span>: <span class="kw-2">*mut</span> <span class="ident">T</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="kw-2">mut</span> [<span class="ident">T</span>; <span class="ident">COUNT</span>]<span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="ident">validate_slice_mut</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">ptr</span>, <span class="ident">COUNT</span>);
+    <span class="comment">// Convert the validated slice to an array.</span>
+    <span class="comment">//</span>
+    <span class="comment">// SAFETY: We know that `slice` is a valid slice of `COUNT` elements.</span>
+    <span class="ident">slice</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="ident">e</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*mut</span> [<span class="ident">T</span>; <span class="ident">COUNT</span>]) })
 }
 
 <span class="kw">pub</span> <span class="kw">macro</span> <span class="ident">intel_asm</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">code</span>:<span class="ident">expr</span>,)<span class="op">+</span>) {
@@ -544,5 +582,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (90ca44752 2022-04-11)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (311e2683e 2022-04-18)" ></div>
 </body></html>

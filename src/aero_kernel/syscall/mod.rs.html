@@ -265,6 +265,8 @@
 <span id="260">260</span>
 <span id="261">261</span>
 <span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -456,7 +458,6 @@
         <span class="ident">SYS_GETDENTS</span> =&gt; <span class="ident">fs::getdents</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_GETCWD</span> =&gt; <span class="ident">fs::getcwd</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_CHDIR</span> =&gt; <span class="ident">fs::chdir</span>(<span class="ident">b</span>, <span class="ident">c</span>),
-        <span class="ident">SYS_MKDIR</span> =&gt; <span class="ident">fs::mkdir</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_MKDIR_AT</span> =&gt; <span class="ident">fs::mkdirat</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_RMDIR</span> =&gt; <span class="ident">fs::rmdir</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_IOCTL</span> =&gt; <span class="ident">fs::ioctl</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
@@ -481,6 +482,9 @@
         <span class="ident">SYS_IPC_RECV</span> =&gt; <span class="ident">ipc::recv</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>),
         <span class="ident">SYS_IPC_DISCOVER_ROOT</span> =&gt; <span class="ident">ipc::discover_root</span>(),
         <span class="ident">SYS_IPC_BECOME_ROOT</span> =&gt; <span class="ident">ipc::become_root</span>(),
+
+        <span class="comment">// Syscall aliases (this should be handled in aero_syscall)</span>
+        <span class="ident">SYS_MKDIR</span> =&gt; <span class="ident">fs::mkdirat</span>(<span class="ident">aero_syscall::AT_FDCWD</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">c</span>, <span class="ident">d</span>),
 
         <span class="kw">_</span> =&gt; {
             <span class="macro">log::error!</span>(<span class="string">&quot;invalid syscall: {:#x}&quot;</span>, <span class="ident">a</span>);
@@ -528,5 +532,5 @@
     <span class="ident">result_usize</span>
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (90ca44752 2022-04-11)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (311e2683e 2022-04-18)" ></div>
 </body></html>

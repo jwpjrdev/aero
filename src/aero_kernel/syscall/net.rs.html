@@ -53,10 +53,14 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">aero_syscall</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">fs::inode::DirEntry</span>, <span class="ident">socket::unix</span>::<span class="kw-2">*</span>, <span class="ident">userland::scheduler</span>};
 
+<span class="attribute">#[<span class="ident">aero_proc::syscall</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">socket</span>(
     <span class="ident">domain</span>: <span class="ident">usize</span>,
     <span class="ident">socket_type</span>: <span class="ident">usize</span>,
@@ -85,6 +89,8 @@
     <span class="prelude-val">Ok</span>(<span class="ident">fd</span>)
 }
 
+<span class="comment">// TODO: Figure out how to handle this.</span>
+<span class="attribute">#[<span class="ident">aero_proc::syscall</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind</span>(<span class="ident">fd</span>: <span class="ident">usize</span>, <span class="ident">address</span>: <span class="ident">usize</span>, <span class="ident">length</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">SocketAddr</span>) };
     <span class="kw">let</span> <span class="ident">current_task</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>();
@@ -104,5 +110,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (90ca44752 2022-04-11)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (311e2683e 2022-04-18)" ></div>
 </body></html>
