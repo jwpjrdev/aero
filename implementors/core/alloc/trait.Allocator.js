@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["aero_kernel"] = [{"text":"impl Allocator for <a class=\"struct\" href=\"aero_kernel/mem/paging/frame/struct.BootAllocRef.html\" title=\"struct aero_kernel::mem::paging::frame::BootAllocRef\">BootAllocRef</a>","synthetic":false,"types":["aero_kernel::mem::paging::frame::BootAllocRef"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
