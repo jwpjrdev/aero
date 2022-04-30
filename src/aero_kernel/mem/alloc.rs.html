@@ -344,6 +344,24 @@
 <span id="339">339</span>
 <span id="340">340</span>
 <span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -667,6 +685,24 @@
 
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">dealloc</span>(<span class="ident">ptr</span>, <span class="ident">layout</span>)
     }
+
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">realloc</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ptr</span>: <span class="kw-2">*mut</span> <span class="ident">u8</span>, <span class="ident">layout</span>: <span class="ident">Layout</span>, <span class="ident">new_size</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">u8</span> {
+        <span class="comment">// SAFETY: the caller must ensure that the `new_size` does not overflow.</span>
+        <span class="comment">// `layout.align()` comes from a `Layout` and is thus guaranteed to be valid.</span>
+        <span class="kw">let</span> <span class="ident">new_layout</span> <span class="op">=</span> <span class="ident">Layout::from_size_align_unchecked</span>(<span class="ident">new_size</span>, <span class="ident">layout</span>.<span class="ident">align</span>());
+        <span class="comment">// SAFETY: the caller must ensure that `new_layout` is greater than zero.</span>
+        <span class="kw">let</span> <span class="ident">new_ptr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">alloc</span>(<span class="ident">new_layout</span>);
+
+        <span class="comment">// NOTE: It is fine to pass a NULL pointer to `realloc` so, we need to check for that.</span>
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">new_ptr</span>.<span class="ident">is_null</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">ptr</span>.<span class="ident">is_null</span>() {
+            <span class="comment">// SAFETY: the previously allocated block cannot overlap the newly allocated block.</span>
+            <span class="comment">// The safety contract for `dealloc` must be upheld by the caller.</span>
+            <span class="ident">core::ptr::copy_nonoverlapping</span>(<span class="ident">ptr</span>, <span class="ident">new_ptr</span>, <span class="ident">core::cmp::min</span>(<span class="ident">layout</span>.<span class="ident">size</span>(), <span class="ident">new_size</span>));
+            <span class="self">self</span>.<span class="ident">dealloc</span>(<span class="ident">ptr</span>, <span class="ident">layout</span>);
+        }
+
+        <span class="ident">new_ptr</span>
+    }
 }
 
 <span class="attribute">#[<span class="ident">alloc_error_handler</span>]</span>
@@ -686,5 +722,5 @@
     <span class="ident">kmemleak::MEM_LEAK_CATCHER</span>.<span class="ident">init</span>();
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (e85edd9a8 2022-04-28)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (a707f4010 2022-04-29)" ></div>
 </body></html>
