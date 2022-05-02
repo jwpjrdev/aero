@@ -460,7 +460,7 @@
     <span class="ident">apic::init</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded APIC&quot;</span>);
 
-    <span class="ident">acpi::init</span>(<span class="ident">rsdp_address</span>).<span class="ident">unwrap</span>();
+    <span class="ident">acpi::init</span>(<span class="ident">rsdp_address</span>);
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded ACPI&quot;</span>);
 
     <span class="ident">tls::init</span>(<span class="number">0</span>);
@@ -538,5 +538,5 @@
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (a707f4010 2022-04-29)" ></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (4dd8b420c 2022-05-01)" ></div>
 </body></html>

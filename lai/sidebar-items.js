@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["create_namespace","Creates the ACPI namespace."],["enable_acpi","Enables ACPI SCI."],["enter_sleep","Enters a sleeping state."],["init",""],["reset",""],["set_acpi_revision","Initializes the ACPI revision."]],"trait":[["Host",""]]});
