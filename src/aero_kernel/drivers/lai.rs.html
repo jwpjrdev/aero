@@ -124,10 +124,6 @@
 <span id="119">119</span>
 <span id="120">120</span>
 <span id="121">121</span>
-<span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi::aml</span>;
@@ -172,17 +168,14 @@
     }
 
     <span class="comment">// Port I/O functions:</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">outb</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">port</span>: <span class="ident">u16</span>, <span class="ident">value</span>: <span class="ident">u8</span>) {
         <span class="kw">unsafe</span> { <span class="ident">io::outb</span>(<span class="ident">port</span>, <span class="ident">value</span>) }
     }
 
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">outw</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">port</span>: <span class="ident">u16</span>, <span class="ident">value</span>: <span class="ident">u16</span>) {
         <span class="kw">unsafe</span> { <span class="ident">io::outw</span>(<span class="ident">port</span>, <span class="ident">value</span>) }
     }
 
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">outd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">port</span>: <span class="ident">u16</span>, <span class="ident">value</span>: <span class="ident">u32</span>) {
         <span class="kw">unsafe</span> { <span class="ident">io::outl</span>(<span class="ident">port</span>, <span class="ident">value</span>) }
     }
@@ -221,7 +214,6 @@
     }
 
     <span class="comment">// Memory functions:</span>
-    <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">map</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">address</span>: <span class="ident">usize</span>, <span class="ident">_count</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">u8</span> {
         <span class="ident">PhysAddr::new</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="ident">u64</span>)
             .<span class="ident">as_hhdm_virt</span>()
