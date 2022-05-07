@@ -270,6 +270,13 @@
 <span id="265">265</span>
 <span id="266">266</span>
 <span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -298,6 +305,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">tls</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi::aml</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::apic</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::cmdline</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem</span>;
@@ -313,6 +321,8 @@
 
 <span class="kw">use</span> <span class="ident">raw_cpuid::CpuId</span>;
 <span class="kw">use</span> <span class="ident">stivale_boot::v2</span>::<span class="kw-2">*</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::interrupts::INTERRUPT_CONTROLLER</span>;
 
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>, <span class="ident">align</span>(<span class="number">4096</span>))]</span>
 <span class="kw">struct</span> <span class="ident">P2Align12</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">T</span>);
@@ -504,6 +514,10 @@
     <span class="comment">// Architecture init is done. Now move on to the non-architecture specific</span>
     <span class="comment">// initialization of the AP.</span>
     <span class="ident"><span class="kw">crate</span>::aero_ap_main</span>(<span class="ident">ap_id</span>);
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">enable_acpi</span>() {
+    <span class="ident">aml::get_subsystem</span>().<span class="ident">enable_acpi</span>(<span class="ident">INTERRUPT_CONTROLLER</span>.<span class="ident">method</span>() <span class="kw">as</span> <span class="kw">_</span>);
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init_cpu</span>() {

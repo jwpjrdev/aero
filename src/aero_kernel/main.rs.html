@@ -179,6 +179,8 @@
 <span id="174">174</span>
 <span id="175">175</span>
 <span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -324,6 +326,8 @@
 
     <span class="ident">modules::init</span>();
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded kernel modules&quot;</span>);
+
+    <span class="ident">arch::enable_acpi</span>();
 
     <span class="ident">drivers::pci::init</span>(<span class="kw-2">&amp;mut</span> <span class="ident">offset_table</span>);
     <span class="macro">log::info!</span>(<span class="string">&quot;loaded PCI driver&quot;</span>);

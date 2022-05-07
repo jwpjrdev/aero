@@ -32,6 +32,13 @@
 <span id="27">27</span>
 <span id="28">28</span>
 <span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">spin::Once</span>;
 
@@ -44,6 +51,13 @@
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AmlSubsystem</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> {
     <span class="kw">fn</span> <span class="ident">enter_state</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">state</span>: <span class="ident">SleepState</span>);
+    <span class="doccomment">/// Ensures that the system control interrupt (SCI) is properly</span>
+    <span class="doccomment">/// configured, disables SCI event sources, installs the SCI handler, and</span>
+    <span class="doccomment">/// transfers the system hardware into ACPI mode.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ## Parameters</span>
+    <span class="doccomment">/// * `mode` - IRQ mode (ACPI spec section 5.8.1)</span>
+    <span class="kw">fn</span> <span class="ident">enable_acpi</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">mode</span>: <span class="ident">u32</span>);
 }
 
 <span class="kw">static</span> <span class="ident">AML_SUBSYSTEM</span>: <span class="ident">Once</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AmlSubsystem</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Once::new</span>();
