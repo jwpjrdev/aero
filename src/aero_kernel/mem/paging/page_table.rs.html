@@ -768,7 +768,7 @@
         <span class="self">self</span>.<span class="ident">for_entries_mut</span>(<span class="ident">flags</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">_entry</span>, <span class="ident">table</span><span class="op">|</span> {
             <span class="ident">table</span>.<span class="ident">for_entries_mut</span>(<span class="ident">flags</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">_entry</span>, <span class="ident">table</span><span class="op">|</span> {
                 <span class="ident">table</span>.<span class="ident">for_entries_mut</span>(<span class="ident">flags</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">_entry</span>, <span class="ident">table</span><span class="op">|</span> {
-                    <span class="ident">table</span>.<span class="ident">for_entries_mut</span>(<span class="ident">flags</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">entry</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">fun</span>(<span class="ident">entry</span>))<span class="question-mark">?</span>;
+                    <span class="ident">table</span>.<span class="ident">for_entries_mut</span>(<span class="ident">flags</span>, <span class="op">|</span><span class="kw">_</span>, <span class="ident">entry</span>, <span class="kw">_</span><span class="op">|</span> <span class="comment">/* fun(entry) */</span> <span class="prelude-val">Ok</span>(()))<span class="question-mark">?</span>;
                     <span class="prelude-val">Ok</span>(())
                 })<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(())
