@@ -114,8 +114,21 @@
 <span id="109">109</span>
 <span id="110">110</span>
 <span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi::aml</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi::fadt</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::acpi::get_acpi_table</span>;
 
@@ -214,6 +227,14 @@
     }
 }
 
+<span class="kw">struct</span> <span class="ident">LaiSubsystem</span>;
+
+<span class="kw">impl</span> <span class="ident">aml::AmlSubsystem</span> <span class="kw">for</span> <span class="ident">LaiSubsystem</span> {
+    <span class="kw">fn</span> <span class="ident">enter_state</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">state</span>: <span class="ident">aml::SleepState</span>) {
+        <span class="ident">lai::enter_sleep</span>(<span class="ident">state</span> <span class="kw">as</span> <span class="ident">u8</span>)
+    }
+}
+
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init_lai</span>() {
     <span class="kw">let</span> <span class="ident">lai_host</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">LaiHost</span>);
     <span class="ident">lai::init</span>(<span class="ident">lai_host</span>);
@@ -222,9 +243,12 @@
     <span class="ident">lai::create_namespace</span>();
 
     <span class="ident">lai::enable_acpi</span>(<span class="number">1</span>);
+
+    <span class="kw">let</span> <span class="ident">subsystem</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">LaiSubsystem</span>);
+    <span class="ident">aml::init</span>(<span class="ident">subsystem</span>);
 }
 
 <span class="macro">crate::module_init!</span>(<span class="ident">init_lai</span>);
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (30f386087 2022-05-05)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.62.0-nightly (77652b9ef 2022-05-06)" ></div>
 </body></html>
