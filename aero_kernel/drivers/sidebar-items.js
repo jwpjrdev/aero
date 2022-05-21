@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["block",""],["keyboard",""],["lai",""],["pci",""],["tty",""],["uart_16550",""]]});
+initSidebarItems({"mod":[["block",""],["drm",""],["keyboard",""],["lai",""],["pci",""],["tty",""],["uart_16550",""]]});
