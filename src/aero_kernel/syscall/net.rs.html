@@ -58,6 +58,13 @@
 <span id="51">51</span>
 <span id="52">52</span>
 <span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">aero_syscall</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">fs::inode::DirEntry</span>, <span class="ident">socket::unix</span>::<span class="kw-2">*</span>, <span class="ident">userland::scheduler</span>};
@@ -72,10 +79,7 @@
         (<span class="ident">AF_UNIX</span>, <span class="ident">SOCK_STREAM</span>, <span class="number">0</span>) =&gt; <span class="ident">UnixSocket::new</span>(),
         (<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
             <span class="macro">log::warn!</span>(
-                <span class="string">&quot;unsupported socket type: domain={}, socket_type={}, protocol={}&quot;</span>,
-                <span class="ident">domain</span>,
-                <span class="ident">socket_type</span>,
-                <span class="ident">protocol</span>
+                <span class="string">&quot;unsupported socket type: domain={domain}, socket_type={socket_type}, protocol={protocol}&quot;</span>
             );
 
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EINVAL</span>);
@@ -94,7 +98,17 @@
 <span class="comment">// TODO: Figure out how to handle this.</span>
 <span class="attribute">#[<span class="ident">aero_proc::syscall</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind</span>(<span class="ident">fd</span>: <span class="ident">usize</span>, <span class="ident">address</span>: <span class="ident">usize</span>, <span class="ident">length</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">SocketAddr</span>) };
+    <span class="kw">let</span> <span class="ident">family</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">i32</span>) };
+    <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">family</span> <span class="kw">as</span> <span class="ident">usize</span> {
+        <span class="ident">AF_UNIX</span> =&gt; <span class="ident">SocketAddr::Unix</span>(<span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">SocketAddrUnix</span>) }),
+
+        <span class="kw">_</span> =&gt; {
+            <span class="macro">log::warn!</span>(<span class="string">&quot;unsupported address family: {}&quot;</span>, <span class="ident">family</span>);
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EINVAL</span>);
+        }
+    };
+
+    <span class="comment">// let address = unsafe { &amp;*(address as *const SocketAddr) };</span>
     <span class="kw">let</span> <span class="ident">current_task</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>();
     <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">current_task</span>.<span class="ident">file_table</span>.<span class="ident">get_handle</span>(<span class="ident">fd</span>);
 
@@ -112,5 +126,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (e6a4afc3a 2022-05-20)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (1fede1753 2022-05-28)" ></div>
 </body></html>

@@ -321,6 +321,28 @@
 <span id="314">314</span>
 <span id="315">315</span>
 <span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -355,6 +377,12 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache</span>::{<span class="ident">DirCacheItem</span>, <span class="ident">INodeCacheItem</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode::FileType</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::FileSystemError</span>;
+
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">DuplicateHint</span> {
+    <span class="ident">Exact</span>(<span class="ident">usize</span>),
+    <span class="ident">Any</span>,
+    <span class="ident">GreatorOrEqual</span>(<span class="ident">usize</span>),
+}
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FileHandle</span> {
     <span class="kw">pub</span> <span class="ident">fd</span>: <span class="ident">usize</span>,
@@ -538,51 +566,67 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">duplicate_at</span>(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">fd</span>: <span class="ident">usize</span>,
-        <span class="ident">new_fd</span>: <span class="ident">usize</span>,
-        <span class="ident">flags</span>: <span class="ident">OpenFlags</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">aero_syscall::AeroSyscallError</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="self">self</span>
-            .<span class="ident">get_handle</span>(<span class="ident">fd</span>)
-            .<span class="ident">ok_or</span>(<span class="ident">aero_syscall::AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">write</span>();
-
-        <span class="kw">if</span> <span class="ident">files</span>[<span class="ident">new_fd</span>].<span class="ident">is_none</span>() {
-            <span class="ident">files</span>[<span class="ident">new_fd</span>] <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">handle</span>.<span class="ident">duplicate</span>(<span class="ident">flags</span>)<span class="question-mark">?</span>);
-            <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">handle</span>.<span class="ident">duplicate</span>(<span class="ident">flags</span>)<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">old</span> <span class="op">=</span> <span class="ident">files</span>[<span class="ident">new_fd</span>]
-                .<span class="ident">take</span>()
-                .<span class="ident">expect</span>(<span class="string">&quot;duplicate_at: failed to take the value at new_fd&quot;</span>);
-
-            <span class="ident">old</span>.<span class="ident">inode</span>.<span class="ident">inode</span>().<span class="ident">close</span>(<span class="ident">old</span>.<span class="ident">flags</span>);
-            <span class="ident">files</span>[<span class="ident">new_fd</span>] <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">handle</span>);
-
-            <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
-        }
-    }
-
+    <span class="doccomment">/// Duplicates the provided file descriptor based on the provided duplicate</span>
+    <span class="doccomment">/// descriptor hint. Check out the documentation for [`DuplicateHint`] for more</span>
+    <span class="doccomment">/// information.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">duplicate</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">fd</span>: <span class="ident">usize</span>,
+        <span class="ident">hint</span>: <span class="ident">DuplicateHint</span>,
         <span class="ident">flags</span>: <span class="ident">OpenFlags</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">aero_syscall::AeroSyscallError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">get_handle</span>(<span class="ident">fd</span>)
             .<span class="ident">ok_or</span>(<span class="ident">aero_syscall::AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">write</span>();
+        <span class="kw">let</span> <span class="ident">find_from</span> <span class="op">=</span> <span class="op">|</span><span class="ident">files</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">FileHandle</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">start</span>: <span class="ident">usize</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="ident">array</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">files</span>[<span class="ident">start</span>..];
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">index</span>, <span class="ident">f</span>)) <span class="op">=</span> <span class="ident">files</span>.<span class="ident">iter_mut</span>().<span class="ident">enumerate</span>().<span class="ident">find</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="number">1</span>.<span class="ident">is_none</span>()) {
-            <span class="kw-2">*</span><span class="ident">f</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">handle</span>.<span class="ident">duplicate</span>(<span class="ident">flags</span>)<span class="question-mark">?</span>);
-            <span class="prelude-val">Ok</span>(<span class="ident">index</span>)
-        } <span class="kw">else</span> {
+            <span class="comment">// Loop over the current file descriptor table and find the first</span>
+            <span class="comment">// avaliable file descriptor.</span>
+            <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">file</span>) <span class="kw">in</span> <span class="ident">array</span>.<span class="ident">iter_mut</span>().<span class="ident">enumerate</span>() {
+                <span class="kw">if</span> <span class="ident">file</span>.<span class="ident">is_none</span>() {
+                    <span class="kw-2">*</span><span class="ident">file</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">handle</span>.<span class="ident">duplicate</span>(<span class="ident">flags</span>)<span class="question-mark">?</span>);
+                    <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">i</span>);
+                }
+            }
+
+            <span class="comment">// We ran out of file descriptors. Grow the table and add the</span>
+            <span class="comment">// file descriptor.</span>
             <span class="ident">files</span>.<span class="ident">push</span>(<span class="prelude-val">Some</span>(<span class="ident">handle</span>.<span class="ident">duplicate</span>(<span class="ident">flags</span>)<span class="question-mark">?</span>));
             <span class="prelude-val">Ok</span>(<span class="ident">files</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>)
+        };
+
+        <span class="kw">match</span> <span class="ident">hint</span> {
+            <span class="ident">DuplicateHint::Exact</span>(<span class="ident">new_fd</span>) =&gt; {
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">write</span>();
+
+                <span class="comment">// Ensure the file descriptor is available.</span>
+                <span class="kw">if</span> <span class="ident">files</span>[<span class="ident">new_fd</span>].<span class="ident">is_none</span>() {
+                    <span class="ident">files</span>[<span class="ident">new_fd</span>] <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">handle</span>.<span class="ident">duplicate</span>(<span class="ident">flags</span>)<span class="question-mark">?</span>);
+                    <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
+                } <span class="kw">else</span> {
+                    <span class="comment">// If the file descriptor is not available, then we close the</span>
+                    <span class="comment">// old one and set its handle to the new duplicate handle.</span>
+                    <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">handle</span>.<span class="ident">duplicate</span>(<span class="ident">flags</span>)<span class="question-mark">?</span>;
+                    <span class="kw">let</span> <span class="ident">old</span> <span class="op">=</span> <span class="ident">files</span>[<span class="ident">new_fd</span>].<span class="ident">take</span>().<span class="ident">unwrap</span>();
+
+                    <span class="ident">old</span>.<span class="ident">inode</span>.<span class="ident">inode</span>().<span class="ident">close</span>(<span class="ident">old</span>.<span class="ident">flags</span>);
+                    <span class="ident">files</span>[<span class="ident">new_fd</span>] <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">handle</span>);
+
+                    <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
+                }
+            }
+
+            <span class="ident">DuplicateHint::Any</span> =&gt; {
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">write</span>();
+                <span class="ident">find_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">files</span>, <span class="number">0</span>)
+            }
+
+            <span class="ident">DuplicateHint::GreatorOrEqual</span>(<span class="ident">hint_fd</span>) =&gt; {
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">write</span>();
+                <span class="ident">find_from</span>(<span class="kw-2">&amp;mut</span> <span class="ident">files</span>, <span class="ident">hint_fd</span>)
+            }
         }
     }
 
@@ -638,5 +682,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (e6a4afc3a 2022-05-20)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (1fede1753 2022-05-28)" ></div>
 </body></html>

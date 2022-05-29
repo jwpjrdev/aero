@@ -269,6 +269,11 @@
 <span id="262">262</span>
 <span id="263">263</span>
 <span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -473,6 +478,11 @@
         <span class="ident">SYS_STAT</span> =&gt; <span class="ident">fs::stat</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_FSTAT</span> =&gt; <span class="ident">fs::fstat</span>(<span class="ident">b</span>, <span class="ident">c</span>),
         <span class="ident">SYS_READ_LINK</span> =&gt; <span class="ident">fs::read_link</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>),
+        <span class="ident">SYS_EVENT_FD</span> =&gt; <span class="ident">fs::event_fd</span>(<span class="ident">b</span>, <span class="ident">c</span>),
+
+        <span class="comment">// epoll calls:</span>
+        <span class="ident">SYS_EPOLL_CREATE</span> =&gt; <span class="ident">fs::epoll_create</span>(<span class="ident">b</span>),
+        <span class="ident">SYS_EPOLL_CTL</span> =&gt; <span class="ident">fs::epoll_ctl</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>, <span class="ident">e</span>),
 
         <span class="ident">SYS_SOCKET</span> =&gt; <span class="ident">net::socket</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
         <span class="ident">SYS_BIND</span> =&gt; <span class="ident">net::bind</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
@@ -534,5 +544,5 @@
     <span class="ident">result_usize</span>
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (e6a4afc3a 2022-05-20)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (1fede1753 2022-05-28)" ></div>
 </body></html>
