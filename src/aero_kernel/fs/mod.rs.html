@@ -319,6 +319,8 @@
 <span id="312">312</span>
 <span id="313">313</span>
 <span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -452,6 +454,7 @@
     <span class="ident">IsPipe</span>,
     <span class="ident">Interrupted</span>,
     <span class="ident">TooSmall</span>,
+    <span class="ident">InvalidPath</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FileSystemError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AeroSyscallError</span> {
@@ -465,6 +468,7 @@
             <span class="ident">FileSystemError::IsPipe</span> =&gt; <span class="ident">AeroSyscallError::ESPIPE</span>,
             <span class="ident">FileSystemError::Interrupted</span> =&gt; <span class="ident">AeroSyscallError::EINTR</span>,
             <span class="ident">FileSystemError::TooSmall</span> =&gt; <span class="ident">AeroSyscallError::E2BIG</span>,
+            <span class="ident">FileSystemError::InvalidPath</span> =&gt; <span class="ident">AeroSyscallError::EINVAL</span>,
         }
     }
 }
@@ -634,5 +638,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (1fede1753 2022-05-28)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (c35035cef 2022-05-30)" ></div>
 </body></html>
