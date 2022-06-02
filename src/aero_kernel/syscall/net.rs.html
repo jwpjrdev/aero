@@ -65,9 +65,61 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">aero_syscall</span>::<span class="kw-2">*</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">fs::inode::DirEntry</span>, <span class="ident">socket::unix</span>::<span class="kw-2">*</span>, <span class="ident">userland::scheduler</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode::DirEntry</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::VirtAddr</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::socket::unix</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::socket::SocketAddr</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::scheduler</span>;
+
+<span class="doccomment">/// Creates a [`SocketAddr`] from the provided userland socket structure address. This</span>
+<span class="doccomment">/// is done by looking at the family field present in every socket address structure.</span>
+<span class="kw">fn</span> <span class="ident">socket_addr_from_addr</span><span class="op">&lt;</span><span class="lifetime">&#39;sys</span><span class="op">&gt;</span>(<span class="ident">address</span>: <span class="ident">VirtAddr</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SocketAddr</span><span class="op">&lt;</span><span class="lifetime">&#39;sys</span><span class="op">&gt;</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">family</span> <span class="op">=</span> <span class="ident">address</span>
+        .<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>()
+        .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>
+        .<span class="ident">clone</span>();
+
+    <span class="prelude-val">Ok</span>(<span class="ident">SocketAddr::from_family</span>(<span class="ident">address</span>, <span class="ident">family</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>)
+}
+
+<span class="doccomment">/// Connects the socket referred to by the file descriptor, to the specified address.</span>
+<span class="attribute">#[<span class="ident">aero_proc::syscall</span>]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">connect</span>(<span class="ident">fd</span>: <span class="ident">usize</span>, <span class="ident">address</span>: <span class="ident">usize</span>, <span class="ident">length</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="ident">socket_addr_from_addr</span>(<span class="ident">VirtAddr::new</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="ident">u64</span>))<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>()
+        .<span class="ident">current_task</span>()
+        .<span class="ident">file_table</span>
+        .<span class="ident">get_handle</span>(<span class="ident">fd</span>)
+        .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
+
+    <span class="ident">file</span>.<span class="ident">inode</span>().<span class="ident">connect</span>(<span class="ident">address</span>, <span class="ident">length</span>)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(<span class="number">0</span>)
+}
 
 <span class="attribute">#[<span class="ident">aero_proc::syscall</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">socket</span>(
@@ -75,7 +127,7 @@
     <span class="ident">socket_type</span>: <span class="ident">usize</span>,
     <span class="ident">protocol</span>: <span class="ident">usize</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">domain</span>, <span class="ident">socket_type</span>, <span class="ident">protocol</span>) {
+    <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="kw">match</span> (<span class="ident">domain</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="ident">socket_type</span>, <span class="ident">protocol</span>) {
         (<span class="ident">AF_UNIX</span>, <span class="ident">SOCK_STREAM</span>, <span class="number">0</span>) =&gt; <span class="ident">UnixSocket::new</span>(),
         (<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
             <span class="macro">log::warn!</span>(
@@ -95,20 +147,10 @@
     <span class="prelude-val">Ok</span>(<span class="ident">fd</span>)
 }
 
-<span class="comment">// TODO: Figure out how to handle this.</span>
 <span class="attribute">#[<span class="ident">aero_proc::syscall</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind</span>(<span class="ident">fd</span>: <span class="ident">usize</span>, <span class="ident">address</span>: <span class="ident">usize</span>, <span class="ident">length</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">family</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">i32</span>) };
-    <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">family</span> <span class="kw">as</span> <span class="ident">usize</span> {
-        <span class="ident">AF_UNIX</span> =&gt; <span class="ident">SocketAddr::Unix</span>(<span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">SocketAddrUnix</span>) }),
+    <span class="kw">let</span> <span class="ident">address</span> <span class="op">=</span> <span class="ident">socket_addr_from_addr</span>(<span class="ident">VirtAddr::new</span>(<span class="ident">address</span> <span class="kw">as</span> <span class="ident">u64</span>))<span class="question-mark">?</span>;
 
-        <span class="kw">_</span> =&gt; {
-            <span class="macro">log::warn!</span>(<span class="string">&quot;unsupported address family: {}&quot;</span>, <span class="ident">family</span>);
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EINVAL</span>);
-        }
-    };
-
-    <span class="comment">// let address = unsafe { &amp;*(address as *const SocketAddr) };</span>
     <span class="kw">let</span> <span class="ident">current_task</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>().<span class="ident">current_task</span>();
     <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">current_task</span>.<span class="ident">file_table</span>.<span class="ident">get_handle</span>(<span class="ident">fd</span>);
 
@@ -126,5 +168,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (c35035cef 2022-05-30)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (12cd71f4d 2022-06-01)" ></div>
 </body></html>

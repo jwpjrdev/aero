@@ -25,6 +25,27 @@
 <span id="18">18</span>
 <span id="19">19</span>
 <span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -44,7 +65,28 @@
  * along with Aero. If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */</span>
 
+<span class="kw">use</span> <span class="ident">aero_syscall</span>::<span class="kw-2">*</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::VirtAddr</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SocketAddr</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="ident">Unix</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SocketAddrUnix</span>),
+    <span class="ident">INet</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">SocketAddrInet</span>),
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">SocketAddr</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_family</span>(<span class="ident">address</span>: <span class="ident">VirtAddr</span>, <span class="ident">family</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">family</span> {
+            <span class="ident">AF_UNIX</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">SocketAddr::Unix</span>(<span class="ident">address</span>.<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">SocketAddrUnix</span><span class="op">&gt;</span>()<span class="question-mark">?</span>)),
+            <span class="ident">AF_INET</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">SocketAddr::INet</span>(<span class="ident">address</span>.<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">SocketAddrInet</span><span class="op">&gt;</span>()<span class="question-mark">?</span>)),
+
+            <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+        }
+    }
+}
+
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">unix</span>;
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (c35035cef 2022-05-30)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (12cd71f4d 2022-06-01)" ></div>
 </body></html>

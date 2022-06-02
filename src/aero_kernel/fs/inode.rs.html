@@ -405,6 +405,10 @@
 <span id="398">398</span>
 <span id="399">399</span>
 <span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -426,8 +430,7 @@
 
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
-<span class="kw">use</span> <span class="ident">aero_syscall::MMapFlags</span>;
-<span class="kw">use</span> <span class="ident">aero_syscall</span>::{<span class="ident">OpenFlags</span>, <span class="ident">SocketAddr</span>};
+<span class="kw">use</span> <span class="ident">aero_syscall</span>::{<span class="ident">MMapFlags</span>, <span class="ident">OpenFlags</span>};
 
 <span class="kw">use</span> <span class="ident">alloc::string::String</span>;
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
@@ -437,6 +440,7 @@
 <span class="kw">use</span> <span class="ident">spin::Once</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging::PhysFrame</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::socket::SocketAddr</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::Downcastable</span>;
 
@@ -554,7 +558,11 @@
 
     <span class="comment">// Socket operations</span>
     <span class="kw">fn</span> <span class="ident">bind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_address</span>: <span class="ident">SocketAddr</span>, <span class="ident">_length</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>)
+        <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSocket</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">connect</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_address</span>: <span class="ident">SocketAddr</span>, <span class="ident">_length</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSocket</span>)
     }
 }
 
@@ -806,5 +814,5 @@
     <span class="ident">dcache</span>.<span class="ident">get</span>(<span class="ident">cache_key</span>)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (c35035cef 2022-05-30)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (12cd71f4d 2022-06-01)" ></div>
 </body></html>

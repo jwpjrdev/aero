@@ -321,6 +321,8 @@
 <span id="314">314</span>
 <span id="315">315</span>
 <span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -455,20 +457,22 @@
     <span class="ident">Interrupted</span>,
     <span class="ident">TooSmall</span>,
     <span class="ident">InvalidPath</span>,
+    <span class="ident">NotSocket</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FileSystemError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AeroSyscallError</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">error</span>: <span class="ident">FileSystemError</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">error</span> {
-            <span class="ident">FileSystemError::NotSupported</span> =&gt; <span class="ident">AeroSyscallError::EACCES</span>,
-            <span class="ident">FileSystemError::EntryExists</span> =&gt; <span class="ident">AeroSyscallError::EEXIST</span>,
-            <span class="ident">FileSystemError::EntryNotFound</span> =&gt; <span class="ident">AeroSyscallError::ENOENT</span>,
-            <span class="ident">FileSystemError::Busy</span> =&gt; <span class="ident">AeroSyscallError::EBUSY</span>,
-            <span class="ident">FileSystemError::NotDirectory</span> =&gt; <span class="ident">AeroSyscallError::ENOTDIR</span>,
-            <span class="ident">FileSystemError::IsPipe</span> =&gt; <span class="ident">AeroSyscallError::ESPIPE</span>,
-            <span class="ident">FileSystemError::Interrupted</span> =&gt; <span class="ident">AeroSyscallError::EINTR</span>,
-            <span class="ident">FileSystemError::TooSmall</span> =&gt; <span class="ident">AeroSyscallError::E2BIG</span>,
-            <span class="ident">FileSystemError::InvalidPath</span> =&gt; <span class="ident">AeroSyscallError::EINVAL</span>,
+            <span class="ident">FileSystemError::NotSupported</span> =&gt; <span class="ident"><span class="self">Self</span>::EACCES</span>,
+            <span class="ident">FileSystemError::EntryExists</span> =&gt; <span class="ident"><span class="self">Self</span>::EEXIST</span>,
+            <span class="ident">FileSystemError::EntryNotFound</span> =&gt; <span class="ident"><span class="self">Self</span>::ENOENT</span>,
+            <span class="ident">FileSystemError::Busy</span> =&gt; <span class="ident"><span class="self">Self</span>::EBUSY</span>,
+            <span class="ident">FileSystemError::NotDirectory</span> =&gt; <span class="ident"><span class="self">Self</span>::ENOTDIR</span>,
+            <span class="ident">FileSystemError::IsPipe</span> =&gt; <span class="ident"><span class="self">Self</span>::ESPIPE</span>,
+            <span class="ident">FileSystemError::Interrupted</span> =&gt; <span class="ident"><span class="self">Self</span>::EINTR</span>,
+            <span class="ident">FileSystemError::TooSmall</span> =&gt; <span class="ident"><span class="self">Self</span>::E2BIG</span>,
+            <span class="ident">FileSystemError::InvalidPath</span> =&gt; <span class="ident"><span class="self">Self</span>::EINVAL</span>,
+            <span class="ident">FileSystemError::NotSocket</span> =&gt; <span class="ident"><span class="self">Self</span>::ENOTSOCK</span>,
         }
     }
 }
@@ -638,5 +642,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (c35035cef 2022-05-30)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (12cd71f4d 2022-06-01)" ></div>
 </body></html>
