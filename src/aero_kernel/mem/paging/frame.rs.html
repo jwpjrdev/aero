@@ -1298,7 +1298,7 @@
 
     <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::AddressSpace</span>;
 
-    <span class="attribute">#[<span class="ident">aero_proc::test</span>]</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">vm_frame_ref_count</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">address_space</span> <span class="op">=</span> <span class="ident">AddressSpace::this</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset_table</span> <span class="op">=</span> <span class="ident">address_space</span>.<span class="ident">offset_page_table</span>();

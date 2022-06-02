@@ -276,7 +276,7 @@
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="ident">alloc::alloc::Global</span>;
 
-    <span class="attribute">#[<span class="ident">aero_proc::test</span>]</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">bitmap_first_set_idx</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bitmap</span> <span class="op">=</span> <span class="ident">Bitmap::new_in</span>(<span class="ident">Global</span>, <span class="number">4096</span>);
 
@@ -284,7 +284,7 @@
         <span class="macro">assert_eq!</span>(<span class="ident">bitmap</span>.<span class="ident">find_first_set</span>(), <span class="prelude-val">Some</span>(<span class="number">69</span>));
     }
 
-    <span class="attribute">#[<span class="ident">aero_proc::test</span>]</span>
+    <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">bitmap_set_and_test</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bitmap</span> <span class="op">=</span> <span class="ident">Bitmap::new_in</span>(<span class="ident">Global</span>, <span class="number">4096</span>);
 
