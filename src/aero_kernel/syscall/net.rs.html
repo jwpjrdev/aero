@@ -99,6 +99,7 @@
 <span id="92">92</span>
 <span id="93">93</span>
 <span id="94">94</span>
+<span id="95">95</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">aero_syscall</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode::DirEntry</span>;
@@ -134,7 +135,8 @@
     <span class="prelude-val">Ok</span>(<span class="number">0</span>)
 }
 
-<span class="doccomment">/// Marks the socket as a passive socket (i.e. as a socket that will be used to accept incoming connection requests).</span>
+<span class="doccomment">/// Marks the socket as a passive socket (i.e. as a socket that will be used to accept incoming</span>
+<span class="doccomment">/// connection requests).</span>
 <span class="attribute">#[<span class="ident">aero_proc::syscall</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">listen</span>(<span class="ident">fd</span>: <span class="ident">usize</span>, <span class="ident">backlog</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>()
