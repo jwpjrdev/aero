@@ -909,12 +909,12 @@
 <span class="attribute">#[<span class="ident">syscall</span>]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">epoll_pwait</span>(
     <span class="ident">epfd</span>: <span class="ident">usize</span>,
-    <span class="ident">event</span>: <span class="kw-2">&amp;mut</span> <span class="ident">EPollEvent</span>,
-    <span class="ident">max_events</span>: <span class="ident">usize</span>,
-    <span class="ident">timeout</span>: <span class="ident">usize</span>,
-    <span class="ident">sigmask</span>: <span class="ident">usize</span>,
+    <span class="ident">_event</span>: <span class="kw-2">&amp;mut</span> <span class="ident">EPollEvent</span>,
+    <span class="ident">_max_events</span>: <span class="ident">usize</span>,
+    <span class="ident">_timeout</span>: <span class="ident">usize</span>,
+    <span class="ident">_sigmask</span>: <span class="ident">usize</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">epfd</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>()
+    <span class="kw">let</span> <span class="ident">_epfd</span> <span class="op">=</span> <span class="ident">scheduler::get_scheduler</span>()
         .<span class="ident">current_task</span>()
         .<span class="ident">file_table</span>
         .<span class="ident">get_handle</span>(<span class="ident">epfd</span>)
