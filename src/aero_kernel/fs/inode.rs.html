@@ -413,6 +413,11 @@
 <span id="406">406</span>
 <span id="407">407</span>
 <span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -570,6 +575,11 @@
     }
 
     <span class="kw">fn</span> <span class="ident">listen</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_backlog</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSocket</span>)
+    }
+
+    <span class="doccomment">/// Returns the inner UNIX socket inode if bound to one.</span>
+    <span class="kw">fn</span> <span class="ident">as_unix_socket</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSocket</span>)
     }
 }

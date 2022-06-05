@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["UnixSocket",""]]});
+initSidebarItems({"fn":[["path_from_unix_sock",""]],"struct":[["UnixSocket",""],["UnixSocketBacklog",""],["UnixSocketInner",""]]});

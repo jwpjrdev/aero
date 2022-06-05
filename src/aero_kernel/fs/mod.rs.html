@@ -323,6 +323,8 @@
 <span id="316">316</span>
 <span id="317">317</span>
 <span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -458,6 +460,7 @@
     <span class="ident">TooSmall</span>,
     <span class="ident">InvalidPath</span>,
     <span class="ident">NotSocket</span>,
+    <span class="ident">ConnectionRefused</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FileSystemError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AeroSyscallError</span> {
@@ -473,6 +476,7 @@
             <span class="ident">FileSystemError::TooSmall</span> =&gt; <span class="ident"><span class="self">Self</span>::E2BIG</span>,
             <span class="ident">FileSystemError::InvalidPath</span> =&gt; <span class="ident"><span class="self">Self</span>::EINVAL</span>,
             <span class="ident">FileSystemError::NotSocket</span> =&gt; <span class="ident"><span class="self">Self</span>::ENOTSOCK</span>,
+            <span class="ident">FileSystemError::ConnectionRefused</span> =&gt; <span class="ident"><span class="self">Self</span>::ECONNREFUSED</span>,
         }
     }
 }

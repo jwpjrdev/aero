@@ -928,6 +928,27 @@
 <span id="921">921</span>
 <span id="922">922</span>
 <span id="923">923</span>
+<span id="924">924</span>
+<span id="925">925</span>
+<span id="926">926</span>
+<span id="927">927</span>
+<span id="928">928</span>
+<span id="929">929</span>
+<span id="930">930</span>
+<span id="931">931</span>
+<span id="932">932</span>
+<span id="933">933</span>
+<span id="934">934</span>
+<span id="935">935</span>
+<span id="936">936</span>
+<span id="937">937</span>
+<span id="938">938</span>
+<span id="939">939</span>
+<span id="940">940</span>
+<span id="941">941</span>
+<span id="942">942</span>
+<span id="943">943</span>
+<span id="944">944</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1610,8 +1631,29 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SOCK_RAW</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">2</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SOCK_SEQPACKET</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">3</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SOCK_STREAM</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SOCK_NONBLOCK</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0x10000</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SOCK_CLOEXEC</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0x20000</span>;
+
+<span class="macro">bitflags::bitflags!</span> {
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SocketFlags</span>: <span class="ident">usize</span> {
+        <span class="kw">const</span> <span class="ident">NONBLOCK</span> <span class="op">=</span> <span class="number">0x10000</span>;
+        <span class="kw">const</span> <span class="ident">CLOEXEC</span> <span class="op">=</span> <span class="number">0x20000</span>;
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">SocketFlags</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">OpenFlags</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">flags</span>: <span class="ident">SocketFlags</span>) -&gt; <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">OpenFlags::empty</span>();
+
+        <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">SocketFlags::NONBLOCK</span>) {
+            <span class="ident">result</span>.<span class="ident">insert</span>(<span class="ident">OpenFlags::O_NONBLOCK</span>);
+        }
+
+        <span class="kw">if</span> <span class="ident">flags</span>.<span class="ident">contains</span>(<span class="ident">SocketFlags::CLOEXEC</span>) {
+            <span class="ident">result</span>.<span class="ident">insert</span>(<span class="ident">OpenFlags::O_CLOEXEC</span>);
+        }
+
+        <span class="ident">result</span>
+    }
+}
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PF_INET</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">1</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PF_INET6</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">2</span>;
