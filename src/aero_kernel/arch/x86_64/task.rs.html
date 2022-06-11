@@ -459,10 +459,6 @@
 <span id="452">452</span>
 <span id="453">453</span>
 <span id="454">454</span>
-<span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
-<span id="458">458</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -908,19 +904,15 @@
         <span class="ident"><span class="kw">super</span>::gdt::get_task_state_segement</span>().<span class="ident">rsp</span>[<span class="number">0</span>] <span class="op">=</span> <span class="ident">kstackp</span>;
         <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_SYSENTER_ESP</span>, <span class="ident">kstackp</span>);
 
-        <span class="ident">task_spinup</span>(<span class="kw-2">&amp;mut</span> <span class="ident">from</span>.<span class="ident">context</span>, <span class="ident">to</span>.<span class="ident">context</span>.<span class="ident">as_ref</span>());
-
-        <span class="comment">// make a restore point for the current FS base.</span>
-        <span class="ident">from</span>.<span class="ident">fs_base</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_FS_BASE</span>));
         <span class="comment">// switch to the new FS base.</span>
         <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_FS_BASE</span>, <span class="ident">to</span>.<span class="ident">fs_base</span>.<span class="ident">as_u64</span>());
 
-        <span class="comment">// make a restore point for the current GS base.</span>
-        <span class="ident">from</span>.<span class="ident">gs_base</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">io::rdmsr</span>(<span class="ident">io::IA32_KERNEL_GSBASE</span>));
         <span class="comment">// update the swap GS target to point to the new GS base.</span>
         <span class="ident">io::wrmsr</span>(<span class="ident">io::IA32_KERNEL_GSBASE</span>, <span class="ident">to</span>.<span class="ident">gs_base</span>.<span class="ident">as_u64</span>());
+
+        <span class="ident">task_spinup</span>(<span class="kw-2">&amp;mut</span> <span class="ident">from</span>.<span class="ident">context</span>, <span class="ident">to</span>.<span class="ident">context</span>.<span class="ident">as_ref</span>());
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (50b00252a 2022-06-06)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
 </body></html>

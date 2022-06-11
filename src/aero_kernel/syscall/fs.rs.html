@@ -471,6 +471,16 @@
 <span id="464">464</span>
 <span id="465">465</span>
 <span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -701,7 +711,17 @@
         .<span class="ident">get_handle</span>(<span class="ident">fd</span>)
         .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EBADFD</span>)<span class="question-mark">?</span>;
 
-    <span class="prelude-val">Ok</span>(<span class="ident">handle</span>.<span class="ident">inode</span>().<span class="ident">ioctl</span>(<span class="ident">command</span>, <span class="ident">argument</span>)<span class="question-mark">?</span>)
+    <span class="kw">match</span> <span class="ident">command</span> {
+        <span class="comment">// Sets the close-on-exec file descriptor flag. This is equivalent</span>
+        <span class="comment">// to `fcntl(fd, F_SETFD, FD_CLOEXEC)`</span>
+        <span class="ident">FIOCLEX</span> =&gt; {
+            <span class="ident">handle</span>.<span class="ident">fd_flags</span>.<span class="ident">lock</span>().<span class="ident">insert</span>(<span class="ident">FdFlags::CLOEXEC</span>);
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="number">0x00</span>);
+        }
+
+        <span class="comment">// Handle file specific ioctl:</span>
+        <span class="kw">_</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">handle</span>.<span class="ident">inode</span>().<span class="ident">ioctl</span>(<span class="ident">command</span>, <span class="ident">argument</span>)<span class="question-mark">?</span>),
+    }
 }
 
 <span class="attribute">#[<span class="ident">syscall</span>]</span>
@@ -938,5 +958,5 @@
         .<span class="ident">open_file</span>(<span class="ident">entry</span>, <span class="ident">OpenFlags::O_RDWR</span>)<span class="question-mark">?</span>)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (50b00252a 2022-06-06)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
 </body></html>

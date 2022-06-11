@@ -949,6 +949,7 @@
 <span id="942">942</span>
 <span id="943">943</span>
 <span id="944">944</span>
+<span id="945">945</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1176,6 +1177,7 @@
         <span class="ident">prelude::SYS_EPOLL_PWAIT</span> =&gt; <span class="string">&quot;epoll_pwait&quot;</span>,
         <span class="ident">prelude::SYS_EPOLL_CTL</span> =&gt; <span class="string">&quot;epoll_ctl&quot;</span>,
         <span class="ident">prelude::SYS_EVENT_FD</span> =&gt; <span class="string">&quot;event_fd&quot;</span>,
+        <span class="ident">prelude::SYS_KILL</span> =&gt; <span class="string">&quot;kill&quot;</span>,
 
         <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;unknown syscall {syscall}&quot;</span>),
     }
@@ -1894,5 +1896,5 @@
     <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (50b00252a 2022-06-06)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
 </body></html>
