@@ -197,6 +197,31 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -318,10 +343,35 @@
     <span class="kw">pub</span> <span class="ident">u64</span>: <span class="ident">u64</span>,
 }
 
+<span class="macro">bitflags::bitflags!</span> {
+    <span class="doccomment">/// A bit mask composed by ORing together, zero or more of the following available event types.</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EPollEventFlags</span>: <span class="ident">u32</span> {
+        <span class="doccomment">/// The associated file is available for read operations.</span>
+        <span class="kw">const</span> <span class="ident">IN</span>        <span class="op">=</span> <span class="number">0x001</span>;
+        <span class="doccomment">/// There is an exceptional condition on the file descriptor.</span>
+        <span class="kw">const</span> <span class="ident">PRI</span>       <span class="op">=</span> <span class="number">0x002</span>;
+        <span class="doccomment">/// The associated file is available for write operations.</span>
+        <span class="kw">const</span> <span class="ident">OUT</span>       <span class="op">=</span> <span class="number">0x004</span>;
+        <span class="kw">const</span> <span class="ident">RDNORM</span>    <span class="op">=</span> <span class="number">0x040</span>;
+        <span class="kw">const</span> <span class="ident">RDBAND</span>    <span class="op">=</span> <span class="number">0x080</span>;
+        <span class="kw">const</span> <span class="ident">WRNORM</span>    <span class="op">=</span> <span class="number">0x100</span>;
+        <span class="kw">const</span> <span class="ident">WRBAND</span>    <span class="op">=</span> <span class="number">0x200</span>;
+        <span class="kw">const</span> <span class="ident">MSG</span>       <span class="op">=</span> <span class="number">0x400</span>;
+        <span class="kw">const</span> <span class="ident">ERR</span>       <span class="op">=</span> <span class="number">0x008</span>;
+        <span class="kw">const</span> <span class="ident">HUP</span>       <span class="op">=</span> <span class="number">0x010</span>;
+        <span class="kw">const</span> <span class="ident">RDHUP</span>     <span class="op">=</span> <span class="number">0x2000</span>;
+        <span class="kw">const</span> <span class="ident">EXCLUSIVE</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">28</span>;
+        <span class="kw">const</span> <span class="ident">WAKEUP</span>    <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">29</span>;
+        <span class="kw">const</span> <span class="ident">ONESHOT</span>   <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">30</span>;
+        <span class="kw">const</span> <span class="ident">ET</span>        <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">31</span>;
+    }
+}
+
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EPollEvent</span> {
-    <span class="kw">pub</span> <span class="ident">events</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">events</span>: <span class="ident">EPollEventFlags</span>,
     <span class="kw">pub</span> <span class="ident">data</span>: <span class="ident">EPollData</span>,
 }
 
@@ -390,5 +440,5 @@
     <span class="kw">pub</span> <span class="ident">reserved</span>: [<span class="ident">u32</span>; <span class="number">4</span>],
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
 </body></html>

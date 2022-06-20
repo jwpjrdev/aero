@@ -462,6 +462,22 @@
 <span id="455">455</span>
 <span id="456">456</span>
 <span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -487,6 +503,7 @@
 
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
+<span class="kw">use</span> <span class="ident">aero_syscall::prelude::EPollEventFlags</span>;
 <span class="kw">use</span> <span class="ident">aero_syscall::MMapFlags</span>;
 <span class="kw">use</span> <span class="ident">alloc::collections::BTreeMap</span>;
 <span class="kw">use</span> <span class="ident">alloc::string::String</span>;
@@ -502,7 +519,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache</span>::{<span class="self">self</span>, <span class="ident">CacheWeak</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache</span>::{<span class="ident">CachedINode</span>, <span class="ident">DirCacheItem</span>, <span class="ident">INodeCacheItem</span>, <span class="ident">INodeCacheWeakItem</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::devfs::DevINode</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">DirEntry</span>, <span class="ident">FileType</span>, <span class="ident">INodeInterface</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">DirEntry</span>, <span class="ident">FileType</span>, <span class="ident">INodeInterface</span>, <span class="ident">PollTable</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">FileContents</span>, <span class="ident">Metadata</span>};
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">FileSystem</span>, <span class="ident">FileSystemError</span>, <span class="prelude-ty">Result</span>};
 
@@ -855,6 +872,21 @@
         }
     }
 
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">table</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PollTable</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">EPollEventFlags</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">this</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">read</span>();
+
+        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">this</span>.<span class="ident">contents</span> {
+            <span class="ident">FileContents::Device</span>(<span class="ident">device</span>) =&gt; {
+                <span class="kw">let</span> <span class="ident">device</span> <span class="op">=</span> <span class="ident">device</span>.<span class="ident">clone</span>();
+                <span class="ident">drop</span>(<span class="ident">this</span>);
+
+                <span class="ident">device</span>.<span class="ident">poll</span>(<span class="ident">table</span>)
+            }
+
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>),
+        }
+    }
+
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">fn</span> <span class="ident">weak_filesystem</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Weak</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">FileSystem</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">read</span>().<span class="ident">filesystem</span>.<span class="ident">clone</span>())
@@ -920,5 +952,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
 </body></html>

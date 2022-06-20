@@ -397,6 +397,10 @@
 <span id="390">390</span>
 <span id="391">391</span>
 <span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -434,7 +438,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::rendy::RendyInfo</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache</span>::{<span class="ident">DirCacheItem</span>, <span class="ident">INodeCacheItem</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode::INodeInterface</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">INodeInterface</span>, <span class="ident">PollTable</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ramfs::RamFs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::FileSystemError</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">FileSystem</span>, <span class="prelude-ty">Result</span>, <span class="ident">MOUNT_MANAGER</span>};
@@ -526,6 +530,10 @@
 
     <span class="kw">fn</span> <span class="ident">ioctl</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">command</span>: <span class="ident">usize</span>, <span class="ident">arg</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">inode</span>().<span class="ident">ioctl</span>(<span class="ident">command</span>, <span class="ident">arg</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">table</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PollTable</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">EPollEventFlags</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">inode</span>().<span class="ident">poll</span>(<span class="ident">table</span>)
     }
 }
 
@@ -790,5 +798,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
 </body></html>

@@ -15,7 +15,7 @@ better error messages for erroneous conditions. It’s the compiler-level form o
 but emits an error during <em>compilation</em> rather than at <em>runtime</em>.</p>
 <h2 id="examples"><a href="#examples">Examples</a></h2>
 <p>Two such examples are macros and <code>#[cfg]</code> environments.</p>
-<p>Emit better compiler error if a macro is passed invalid values. Without the final branch,
+<p>Emit a better compiler error if a macro is passed invalid values. Without the final branch,
 the compiler would still emit an error, but the error’s message would not mention the two
 valid values.</p>
 
@@ -29,9 +29,9 @@ valid values.</p>
 
 <span class="macro">give_me_foo_or_bar!</span>(<span class="ident">neither</span>);
 <span class="comment">// ^ will fail at compile time with message &quot;This macro only accepts `foo` or `bar`&quot;</span></code></pre></div>
-<p>Emit compiler error if one of a number of features isn’t available.</p>
+<p>Emit a compiler error if one of a number of features isn’t available.</p>
 
 <div class='information'><div class='tooltip compile_fail'>ⓘ</div></div><div class="example-wrap"><pre class="rust rust-example-rendered compile_fail"><code><span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;foo&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bar&quot;</span>)))]</span>
 <span class="macro">compile_error!</span>(<span class="string">&quot;Either feature \&quot;foo\&quot; or \&quot;bar\&quot; must be enabled for this crate.&quot;</span>);</code></pre></div>
-</div></details></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
+</div></details></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
 </body></html>

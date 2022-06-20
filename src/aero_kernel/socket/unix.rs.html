@@ -159,6 +159,30 @@
 <span id="152">152</span>
 <span id="153">153</span>
 <span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -180,15 +204,17 @@
 
 <span class="kw">use</span> <span class="ident">aero_syscall::SocketAddrUnix</span>;
 
+<span class="kw">use</span> <span class="ident">aero_syscall::prelude::EPollEventFlags</span>;
 <span class="kw">use</span> <span class="ident">alloc::string::String</span>;
 <span class="kw">use</span> <span class="ident">alloc::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Weak</span>};
 <span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
 <span class="kw">use</span> <span class="ident">spin::RwLock</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode</span>::{<span class="ident">DirEntry</span>, <span class="ident">FileType</span>, <span class="ident">INodeInterface</span>, <span class="ident">Metadata</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode</span>::{<span class="ident">DirEntry</span>, <span class="ident">FileType</span>, <span class="ident">INodeInterface</span>, <span class="ident">Metadata</span>, <span class="ident">PollTable</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>::{<span class="ident">FileSystemError</span>, <span class="ident">Path</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::downcast</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::BlockQueue</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::SocketAddr</span>;
 
@@ -224,6 +250,10 @@
         }
     }
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
+        <span class="self">self</span>.<span class="ident">backlog</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">len</span>()).<span class="ident">unwrap_or</span>(<span class="number">0</span>)
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_capacity</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">capacity</span>: <span class="ident">usize</span>) {
         <span class="macro">assert!</span>(
             <span class="self">self</span>.<span class="ident">backlog</span>.<span class="ident">is_none</span>(),
@@ -242,6 +272,7 @@
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnixSocket</span> {
     <span class="ident">inner</span>: <span class="ident">RwLock</span><span class="op">&lt;</span><span class="ident">UnixSocketInner</span><span class="op">&gt;</span>,
+    <span class="ident">wq</span>: <span class="ident">BlockQueue</span>,
     <span class="ident">weak</span>: <span class="ident">Weak</span><span class="op">&lt;</span><span class="ident">UnixSocket</span><span class="op">&gt;</span>,
 }
 
@@ -249,6 +280,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">UnixSocket</span><span class="op">&gt;</span> {
         <span class="ident">Arc::new_cyclic</span>(<span class="op">|</span><span class="ident">weak</span><span class="op">|</span> <span class="ident">UnixSocket</span> {
             <span class="ident">inner</span>: <span class="ident">RwLock::new</span>(<span class="ident">UnixSocketInner::default</span>()),
+            <span class="ident">wq</span>: <span class="ident">BlockQueue::new</span>(),
             <span class="ident">weak</span>: <span class="ident">weak</span>.<span class="ident">clone</span>(),
         })
     }
@@ -301,6 +333,8 @@
         }
 
         <span class="ident">target</span>.<span class="ident">backlog</span>.<span class="ident">push</span>(<span class="self">self</span>.<span class="ident">sref</span>());
+        <span class="self">self</span>.<span class="ident">wq</span>.<span class="ident">notify_complete</span>();
+
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -312,7 +346,21 @@
 
         <span class="prelude-val">Ok</span>(())
     }
+
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">table</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PollTable</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">EPollEventFlags</span><span class="op">&gt;</span> {
+        <span class="macro">log::warn!</span>(<span class="string">&quot;UnixSocket::poll() is a stub&quot;</span>);
+
+        <span class="ident">table</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">wq</span>));
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">events</span> <span class="op">=</span> <span class="ident">EPollEventFlags::default</span>();
+
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">read</span>().<span class="ident">backlog</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="ident">events</span>.<span class="ident">insert</span>(<span class="ident">EPollEventFlags::OUT</span>);
+        }
+
+        <span class="prelude-val">Ok</span>(<span class="ident">events</span>)
+    }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (ec55c6130 2022-06-10)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
 </body></html>
