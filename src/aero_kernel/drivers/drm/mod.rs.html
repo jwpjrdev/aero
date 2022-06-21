@@ -1112,8 +1112,6 @@
 <span id="1105">1105</span>
 <span id="1106">1106</span>
 <span id="1107">1107</span>
-<span id="1108">1108</span>
-<span id="1109">1109</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1148,9 +1146,6 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode::INodeInterface</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::FileSystemError</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::Downcastable</span>;
-
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 
@@ -1158,7 +1153,8 @@
 
 <span class="doccomment">/// Represents modset objects visible to userspace; this includes connectors,</span>
 <span class="doccomment">/// CRTCs, encoders, frambuffers and planes.</span>
-<span class="kw">trait</span> <span class="ident">ModeObject</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Downcastable</span> {
+<span class="attribute">#[<span class="ident">downcastable</span>]</span>
+<span class="kw">trait</span> <span class="ident">ModeObject</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> {
     <span class="doccomment">/// Returns the mode object&#39;s ID.</span>
     <span class="kw">fn</span> <span class="ident">id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span>;
     <span class="kw">fn</span> <span class="ident">object</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ModeObject</span><span class="op">&gt;</span>;
@@ -1167,22 +1163,22 @@
 
     <span class="doccomment">/// Converts this mode object into a connector.</span>
     <span class="kw">fn</span> <span class="ident">as_connector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Connector</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="ident">utils::downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ModeObject</span>, <span class="ident">Connector</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">object</span>())
+        <span class="self">self</span>.<span class="ident">object</span>().<span class="ident">downcast_arc</span>::<span class="op">&lt;</span><span class="ident">Connector</span><span class="op">&gt;</span>()
     }
 
     <span class="doccomment">/// Converts this mode object into an encoder.</span>
     <span class="kw">fn</span> <span class="ident">as_encoder</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Encoder</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="ident">utils::downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ModeObject</span>, <span class="ident">Encoder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">object</span>())
+        <span class="self">self</span>.<span class="ident">object</span>().<span class="ident">downcast_arc</span>::<span class="op">&lt;</span><span class="ident">Encoder</span><span class="op">&gt;</span>()
     }
 
     <span class="doccomment">/// Converts this mode object into a CRTC.</span>
     <span class="kw">fn</span> <span class="ident">as_crtc</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Crtc</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="ident">utils::downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ModeObject</span>, <span class="ident">Crtc</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">object</span>())
+        <span class="self">self</span>.<span class="ident">object</span>().<span class="ident">downcast_arc</span>::<span class="op">&lt;</span><span class="ident">Crtc</span><span class="op">&gt;</span>()
     }
 
     <span class="doccomment">/// Converts this mode object into a framebuffer.</span>
     <span class="kw">fn</span> <span class="ident">as_framebuffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Framebuffer</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="ident">utils::downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ModeObject</span>, <span class="ident">Framebuffer</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">object</span>())
+        <span class="self">self</span>.<span class="ident">object</span>().<span class="ident">downcast_arc</span>::<span class="op">&lt;</span><span class="ident">Framebuffer</span><span class="op">&gt;</span>()
     }
 }
 
@@ -2224,5 +2220,5 @@
     <span class="ident">result</span>
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (5750a6aa2 2022-06-20)" ></div>
 </body></html>

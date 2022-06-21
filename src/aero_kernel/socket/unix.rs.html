@@ -183,6 +183,8 @@
 <span id="176">176</span>
 <span id="177">177</span>
 <span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -213,7 +215,6 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::inode</span>::{<span class="ident">DirEntry</span>, <span class="ident">FileType</span>, <span class="ident">INodeInterface</span>, <span class="ident">Metadata</span>, <span class="ident">PollTable</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs</span>::{<span class="ident">FileSystemError</span>, <span class="ident">Path</span>, <span class="prelude-ty">Result</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::downcast</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::BlockQueue</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::SocketAddr</span>;
@@ -322,7 +323,10 @@
         <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">path_from_unix_sock</span>(<span class="ident">address</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">socket</span> <span class="op">=</span> <span class="ident">fs::lookup_path</span>(<span class="ident">path</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="ident">downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span>, <span class="ident">UnixSocket</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">socket</span>.<span class="ident">inode</span>().<span class="ident">as_unix_socket</span>()<span class="question-mark">?</span>)
+        <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="ident">socket</span>
+            .<span class="ident">inode</span>()
+            .<span class="ident">as_unix_socket</span>()<span class="question-mark">?</span>
+            .<span class="ident">downcast_arc</span>::<span class="op">&lt;</span><span class="ident">UnixSocket</span><span class="op">&gt;</span>()
             .<span class="ident">ok_or</span>(<span class="ident">FileSystemError::NotSocket</span>)<span class="question-mark">?</span>; <span class="comment">// NOTE: the provided socket was not a unix socket.</span>
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">target</span> <span class="op">=</span> <span class="ident">target</span>.<span class="ident">inner</span>.<span class="ident">write</span>();
@@ -362,5 +366,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (5750a6aa2 2022-06-20)" ></div>
 </body></html>

@@ -478,6 +478,9 @@
 <span id="471">471</span>
 <span id="472">472</span>
 <span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -513,7 +516,6 @@
 <span class="kw">use</span> <span class="ident">spin::RwLock</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mem::paging</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::downcast</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync::Mutex</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache</span>::{<span class="self">self</span>, <span class="ident">CacheWeak</span>};
@@ -578,8 +580,10 @@
         <span class="kw">let</span> <span class="ident">inode</span> <span class="op">=</span> <span class="ident">filesystem</span>.<span class="ident">allocate_inode</span>(<span class="ident">file_type</span>, <span class="ident">contents</span>);
         <span class="kw">let</span> <span class="ident">inode_cached</span> <span class="op">=</span> <span class="ident">icache</span>.<span class="ident">make_item_no_cache</span>(<span class="ident">CachedINode::new</span>(<span class="ident">inode</span>));
 
-        <span class="ident">downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span>, <span class="ident">LockedRamINode</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">inode_cached</span>.<span class="ident">inner</span>())
-            .<span class="ident">expect</span>(<span class="string">&quot;Failed to downcast cached inode on creation&quot;</span>)
+        <span class="ident">inode_cached</span>
+            .<span class="ident">inner</span>()
+            .<span class="ident">downcast_arc</span>::<span class="op">&lt;</span><span class="ident">LockedRamINode</span><span class="op">&gt;</span>()
+            .<span class="ident">unwrap</span>()
             .<span class="ident">init</span>(
                 <span class="kw-2">&amp;</span><span class="ident">this</span>.<span class="ident">node</span>,
                 <span class="kw-2">&amp;</span><span class="ident">inode_cached</span>.<span class="ident">downgrade</span>(),
@@ -920,8 +924,10 @@
 
         <span class="ident">root_dir</span>.<span class="ident">filesystem</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Arc::downgrade</span>(<span class="kw-2">&amp;</span><span class="ident">copy</span>));
 
-        <span class="ident">downcast</span>::<span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span>, <span class="ident">LockedRamINode</span><span class="op">&gt;</span>(<span class="ident">root_cached</span>.<span class="ident">inner</span>())
-            .<span class="ident">expect</span>(<span class="string">&quot;cannot downcast inode to ram inode&quot;</span>)
+        <span class="ident">root_cached</span>
+            .<span class="ident">inner</span>()
+            .<span class="ident">downcast_arc</span>::<span class="op">&lt;</span><span class="ident">LockedRamINode</span><span class="op">&gt;</span>()
+            .<span class="ident">unwrap</span>()
             .<span class="ident">init</span>(
                 <span class="kw-2">&amp;</span><span class="ident">ramfs</span>.<span class="ident">root_inode</span>.<span class="ident">downgrade</span>(),
                 <span class="op">&amp;&amp;</span><span class="ident">root_cached</span>.<span class="ident">downgrade</span>(),
@@ -952,5 +958,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (5750a6aa2 2022-06-20)" ></div>
 </body></html>

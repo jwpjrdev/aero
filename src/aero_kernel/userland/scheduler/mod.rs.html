@@ -179,9 +179,6 @@
 <span id="172">172</span>
 <span id="173">173</span>
 <span id="174">174</span>
-<span id="175">175</span>
-<span id="176">176</span>
-<span id="177">177</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -214,17 +211,14 @@
 
 <span class="kw">use</span> <span class="ident">spin::Once</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::Downcastable</span>;
-
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::round_robin::RoundRobin</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::signals::SignalResult</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::task</span>::{<span class="ident">Task</span>, <span class="ident">TaskId</span>};
 
 <span class="kw">static</span> <span class="ident">SCHEDULER</span>: <span class="ident">Once</span><span class="op">&lt;</span><span class="ident">Scheduler</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Once::new</span>();
 
-<span class="doccomment">/// Scheduler interface for each scheduling algorithm. The struct implementing</span>
-<span class="doccomment">/// this trait has to implement [Send], [Sync] and [Downcastable].</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SchedulerInterface</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Downcastable</span> {
+<span class="attribute">#[<span class="ident">downcastable</span>]</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SchedulerInterface</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> {
     <span class="doccomment">/// Register the provided task into the task scheduler queue.</span>
     <span class="kw">fn</span> <span class="ident">register_task</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">task</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span>);
 
@@ -360,5 +354,5 @@
     <span class="ident">SCHEDULER_VECTOR</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">scheduler_vector</span>);
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (bb8c2f411 2022-06-19)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (5750a6aa2 2022-06-20)" ></div>
 </body></html>
