@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["drm",""],["ioctl",""]]});
+window.SIDEBAR_ITEMS = {"mod":[["drm",""],["ioctl",""]]};

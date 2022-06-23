@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["hash",""]],"struct":[["HashTable",""]]});
+window.SIDEBAR_ITEMS = {"fn":[["hash",""]],"struct":[["HashTable",""]]};

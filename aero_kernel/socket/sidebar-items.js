@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["SocketAddr",""]],"mod":[["unix",""]]});
+window.SIDEBAR_ITEMS = {"enum":[["SocketAddr",""]],"mod":[["unix",""]]};

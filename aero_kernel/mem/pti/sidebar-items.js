@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["map_pti",""],["switch_pti_stack",""],["unmap_pti",""]]});
+window.SIDEBAR_ITEMS = {"fn":[["map_pti",""],["switch_pti_stack",""],["unmap_pti",""]]};

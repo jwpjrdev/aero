@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["rust_2021",""]]});
+window.SIDEBAR_ITEMS = {"mod":[["rust_2021",""]]};

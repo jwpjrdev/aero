@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["SIGNATURE",""]],"struct":[["Fadt",""]]});
+window.SIDEBAR_ITEMS = {"constant":[["SIGNATURE",""]],"struct":[["Fadt",""]]};

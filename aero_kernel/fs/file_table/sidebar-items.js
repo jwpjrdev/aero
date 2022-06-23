@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["DuplicateHint",""]],"struct":[["FileHandle",""],["FileTable",""]]});
+window.SIDEBAR_ITEMS = {"enum":[["DuplicateHint",""]],"struct":[["FileHandle",""],["FileTable",""]]};

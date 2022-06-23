@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["IdeChannel",""],["IdeChannelData",""],["PrdEntry",""],["PrdTable",""]]});
+window.SIDEBAR_ITEMS = {"struct":[["IdeChannel",""],["IdeChannelData",""],["PrdEntry",""],["PrdTable",""]]};

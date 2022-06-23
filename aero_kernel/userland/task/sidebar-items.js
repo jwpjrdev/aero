@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["TaskState",""]],"struct":[["Cwd",""],["SchedTaskAdapter",""],["Task",""],["TaskAdapter",""],["TaskId",""],["Zombies",""]]});
+window.SIDEBAR_ITEMS = {"enum":[["TaskState",""]],"struct":[["Cwd",""],["SchedTaskAdapter",""],["Task",""],["TaskAdapter",""],["TaskId",""],["Zombies",""]]};

@@ -1,1 +1,1 @@
-initSidebarItems({"foreigntype":[["LinkerSymbol",""]]});
+window.SIDEBAR_ITEMS = {"foreigntype":[["LinkerSymbol",""]]};

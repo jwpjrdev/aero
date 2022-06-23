@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["EPoll",""]]});
+window.SIDEBAR_ITEMS = {"struct":[["EPoll",""]]};

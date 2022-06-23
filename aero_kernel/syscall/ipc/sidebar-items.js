@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["become_root",""],["discover_root",""],["handle_recieve",""],["recv",""],["send",""]],"static":[["IPC_ROOT_NODE",""]],"struct":[["Message",""],["MessageQueue",""]]});
+window.SIDEBAR_ITEMS = {"fn":[["become_root",""],["discover_root",""],["handle_recieve",""],["recv",""],["send",""]],"static":[["IPC_ROOT_NODE",""]],"struct":[["Message",""],["MessageQueue",""]]};

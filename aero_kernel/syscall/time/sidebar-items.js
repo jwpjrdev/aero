@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["CLOCK_TYPE_MONOTONIC",""],["CLOCK_TYPE_REALTIME",""]],"fn":[["gettime",""],["sleep",""]]});
+window.SIDEBAR_ITEMS = {"constant":[["CLOCK_TYPE_MONOTONIC",""],["CLOCK_TYPE_REALTIME",""]],"fn":[["gettime",""],["sleep",""]]};

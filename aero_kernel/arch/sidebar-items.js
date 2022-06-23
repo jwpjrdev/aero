@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["x86_64",""]]});
+window.SIDEBAR_ITEMS = {"mod":[["x86_64",""]]};

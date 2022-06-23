@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["run",""]],"mod":[["scheduler",""],["signals",""],["task",""],["vm",""]]});
+window.SIDEBAR_ITEMS = {"fn":[["run",""]],"mod":[["scheduler",""],["signals",""],["task",""],["vm",""]]};
