@@ -277,6 +277,10 @@
 <span id="271">271</span>
 <span id="272">272</span>
 <span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -357,11 +361,12 @@
 
 <span class="kw">use</span> <span class="ident">aero_syscall::prelude</span>::<span class="kw-2">*</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fs</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ipc</span>;
+<span class="kw">mod</span> <span class="ident">fs</span>;
+<span class="kw">mod</span> <span class="ident">futex</span>;
+<span class="kw">mod</span> <span class="ident">ipc</span>;
 <span class="kw">mod</span> <span class="ident">net</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">process</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">time</span>;
+<span class="kw">mod</span> <span class="ident">process</span>;
+<span class="kw">mod</span> <span class="ident">time</span>;
 
 <span class="kw">use</span> <span class="ident">alloc::boxed::Box</span>;
 <span class="kw">use</span> <span class="ident">alloc::vec::Vec</span>;
@@ -502,6 +507,9 @@
         <span class="ident">SYS_IPC_DISCOVER_ROOT</span> =&gt; <span class="ident">ipc::discover_root</span>(),
         <span class="ident">SYS_IPC_BECOME_ROOT</span> =&gt; <span class="ident">ipc::become_root</span>(),
 
+        <span class="ident">SYS_FUTEX_WAIT</span> =&gt; <span class="ident">futex::wait</span>(<span class="ident">b</span>, <span class="ident">c</span>, <span class="ident">d</span>),
+        <span class="ident">SYS_FUTEX_WAKE</span> =&gt; <span class="ident">futex::wake</span>(<span class="ident">b</span>),
+
         <span class="comment">// Syscall aliases (this should be handled in aero_syscall)</span>
         <span class="ident">SYS_MKDIR</span> =&gt; <span class="ident">fs::mkdirat</span>(<span class="ident">aero_syscall::AT_FDCWD</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">b</span>, <span class="ident">c</span>),
 
@@ -551,5 +559,5 @@
     <span class="ident">result_usize</span>
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (10f4ce324 2022-06-22)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
 </body></html>

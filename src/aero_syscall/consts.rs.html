@@ -221,6 +221,8 @@
 <span id="215">215</span>
 <span id="216">216</span>
 <span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -300,6 +302,8 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SYS_EPOLL_CTL</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">54</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SYS_EVENT_FD</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">55</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SYS_KILL</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">56</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SYS_FUTEX_WAIT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">59</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SYS_FUTEX_WAKE</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">60</span>;
 
 <span class="comment">// constants for fcntl()&#39;s command argument:</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">F_DUPFD</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">1</span>;
@@ -439,5 +443,5 @@
     <span class="kw">pub</span> <span class="ident">reserved</span>: [<span class="ident">u32</span>; <span class="number">4</span>],
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (10f4ce324 2022-06-22)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
 </body></html>
