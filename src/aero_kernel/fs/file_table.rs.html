@@ -573,10 +573,10 @@
         <span class="ident">fd</span>: <span class="ident">usize</span>,
         <span class="ident">hint</span>: <span class="ident">DuplicateHint</span>,
         <span class="ident">flags</span>: <span class="ident">OpenFlags</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">aero_syscall::AeroSyscallError</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">aero_syscall::SyscallError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">get_handle</span>(<span class="ident">fd</span>)
-            .<span class="ident">ok_or</span>(<span class="ident">aero_syscall::AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
+            .<span class="ident">ok_or</span>(<span class="ident">aero_syscall::SyscallError::EINVAL</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">find_from</span> <span class="op">=</span> <span class="op">|</span><span class="ident">files</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">FileHandle</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">start</span>: <span class="ident">usize</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">array</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">files</span>[<span class="ident">start</span>..];
@@ -681,5 +681,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (fdca237d5 2022-06-24)" ></div>
 </body></html>

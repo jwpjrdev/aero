@@ -156,8 +156,6 @@
 <span id="150">150</span>
 <span id="151">151</span>
 <span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -179,7 +177,7 @@
 
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicU32</span>, <span class="ident">Ordering</span>};
 
-<span class="kw">use</span> <span class="ident">aero_syscall</span>::{<span class="ident">AeroSyscallError</span>, <span class="ident">TimeSpec</span>};
+<span class="kw">use</span> <span class="ident">aero_syscall</span>::{<span class="ident">SyscallError</span>, <span class="ident">TimeSpec</span>};
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 <span class="kw">use</span> <span class="ident">spin::Once</span>;
 
@@ -201,11 +199,11 @@
 
     <span class="doccomment">/// Ensures the user-provided futex pointer is non-null and aligned to the alignment of</span>
     <span class="doccomment">/// a futex word (32-bits).</span>
-    <span class="kw">fn</span> <span class="ident">validate_futex_ptr</span>(<span class="ident">ptr</span>: <span class="ident">VirtAddr</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">validate_futex_ptr</span>(<span class="ident">ptr</span>: <span class="ident">VirtAddr</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">SyscallError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">raw</span> <span class="op">=</span> <span class="ident">ptr</span>.<span class="ident">as_u64</span>() <span class="kw">as</span> <span class="ident">usize</span>;
 
         <span class="kw">if</span> <span class="ident">raw</span> <span class="op">==</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> (<span class="ident">raw</span> <span class="op">&amp;</span> (<span class="ident">core::mem::size_of</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>() <span class="op">-</span> <span class="number">1</span>)) <span class="op">==</span> <span class="number">0</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EINVAL</span>)
+            <span class="prelude-val">Err</span>(<span class="ident">SyscallError::EINVAL</span>)
         } <span class="kw">else</span> {
             <span class="prelude-val">Ok</span>(())
         }
@@ -245,13 +243,11 @@
         <span class="ident">uaddr</span>: <span class="ident">VirtAddr</span>,
         <span class="ident">expected</span>: <span class="ident">u32</span>,
         <span class="ident">_timeout</span>: <span class="kw-2">&amp;</span><span class="ident">TimeSpec</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">SyscallError</span><span class="op">&gt;</span> {
         <span class="ident"><span class="self">Self</span>::validate_futex_ptr</span>(<span class="ident">uaddr</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::addr_as_futex_key</span>(<span class="ident">uaddr</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">uaddr</span>
-            .<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">AtomicU32</span><span class="op">&gt;</span>()
-            .<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::addr_as_futex_key</span>(<span class="ident">uaddr</span>).<span class="ident">ok_or</span>(<span class="ident">SyscallError::EINVAL</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">uaddr</span>.<span class="ident">read_mut</span>::<span class="op">&lt;</span><span class="ident">AtomicU32</span><span class="op">&gt;</span>().<span class="ident">ok_or</span>(<span class="ident">SyscallError::EINVAL</span>)<span class="question-mark">?</span>;
 
         <span class="kw">if</span> <span class="ident">value</span>.<span class="ident">load</span>(<span class="ident">Ordering::SeqCst</span>) <span class="op">==</span> <span class="ident">expected</span> {
             <span class="kw">let</span> <span class="ident">futex</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_alloc</span>(<span class="ident">key</span>);
@@ -269,15 +265,15 @@
 
             <span class="prelude-val">Ok</span>(())
         } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EAGAIN</span>)
+            <span class="prelude-val">Err</span>(<span class="ident">SyscallError::EAGAIN</span>)
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">wake</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">uaddr</span>: <span class="ident">VirtAddr</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">wake</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">uaddr</span>: <span class="ident">VirtAddr</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">SyscallError</span><span class="op">&gt;</span> {
         <span class="ident"><span class="self">Self</span>::validate_futex_ptr</span>(<span class="ident">uaddr</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::addr_as_futex_key</span>(<span class="ident">uaddr</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">futex</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">key</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::addr_as_futex_key</span>(<span class="ident">uaddr</span>).<span class="ident">ok_or</span>(<span class="ident">SyscallError::EINVAL</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">futex</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">key</span>).<span class="ident">ok_or</span>(<span class="ident">SyscallError::EINVAL</span>)<span class="question-mark">?</span>;
 
         <span class="ident">futex</span>.<span class="ident">notify_complete</span>();
 
@@ -294,7 +290,7 @@
 }
 
 <span class="attribute">#[<span class="ident">syscall</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wait</span>(<span class="ident">ptr</span>: <span class="ident">usize</span>, <span class="ident">expected</span>: <span class="ident">usize</span>, <span class="ident">timeout</span>: <span class="kw-2">&amp;</span><span class="ident">TimeSpec</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wait</span>(<span class="ident">ptr</span>: <span class="ident">usize</span>, <span class="ident">expected</span>: <span class="ident">usize</span>, <span class="ident">timeout</span>: <span class="kw-2">&amp;</span><span class="ident">TimeSpec</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">SyscallError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">u64</span>);
 
     <span class="kw">let</span> <span class="ident">futex_container</span> <span class="op">=</span> <span class="ident">get_futex_conatiner</span>();
@@ -304,7 +300,7 @@
 }
 
 <span class="attribute">#[<span class="ident">syscall</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wake</span>(<span class="ident">ptr</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wake</span>(<span class="ident">ptr</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">SyscallError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">VirtAddr::new</span>(<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">u64</span>);
 
     <span class="kw">let</span> <span class="ident">futex_container</span> <span class="op">=</span> <span class="ident">get_futex_conatiner</span>();
@@ -313,5 +309,5 @@
     <span class="prelude-val">Ok</span>(<span class="number">0</span>)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (fdca237d5 2022-06-24)" ></div>
 </body></html>

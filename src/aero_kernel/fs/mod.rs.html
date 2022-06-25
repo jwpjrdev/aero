@@ -345,7 +345,7 @@
 
 <span class="kw">use</span> <span class="ident">core::mem</span>;
 
-<span class="kw">use</span> <span class="ident">aero_syscall::AeroSyscallError</span>;
+<span class="kw">use</span> <span class="ident">aero_syscall::SyscallError</span>;
 <span class="kw">use</span> <span class="ident">alloc::collections::BTreeMap</span>;
 <span class="kw">use</span> <span class="ident">alloc::string::String</span>;
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
@@ -462,7 +462,7 @@
     <span class="ident">ConnectionRefused</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FileSystemError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AeroSyscallError</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FileSystemError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SyscallError</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">error</span>: <span class="ident">FileSystemError</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">error</span> {
             <span class="ident">FileSystemError::NotSupported</span> =&gt; <span class="ident"><span class="self">Self</span>::EACCES</span>,
@@ -645,5 +645,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (fdca237d5 2022-06-24)" ></div>
 </body></html>

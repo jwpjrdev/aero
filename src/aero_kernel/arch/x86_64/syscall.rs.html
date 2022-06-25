@@ -176,7 +176,7 @@
 <span id="170">170</span>
 <span id="171">171</span>
 <span id="172">172</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">aero_syscall::AeroSyscallError</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">aero_syscall::SyscallError</span>;
 <span class="kw">use</span> <span class="ident">raw_cpuid::CpuId</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::arch::gdt::GdtEntryType</span>;
@@ -197,7 +197,7 @@
 <span class="kw">const</span> <span class="ident">ARCH_GET_FS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0x1003</span>;
 <span class="kw">const</span> <span class="ident">ARCH_GET_GS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">0x1004</span>;
 
-<span class="kw">fn</span> <span class="ident">arch_prctl</span>(<span class="ident">command</span>: <span class="ident">usize</span>, <span class="ident">address</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">arch_prctl</span>(<span class="ident">command</span>: <span class="ident">usize</span>, <span class="ident">address</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">SyscallError</span><span class="op">&gt;</span> {
     <span class="kw">match</span> <span class="ident">command</span> {
         <span class="ident">ARCH_SET_FS</span> =&gt; <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="ident">IrqGuard::new</span>();
@@ -233,7 +233,7 @@
             .<span class="ident">get_gs_base</span>()
             .<span class="ident">as_u64</span>() <span class="kw">as</span> <span class="ident">usize</span>),
 
-        <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">AeroSyscallError::EINVAL</span>),
+        <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">SyscallError::EINVAL</span>),
     }
 }
 
@@ -349,5 +349,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (fdca237d5 2022-06-24)" ></div>
 </body></html>

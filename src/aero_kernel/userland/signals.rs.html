@@ -499,7 +499,7 @@
 
 <span class="kw">use</span> <span class="ident">bit_field::BitField</span>;
 
-<span class="kw">use</span> <span class="ident">aero_syscall::AeroSyscallError</span>;
+<span class="kw">use</span> <span class="ident">aero_syscall::SyscallError</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::scheduler</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::fs::FileSystemError</span>;
@@ -602,10 +602,10 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">SignalError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AeroSyscallError</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">SignalError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SyscallError</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">s</span>: <span class="ident">SignalError</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="ident">SignalError::Interrupted</span> =&gt; <span class="ident">AeroSyscallError::EINTR</span>,
+            <span class="ident">SignalError::Interrupted</span> =&gt; <span class="ident">SyscallError::EINTR</span>,
         }
     }
 }
@@ -623,10 +623,10 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_sigaction</span>(
         <span class="ident">sigaction</span>: <span class="ident">SigAction</span>,
         <span class="ident">sigreturn</span>: <span class="ident">usize</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SignalEntry</span>, <span class="ident">AeroSyscallError</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SignalEntry</span>, <span class="ident">SyscallError</span><span class="op">&gt;</span> {
         <span class="prelude-val">Ok</span>(<span class="ident">SignalEntry</span> {
             <span class="ident">handler</span>: <span class="ident">SignalHandler::from</span>(<span class="ident">sigaction</span>.<span class="ident">sa_handler</span>),
-            <span class="ident">flags</span>: <span class="ident">SignalFlags::from_bits</span>(<span class="ident">sigaction</span>.<span class="ident">sa_flags</span>).<span class="ident">ok_or</span>(<span class="ident">AeroSyscallError::EINVAL</span>)<span class="question-mark">?</span>,
+            <span class="ident">flags</span>: <span class="ident">SignalFlags::from_bits</span>(<span class="ident">sigaction</span>.<span class="ident">sa_flags</span>).<span class="ident">ok_or</span>(<span class="ident">SyscallError::EINVAL</span>)<span class="question-mark">?</span>,
             <span class="ident">mask</span>: <span class="ident">sigaction</span>.<span class="ident">sa_mask</span>,
             <span class="ident">sigreturn</span>,
         })
@@ -939,5 +939,5 @@
     <span class="prelude-val">None</span>
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (43347397f 2022-06-23)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (fdca237d5 2022-06-24)" ></div>
 </body></html>
