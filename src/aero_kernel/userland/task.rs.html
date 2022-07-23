@@ -568,6 +568,50 @@
 <span id="562">562</span>
 <span id="563">563</span>
 <span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -587,7 +631,6 @@
  * along with Aero. If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */</span>
 
-<span class="kw">use</span> <span class="ident">alloc::string::String</span>;
 <span class="kw">use</span> <span class="ident">alloc::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Weak</span>};
 
 <span class="kw">use</span> <span class="ident">spin::RwLock</span>;
@@ -907,7 +950,41 @@
                 .<span class="ident">expect</span>(<span class="string">&quot;failed to fork arch task&quot;</span>),
         );
 
-        <span class="self">self</span>.<span class="ident">make_child</span>(<span class="ident">arch_task</span>)
+        <span class="kw">let</span> <span class="ident">pid</span> <span class="op">=</span> <span class="ident">TaskId::allocate</span>();
+
+        <span class="kw">let</span> <span class="ident">this</span> <span class="op">=</span> <span class="ident">Arc::new_cyclic</span>(<span class="op">|</span><span class="ident">sref</span><span class="op">|</span> <span class="self">Self</span> {
+            <span class="ident">sref</span>: <span class="ident">sref</span>.<span class="ident">clone</span>(),
+            <span class="ident">zombies</span>: <span class="ident">Zombies::new</span>(),
+
+            <span class="ident">arch_task</span>,
+            <span class="ident">file_table</span>: <span class="self">self</span>.<span class="ident">process_leader</span>().<span class="ident">file_table</span>.<span class="ident">clone</span>(),
+            <span class="ident">message_queue</span>: <span class="ident">MessageQueue::new</span>(),
+            <span class="ident">vm</span>: <span class="self">self</span>.<span class="ident">process_leader</span>().<span class="ident">vm</span>.<span class="ident">clone</span>(),
+            <span class="ident">state</span>: <span class="ident">AtomicU8::new</span>(<span class="ident">TaskState::Runnable</span> <span class="kw">as</span> <span class="kw">_</span>),
+
+            <span class="ident">link</span>: <span class="ident">Default::default</span>(),
+            <span class="ident">clink</span>: <span class="ident">Default::default</span>(),
+
+            <span class="ident">sleep_duration</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>),
+            <span class="ident">exit_status</span>: <span class="ident">AtomicIsize::new</span>(<span class="number">0</span>),
+
+            <span class="ident">tid</span>: <span class="ident">pid</span>.<span class="ident">clone</span>(),
+            <span class="ident">pid</span>,
+
+            <span class="ident">executable</span>: <span class="ident">Mutex::new</span>(<span class="self">self</span>.<span class="ident">executable</span>.<span class="ident">lock</span>().<span class="ident">clone</span>()),
+            <span class="ident">pending_io</span>: <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>),
+
+            <span class="ident">children</span>: <span class="ident">Mutex::new</span>(<span class="ident">Default::default</span>()),
+            <span class="ident">parent</span>: <span class="ident">Mutex::new</span>(<span class="prelude-val">None</span>),
+
+            <span class="ident">cwd</span>: <span class="self">self</span>.<span class="ident">cwd</span>.<span class="ident">read</span>().<span class="ident">fork</span>(),
+            <span class="ident">signals</span>: <span class="ident">Signals::new</span>(),
+        });
+
+        <span class="self">self</span>.<span class="ident">add_child</span>(<span class="ident">this</span>.<span class="ident">clone</span>());
+        <span class="ident">this</span>.<span class="ident">signals</span>().<span class="ident">copy_from</span>(<span class="self">self</span>.<span class="ident">signals</span>());
+
+        <span class="ident">this</span>
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fork</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span> {
@@ -1020,6 +1097,16 @@
     }
 
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">update_state</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">state</span>: <span class="ident">TaskState</span>) {
+        <span class="kw">if</span> <span class="ident">state</span> <span class="op">!</span><span class="op">=</span> <span class="ident">TaskState::Runnable</span> {
+            <span class="macro">log::warn!</span>(
+                <span class="string">&quot;Task::update_state() updated the task state to {state:?}! (pid={:?}, tid={:?})&quot;</span>,
+                <span class="self">self</span>.<span class="ident">pid</span>,
+                <span class="self">self</span>.<span class="ident">tid</span>
+            );
+
+            <span class="ident"><span class="kw">crate</span>::unwind::unwind_stack_trace</span>();
+        }
+
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">store</span>(<span class="ident">state</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">Ordering::SeqCst</span>);
     }
 
@@ -1126,12 +1213,13 @@
     }
 }
 
+<span class="comment">// SAFETY: It&#39;s alright to access [`Task`] through references from other</span>
+<span class="comment">// threads because we&#39;re either accessing constant properties or properties</span>
+<span class="comment">// that are fully synchronized.</span>
 <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Task</span> {}
 
-<span class="comment">// Create a new intrustive adapter for the [Task] struct as the tasks are stored as a linked</span>
-<span class="comment">// list in the scheduler.</span>
 <span class="macro">intrusive_collections::intrusive_adapter!</span>(<span class="kw">pub</span> <span class="ident">SchedTaskAdapter</span> <span class="op">=</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span> : <span class="ident">Task</span> { <span class="ident">link</span>: <span class="ident">LinkedListLink</span> });
 <span class="macro">intrusive_collections::intrusive_adapter!</span>(<span class="kw">pub</span> <span class="ident">TaskAdapter</span> <span class="op">=</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Task</span><span class="op">&gt;</span> : <span class="ident">Task</span> { <span class="ident">clink</span>: <span class="ident">LinkedListLink</span> });
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

@@ -958,6 +958,24 @@
 <span id="952">952</span>
 <span id="953">953</span>
 <span id="954">954</span>
+<span id="955">955</span>
+<span id="956">956</span>
+<span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
+<span id="962">962</span>
+<span id="963">963</span>
+<span id="964">964</span>
+<span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
+<span id="968">968</span>
+<span id="969">969</span>
+<span id="970">970</span>
+<span id="971">971</span>
+<span id="972">972</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -1092,6 +1110,15 @@
     <span class="doccomment">/// value might be larger than `horizontal_resolution`. It is</span>
     <span class="doccomment">/// therefore recommended to use this field for calculating the start address of a line.</span>
     <span class="kw">pub</span> <span class="ident">stride</span>: <span class="ident">usize</span>,
+
+    <span class="kw">pub</span> <span class="ident">red_mask_shift</span>: <span class="ident">u8</span>,
+    <span class="kw">pub</span> <span class="ident">red_mask_size</span>: <span class="ident">u8</span>,
+
+    <span class="kw">pub</span> <span class="ident">green_mask_shift</span>: <span class="ident">u8</span>,
+    <span class="kw">pub</span> <span class="ident">green_mask_size</span>: <span class="ident">u8</span>,
+
+    <span class="kw">pub</span> <span class="ident">blue_mask_shift</span>: <span class="ident">u8</span>,
+    <span class="kw">pub</span> <span class="ident">blue_mask_size</span>: <span class="ident">u8</span>,
 }
 
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>, <span class="ident">packed</span>)]</span>
@@ -1897,6 +1924,15 @@
         <span class="ident">vertical_resolution</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">framebuffer_height</span> <span class="kw">as</span> <span class="ident">usize</span>,
         <span class="ident">pixel_format</span>: <span class="ident">PixelFormat::BGR</span>,
         <span class="ident">stride</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">framebuffer_pitch</span> <span class="kw">as</span> <span class="ident">usize</span>,
+
+        <span class="ident">red_mask_shift</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">red_mask_shift</span>,
+        <span class="ident">red_mask_size</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">red_mask_size</span>,
+
+        <span class="ident">green_mask_shift</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">green_mask_shift</span>,
+        <span class="ident">green_mask_size</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">green_mask_size</span>,
+
+        <span class="ident">blue_mask_shift</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">blue_mask_shift</span>,
+        <span class="ident">blue_mask_size</span>: <span class="ident">framebuffer_tag</span>.<span class="ident">blue_mask_size</span>,
     };
 
     <span class="kw">let</span> <span class="ident">framebuffer_addr</span> <span class="op">=</span> <span class="ident">PhysAddr::new</span>(<span class="ident">framebuffer_tag</span>.<span class="ident">framebuffer_addr</span>).<span class="ident">as_hhdm_virt</span>();
@@ -1913,5 +1949,5 @@
     <span class="ident">DEBUG_RENDY</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Mutex::new</span>(<span class="ident">rendy</span>));
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

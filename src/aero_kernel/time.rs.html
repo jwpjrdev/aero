@@ -193,7 +193,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_realtime_clock</span>() -&gt; <span class="ident">TimeSpec</span> {
-    <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock</span>().<span class="ident">clone</span>()
+    <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock_irq</span>().<span class="ident">clone</span>()
 }
 
 <span class="doccomment">/// Returns the current amount of PIT ticks.</span>
@@ -234,7 +234,7 @@
             <span class="ident">tv_nsec</span>: (<span class="number">1000000000</span> <span class="op">/</span> <span class="ident">PIT_FREQUENCY_HZ</span>) <span class="kw">as</span> <span class="ident">isize</span>,
         };
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">this</span> <span class="op">=</span> <span class="ident">REALTIME_CLOCK</span>.<span class="ident">lock_irq</span>();
 
         <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span> <span class="op">&gt;</span> <span class="number">999999999</span> {
             <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> (<span class="ident">this</span>.<span class="ident">tv_nsec</span> <span class="op">+</span> <span class="ident">interval</span>.<span class="ident">tv_nsec</span>) <span class="op">-</span> <span class="number">1000000000</span>;
@@ -273,5 +273,5 @@
     <span class="ident">apic::io_apic_setup_legacy_irq</span>(<span class="number">0</span>, <span class="ident">pit_vector</span>, <span class="number">1</span>); <span class="comment">// Set up the IRQ.</span>
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

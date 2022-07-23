@@ -395,7 +395,7 @@
     <span class="kw">pub</span> <span class="ident">iret</span>: <span class="ident">IretRegisters</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InterruptErrorStack</span> {
     <span class="kw">pub</span> <span class="ident">code</span>: <span class="ident">u64</span>,
@@ -485,5 +485,5 @@
     <span class="macro">asm!</span>(<span class="string">&quot;lidt [{}]&quot;</span>, <span class="kw">in</span>(<span class="ident">reg</span>) <span class="ident">idt_descriptor</span>, <span class="ident">options</span>(<span class="ident">nostack</span>));
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

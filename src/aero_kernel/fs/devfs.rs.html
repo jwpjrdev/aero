@@ -400,6 +400,55 @@
 <span id="394">394</span>
 <span id="395">395</span>
 <span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -425,7 +474,6 @@
 <span class="kw">use</span> <span class="ident">core::sync::atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
 
 <span class="kw">use</span> <span class="ident">alloc::collections::BTreeMap</span>;
-<span class="kw">use</span> <span class="ident">alloc::string::String</span>;
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident">spin</span>::{<span class="ident">Once</span>, <span class="ident">RwLock</span>};
@@ -437,7 +485,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::rendy::RendyInfo</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::cache</span>::{<span class="ident">DirCacheItem</span>, <span class="ident">INodeCacheItem</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">INodeInterface</span>, <span class="ident">PollTable</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">INodeInterface</span>, <span class="ident">PollFlags</span>, <span class="ident">PollTable</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ramfs::RamFs</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::FileSystemError</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">FileSystem</span>, <span class="prelude-ty">Result</span>, <span class="ident">MOUNT_MANAGER</span>};
@@ -531,7 +579,7 @@
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">inode</span>().<span class="ident">ioctl</span>(<span class="ident">command</span>, <span class="ident">arg</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">table</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PollTable</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">EPollEventFlags</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">table</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PollTable</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PollFlags</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">inode</span>().<span class="ident">poll</span>(<span class="ident">table</span>)
     }
 }
@@ -624,23 +672,56 @@
 
 <span class="kw">struct</span> <span class="ident">DevFb</span> {
     <span class="ident">marker</span>: <span class="ident">usize</span>,
-    <span class="ident">vinfo</span>: <span class="ident">FramebufferVScreenInfo</span>,
+    <span class="ident">vinfo</span>: <span class="ident">RwLock</span><span class="op">&lt;</span><span class="ident">FramebufferVScreenInfo</span><span class="op">&gt;</span>,
+    <span class="ident">finfo</span>: <span class="ident">FramebufferFScreenInfo</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">DevFb</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">info</span>: <span class="ident">RendyInfo</span>) -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="ident">Arc::new</span>(<span class="self">Self</span> {
             <span class="ident">marker</span>: <span class="ident">alloc_device_marker</span>(),
-            <span class="ident">vinfo</span>: <span class="ident">FramebufferVScreenInfo</span> {
+            <span class="ident">vinfo</span>: <span class="ident">RwLock::new</span>(<span class="ident">FramebufferVScreenInfo</span> {
                 <span class="ident">xres</span>: <span class="ident">info</span>.<span class="ident">horizontal_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
                 <span class="ident">yres</span>: <span class="ident">info</span>.<span class="ident">vertical_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
 
                 <span class="ident">xres_virtual</span>: <span class="ident">info</span>.<span class="ident">horizontal_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
                 <span class="ident">yres_virtual</span>: <span class="ident">info</span>.<span class="ident">vertical_resolution</span> <span class="kw">as</span> <span class="ident">u32</span>,
 
+                <span class="ident">width</span>: <span class="ident">u32::MAX</span>,  <span class="comment">// -1</span>
+                <span class="ident">height</span>: <span class="ident">u32::MAX</span>, <span class="comment">// -1</span>
+
+                <span class="ident">red</span>: <span class="ident">FramebufferBitField::new</span>(
+                    <span class="ident">info</span>.<span class="ident">red_mask_shift</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                    <span class="ident">info</span>.<span class="ident">red_mask_size</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                ),
+
+                <span class="ident">green</span>: <span class="ident">FramebufferBitField::new</span>(
+                    <span class="ident">info</span>.<span class="ident">green_mask_shift</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                    <span class="ident">info</span>.<span class="ident">green_mask_size</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                ),
+
+                <span class="ident">blue</span>: <span class="ident">FramebufferBitField::new</span>(
+                    <span class="ident">info</span>.<span class="ident">blue_mask_shift</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                    <span class="ident">info</span>.<span class="ident">blue_mask_size</span> <span class="kw">as</span> <span class="ident">u32</span>,
+                ),
+
+                <span class="ident">transp</span>: <span class="ident">FramebufferBitField::new</span>(<span class="number">0</span>, <span class="number">0</span>),
                 <span class="ident">bits_per_pixel</span>: <span class="ident">info</span>.<span class="ident">bits_per_pixel</span> <span class="kw">as</span> <span class="ident">u32</span>,
 
+                <span class="ident">activate</span>: <span class="ident">FB_ACTIVATE_NOW</span>,
+                <span class="ident">vmode</span>: <span class="ident">FB_VMODE_NONINTERLACED</span>,
+
                 <span class="comment">// TODO: Implement rest of the members</span>
+                ..<span class="ident">Default::default</span>()
+            }),
+
+            <span class="ident">finfo</span>: <span class="ident">FramebufferFScreenInfo</span> {
+                <span class="ident">smem_len</span>: (<span class="ident">info</span>.<span class="ident">stride</span> <span class="op">*</span> <span class="ident">info</span>.<span class="ident">vertical_resolution</span>) <span class="kw">as</span> <span class="ident">u32</span>,
+                <span class="ident">line_length</span>: <span class="ident">info</span>.<span class="ident">stride</span> <span class="kw">as</span> <span class="ident">u32</span>,
+
+                <span class="ident">typee</span>: <span class="ident">FB_TYPE_PACKED_PIXELS</span>,
+                <span class="ident">visual</span>: <span class="ident">FB_VISUAL_TRUECOLOR</span>,
+
                 ..<span class="ident">Default::default</span>()
             },
         })
@@ -653,7 +734,7 @@
     }
 
     <span class="kw">fn</span> <span class="ident">device_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">String</span> {
-        <span class="ident">String::from</span>(<span class="string">&quot;fb&quot;</span>)
+        <span class="ident">String::from</span>(<span class="string">&quot;fb0&quot;</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">inode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">INodeInterface</span><span class="op">&gt;</span> {
@@ -727,11 +808,28 @@
             <span class="ident">FBIOGET_VSCREENINFO</span> =&gt; {
                 <span class="kw">let</span> <span class="ident">struc</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="ident">arg</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">FramebufferVScreenInfo</span>) };
 
-                <span class="kw-2">*</span><span class="ident">struc</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">vinfo</span>.<span class="ident">clone</span>();
+                <span class="kw-2">*</span><span class="ident">struc</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">vinfo</span>.<span class="ident">read</span>().<span class="ident">clone</span>();
                 <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
             }
 
-            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>),
+            <span class="ident">FBIOPUT_VSCREENINFO</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">struc</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="ident">arg</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">FramebufferVScreenInfo</span>) };
+                <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">vinfo</span>.<span class="ident">write</span>() <span class="op">=</span> <span class="ident">struc</span>.<span class="ident">clone</span>();
+
+                <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
+            }
+
+            <span class="ident">FBIOGET_FSCREENINFO</span> =&gt; {
+                <span class="kw">let</span> <span class="ident">struc</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;mut</span> <span class="kw-2">*</span>(<span class="ident">arg</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">FramebufferFScreenInfo</span>) };
+
+                <span class="kw-2">*</span><span class="ident">struc</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">finfo</span>.<span class="ident">clone</span>();
+                <span class="prelude-val">Ok</span>(<span class="number">0x00</span>)
+            }
+
+            <span class="kw">_</span> =&gt; {
+                <span class="macro">log::warn!</span>(<span class="string">&quot;fbdev: ioctl unknown command: {command:#x}&quot;</span>);
+                <span class="prelude-val">Err</span>(<span class="ident">FileSystemError::NotSupported</span>)
+            }
         }
     }
 }
@@ -797,5 +895,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

@@ -324,6 +324,18 @@
 <span id="318">318</span>
 <span id="319">319</span>
 <span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -347,7 +359,6 @@
 
 <span class="kw">use</span> <span class="ident">aero_syscall::SyscallError</span>;
 <span class="kw">use</span> <span class="ident">alloc::collections::BTreeMap</span>;
-<span class="kw">use</span> <span class="ident">alloc::string::String</span>;
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::userland::scheduler</span>;
@@ -455,11 +466,14 @@
     <span class="ident">Busy</span>,
     <span class="ident">NotDirectory</span>,
     <span class="ident">IsPipe</span>,
+    <span class="ident">IsDir</span>,
     <span class="ident">Interrupted</span>,
     <span class="ident">TooSmall</span>,
     <span class="ident">InvalidPath</span>,
     <span class="ident">NotSocket</span>,
     <span class="ident">ConnectionRefused</span>,
+    <span class="ident">NotConnected</span>,
+    <span class="ident">WouldBlock</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">FileSystemError</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SyscallError</span> {
@@ -476,6 +490,9 @@
             <span class="ident">FileSystemError::InvalidPath</span> =&gt; <span class="ident"><span class="self">Self</span>::EINVAL</span>,
             <span class="ident">FileSystemError::NotSocket</span> =&gt; <span class="ident"><span class="self">Self</span>::ENOTSOCK</span>,
             <span class="ident">FileSystemError::ConnectionRefused</span> =&gt; <span class="ident"><span class="self">Self</span>::ECONNREFUSED</span>,
+            <span class="ident">FileSystemError::IsDir</span> =&gt; <span class="ident"><span class="self">Self</span>::EISDIR</span>,
+            <span class="ident">FileSystemError::NotConnected</span> =&gt; <span class="ident"><span class="self">Self</span>::ENOTCONN</span>,
+            <span class="ident">FileSystemError::WouldBlock</span> =&gt; <span class="ident"><span class="self">Self</span>::EAGAIN</span>,
         }
     }
 }
@@ -574,10 +591,16 @@
 
                         <span class="prelude-val">Err</span>(<span class="ident">err</span>)
                             <span class="kw">if</span> <span class="ident">err</span> <span class="op">==</span> <span class="ident">FileSystemError::EntryNotFound</span>
-                                <span class="op">&amp;&amp;</span> <span class="ident">i</span> <span class="op">==</span> <span class="ident">path</span>.<span class="ident">components</span>().<span class="ident">count</span>() <span class="op">-</span> <span class="number">1</span>
                                 <span class="op">&amp;&amp;</span> <span class="ident">mode</span> <span class="op">==</span> <span class="ident">LookupMode::Create</span> =&gt;
                         {
-                            <span class="ident">cwd</span> <span class="op">=</span> <span class="ident">cwd</span>.<span class="ident">inode</span>().<span class="ident">touch</span>(<span class="ident">cwd</span>.<span class="ident">clone</span>(), <span class="ident">component</span>)<span class="question-mark">?</span>;
+                            <span class="kw">if</span> <span class="ident">i</span> <span class="op">==</span> <span class="ident">path</span>.<span class="ident">components</span>().<span class="ident">count</span>() <span class="op">-</span> <span class="number">1</span> {
+                                <span class="ident">cwd</span> <span class="op">=</span> <span class="ident">cwd</span>.<span class="ident">inode</span>().<span class="ident">touch</span>(<span class="ident">cwd</span>.<span class="ident">clone</span>(), <span class="ident">component</span>)<span class="question-mark">?</span>;
+                            } <span class="kw">else</span> {
+                                <span class="comment">// todo: fix this shit</span>
+                                <span class="ident">cwd</span>.<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="ident">component</span>)<span class="question-mark">?</span>;
+                                <span class="ident">cwd</span> <span class="op">=</span>
+                                    <span class="ident">lookup_path_with</span>(<span class="ident">cwd</span>, <span class="ident">Path::new</span>(<span class="ident">component</span>), <span class="ident">LookupMode::None</span>)<span class="question-mark">?</span>;
+                            }
                         }
 
                         <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
@@ -630,8 +653,9 @@
 
     <span class="ident">root_dir</span>().<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="string">&quot;dev&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">root_dir</span>().<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="string">&quot;home&quot;</span>)<span class="question-mark">?</span>;
-    <span class="ident">root_dir</span>().<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="string">&quot;temp&quot;</span>)<span class="question-mark">?</span>;
+    <span class="ident">root_dir</span>().<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="string">&quot;tmp&quot;</span>)<span class="question-mark">?</span>;
     <span class="ident">root_dir</span>().<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="string">&quot;proc&quot;</span>)<span class="question-mark">?</span>;
+    <span class="ident">root_dir</span>().<span class="ident">inode</span>().<span class="ident">mkdir</span>(<span class="string">&quot;var&quot;</span>)<span class="question-mark">?</span>;
 
     <span class="ident">initramfs::init</span>()<span class="question-mark">?</span>;
     <span class="macro">log::info!</span>(<span class="string">&quot;installed initramfs&quot;</span>);
@@ -645,5 +669,5 @@
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

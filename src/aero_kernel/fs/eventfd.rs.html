@@ -76,7 +76,6 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
-<span id="73">73</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -96,10 +95,9 @@
  * along with Aero. If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */</span>
 
-<span class="kw">use</span> <span class="ident">aero_syscall::prelude::EPollEventFlags</span>;
 <span class="kw">use</span> <span class="ident">alloc::sync::Arc</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">INodeInterface</span>, <span class="ident">PollTable</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::inode</span>::{<span class="ident">INodeInterface</span>, <span class="ident">PollFlags</span>, <span class="ident">PollTable</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::utils::sync</span>::{<span class="ident">BlockQueue</span>, <span class="ident">Mutex</span>};
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EventFd</span> {
@@ -129,27 +127,27 @@
         <span class="macro">unimplemented!</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">table</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PollTable</span><span class="op">&gt;</span>) -&gt; <span class="ident"><span class="kw">super</span>::Result</span><span class="op">&lt;</span><span class="ident">EPollEventFlags</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">table</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PollTable</span><span class="op">&gt;</span>) -&gt; <span class="ident"><span class="kw">super</span>::Result</span><span class="op">&lt;</span><span class="ident">PollFlags</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">count</span>.<span class="ident">lock</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">events</span> <span class="op">=</span> <span class="ident">EPollEventFlags::default</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">events</span> <span class="op">=</span> <span class="ident">PollFlags::empty</span>();
 
         <span class="ident">table</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">wq</span>)); <span class="comment">// listen for changes</span>
 
         <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">count</span> <span class="op">&gt;</span> <span class="number">0</span> {
-            <span class="ident">events</span>.<span class="ident">insert</span>(<span class="ident">EPollEventFlags::IN</span>);
+            <span class="ident">events</span>.<span class="ident">insert</span>(<span class="ident">PollFlags::IN</span>);
         }
 
         <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">count</span> <span class="op">==</span> <span class="ident">usize::MAX</span> {
-            <span class="ident">events</span>.<span class="ident">insert</span>(<span class="ident">EPollEventFlags::ERR</span>);
+            <span class="ident">events</span>.<span class="ident">insert</span>(<span class="ident">PollFlags::ERR</span>);
         }
 
         <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">count</span> <span class="op">&lt;</span> (<span class="ident">usize::MAX</span> <span class="op">-</span> <span class="number">1</span>) {
-            <span class="ident">events</span>.<span class="ident">insert</span>(<span class="ident">EPollEventFlags::OUT</span>); <span class="comment">// possible to write a value of at least &quot;1&quot; without blocking.</span>
+            <span class="ident">events</span>.<span class="ident">insert</span>(<span class="ident">PollFlags::OUT</span>); <span class="comment">// possible to write a value of at least &quot;1&quot; without blocking.</span>
         }
 
         <span class="prelude-val">Ok</span>(<span class="ident">events</span>)
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="aero_kernel" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

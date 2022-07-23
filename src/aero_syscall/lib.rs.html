@@ -951,6 +951,26 @@
 <span id="945">945</span>
 <span id="946">946</span>
 <span id="947">947</span>
+<span id="948">948</span>
+<span id="949">949</span>
+<span id="950">950</span>
+<span id="951">951</span>
+<span id="952">952</span>
+<span id="953">953</span>
+<span id="954">954</span>
+<span id="955">955</span>
+<span id="956">956</span>
+<span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
+<span id="962">962</span>
+<span id="963">963</span>
+<span id="964">964</span>
+<span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
 </pre><pre class="rust"><code><span class="comment">/*
  * Copyright (C) 2021-2022 The Aero Project Developers.
  *
@@ -975,6 +995,7 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">consts</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">signal</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">socket</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">syscall</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::syscall</span>::<span class="kw-2">*</span>;
@@ -1181,6 +1202,9 @@
         <span class="ident">prelude::SYS_KILL</span> =&gt; <span class="string">&quot;kill&quot;</span>,
         <span class="ident">prelude::SYS_FUTEX_WAIT</span> =&gt; <span class="string">&quot;futex_wait&quot;</span>,
         <span class="ident">prelude::SYS_FUTEX_WAKE</span> =&gt; <span class="string">&quot;futex_wake&quot;</span>,
+        <span class="ident">prelude::SYS_LINK</span> =&gt; <span class="string">&quot;link&quot;</span>,
+        <span class="ident">prelude::SYS_BACKTRACE</span> =&gt; <span class="string">&quot;backtrace&quot;</span>,
+        <span class="ident">prelude::SYS_POLL</span> =&gt; <span class="string">&quot;poll&quot;</span>,
 
         <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;unknown syscall {syscall}&quot;</span>),
     }
@@ -1204,6 +1228,7 @@
     <span class="kw">pub</span> <span class="ident">name</span>: [<span class="ident">u8</span>; <span class="number">0</span>],
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Utsname</span> {
     <span class="kw">pub</span> <span class="ident">name</span>: [<span class="ident">u8</span>; <span class="number">65</span>],
@@ -1370,6 +1395,7 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AT_FDCWD</span>: <span class="ident">isize</span> <span class="op">=</span> <span class="op">-</span><span class="number">100</span>;
 
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SysInfo</span> {
     <span class="doccomment">/// Seconds since boot</span>
     <span class="kw">pub</span> <span class="ident">uptime</span>: <span class="ident">i64</span>,
@@ -1613,11 +1639,22 @@
 }
 
 <span class="comment">// Sockets</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SocketAddr</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> {}
+
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SocketAddrUnix</span> {
     <span class="kw">pub</span> <span class="ident">family</span>: <span class="ident">u32</span>,
     <span class="kw">pub</span> <span class="ident">path</span>: [<span class="ident">u8</span>; <span class="number">108</span>],
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">SocketAddrUnix</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">family</span>: <span class="ident">AF_UNIX</span>,
+            <span class="ident">path</span>: [<span class="number">0</span>; <span class="number">108</span>],
+        }
+    }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
@@ -1628,6 +1665,9 @@
     <span class="kw">pub</span> <span class="ident">address</span>: [<span class="ident">u8</span>; <span class="number">4</span>],
     <span class="kw">pub</span> <span class="ident">padding</span>: [<span class="ident">u8</span>; <span class="number">8</span>],
 }
+
+<span class="kw">impl</span> <span class="ident">SocketAddr</span> <span class="kw">for</span> <span class="ident">SocketAddrUnix</span> {}
+<span class="kw">impl</span> <span class="ident">SocketAddr</span> <span class="kw">for</span> <span class="ident">SocketAddrInet</span> {}
 
 <span class="comment">// constants for the socket types:</span>
 <span class="comment">//</span>
@@ -1899,5 +1939,5 @@
     <span class="ident">isize_as_syscall_result</span>(<span class="ident">value</span> <span class="kw">as</span> <span class="kw">_</span>)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (2f3ddd9f5 2022-06-27)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="aero_syscall" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>
